@@ -1,3 +1,0 @@
-/mnt/c/Users/maxim/Documents/CIR2/C++/Projet_Cpp/cmake-build-debug/CMakeFiles/Projet_Cpp.dir
-/mnt/c/Users/maxim/Documents/CIR2/C++/Projet_Cpp/cmake-build-debug/CMakeFiles/edit_cache.dir
-/mnt/c/Users/maxim/Documents/CIR2/C++/Projet_Cpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
