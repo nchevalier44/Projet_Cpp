@@ -1,4 +1,4 @@
-C:\Windows\system32\wsl.exe --distribution Debian --exec /bin/bash -c "export CMAKE_COLOR_DIAGNOSTICS=ON && export CLION_IDE=TRUE && export JETBRAINS_IDE=TRUE && cd '/mnt/c/Users/Nathan/OneDrive - yncréa/Documents/Cours/Année_2/Algorithme_C++/Projet_Cpp/cmake-build-debug' && /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G 'CodeBlocks - Unix Makefiles' -S '/mnt/c/Users/Nathan/OneDrive - yncréa/Documents/Cours/Année_2/Algorithme_C++/Projet_Cpp' -B '/mnt/c/Users/Nathan/OneDrive - yncréa/Documents/Cours/Année_2/Algorithme_C++/Projet_Cpp/cmake-build-debug'"
+C:\WINDOWS\system32\wsl.exe --distribution Debian --exec /bin/bash -c "export CMAKE_COLOR_DIAGNOSTICS=ON && export CLION_IDE=TRUE && export JETBRAINS_IDE=TRUE && cd '/mnt/c/Users/maxim/Documents/CIR2/C++/Projet_Cpp/cmake-build-debug' && /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G 'CodeBlocks - Unix Makefiles' -S '/mnt/c/Users/maxim/Documents/CIR2/C++/Projet_Cpp' -B '/mnt/c/Users/maxim/Documents/CIR2/C++/Projet_Cpp/cmake-build-debug'"
 -- The C compiler identification is GNU 12.2.0
 -- The CXX compiler identification is GNU 12.2.0
 -- Detecting C compiler ABI info
@@ -13,4 +13,4 @@ C:\Windows\system32\wsl.exe --distribution Debian --exec /bin/bash -c "export CM
 -- Detecting CXX compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: /mnt/c/Users/Nathan/OneDrive - yncréa/Documents/Cours/Année_2/Algorithme_C++/Projet_Cpp/cmake-build-debug
+-- Build files have been written to: /mnt/c/Users/maxim/Documents/CIR2/C++/Projet_Cpp/cmake-build-debug
