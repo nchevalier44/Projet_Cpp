@@ -3,7 +3,7 @@
 #include <QPointF>
 
 MyScene::MyScene(QObject* parent) : QGraphicsScene(parent){
-    character = new CharacterItem("../test-char.png");
+    character = new CharacterItem("../assets/images/test-char.png");
     this->addItem(character);
 
     this->timer = new QTimer(this);
@@ -12,22 +12,35 @@ MyScene::MyScene(QObject* parent) : QGraphicsScene(parent){
 }
 
 void MyScene::keyPressEvent(QKeyEvent* event){
+
     QPointF pos = character->pos();
+    qreal posX = pos.rx();
+    qreal posY = pos.ry();
+
     switch(event->key()){
+
+        case Qt::Key_Up:
         case Qt::Key_Z:
-            character->setPos(pos.rx(), pos.ry()-1);
+            posY -= 1;
             break;
+
+        case Qt::Key_Down:
         case Qt::Key_S:
-            character->setPos(pos.rx(), pos.ry()+1);
+            posY += 1;
             break;
+
+        case Qt::Key_Left:
         case Qt::Key_Q:
-            character->setPos(pos.rx()-1, pos.ry());
+            posX -= 1;
             break;
+
+        case Qt::Key_Right:
         case Qt::Key_D:
-            character->setPos(pos.rx()+1, pos.ry());
+            posX += 1;
             break;
 
     }
+    character->setPos(posX, posY);
 
 }
 void MyScene::timerUpdate(){}

@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QTimer>
-#include "../CharacterItem.h"
+#include "../entities/CharacterItem.h"
 #include <QKeyEvent>
 
 class MyScene : public QGraphicsScene {
