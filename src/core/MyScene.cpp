@@ -3,7 +3,7 @@
 #include <QPointF>
 
 MyScene::MyScene(QObject* parent) : QGraphicsScene(parent){
-    character = new CharacterItem("");
+    character = new CharacterItem("../assets/images/characters/test-char.png");
     this->addItem(character);
 
     this->timer = new QTimer(this);
