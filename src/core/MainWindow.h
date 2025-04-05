@@ -1,5 +1,3 @@
-
-
 #ifndef PROJET_CPP_MAINWINDOW_H
 #define PROJET_CPP_MAINWINDOW_H
 
@@ -26,7 +24,7 @@ public:
     virtual ~MainWindow();
 
 public slots:
-
+    void slot_aboutMenu();
 };
 
 #endif //PROJET_CPP_MAINWINDOW_H
