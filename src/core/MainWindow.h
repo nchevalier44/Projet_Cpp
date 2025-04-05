@@ -26,7 +26,7 @@ public:
     virtual ~MainWindow();
 
 public slots:
-            void slot_aboutMenu();
+
 };
 
 #endif //PROJET_CPP_MAINWINDOW_H
