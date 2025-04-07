@@ -1,8 +1,6 @@
-#include "MyScene.h"
+#include "GameScene.h"
 
-#include <QPointF>
-
-MyScene::MyScene(QObject* parent) : QGraphicsScene(parent){
+GameScene::GameScene(QObject* parent) : QGraphicsScene(parent){
     character = new CharacterItem("../assets/images/characters/test-char.png");
     this->addItem(character);
 
@@ -11,7 +9,7 @@ MyScene::MyScene(QObject* parent) : QGraphicsScene(parent){
     this->timer->start(30); //toutes les 30 millisecondes
 }
 
-void MyScene::keyPressEvent(QKeyEvent* event){
+void GameScene::keyPressEvent(QKeyEvent* event){
 
     QPointF pos = character->pos();
     qreal posX = pos.rx();
@@ -43,8 +41,8 @@ void MyScene::keyPressEvent(QKeyEvent* event){
     character->setPos(posX, posY);
 
 }
-void MyScene::timerUpdate(){}
+void GameScene::timerUpdate(){}
 
-MyScene::~MyScene(){
+GameScene::~GameScene(){
 
 }

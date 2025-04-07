@@ -2,31 +2,21 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    this->mainScene = new MyScene;
+    startMenuScene = new StartMenuScene();
+    mainView = new QGraphicsView();
+    mainView->setScene(startMenuScene);
 
-    this->mainView = new QGraphicsView;
-    this->mainView->setScene(mainScene);
+    connect(startMenuScene, &StartMenuScene::startGameRequested, this, &MainWindow::startGame);
 
     this->setCentralWidget(mainView);
     this->setWindowTitle("C++ Project");
-    this->resize(800, 800);
-
-    helpMenu = menuBar()->addMenu(tr("&Help"));
-    QAction* actionHelp = new QAction(tr("&About"), this);
-    connect(actionHelp, SIGNAL(triggered()), this, SLOT(slot_aboutMenu()));
-    helpMenu->addAction(actionHelp);
-
-
-
 }
 
 MainWindow::~MainWindow(){
 
 }
 
-void MainWindow::slot_aboutMenu(){
-    QMessageBox msgBox;
-    msgBox.setText("A small QT/C++ projet...");
-    msgBox.setModal(true); // on souhaite que la fenetre soit modale i.e qu'on ne puisse plus cliquer ailleurs
-    msgBox.exec();
+void MainWindow::startGame(){
+    gameScene = new GameScene();
+    mainView->setScene(gameScene);
 }

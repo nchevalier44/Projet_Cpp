@@ -1,13 +1,15 @@
-#ifndef PROJET_CPP_MYSCENE_H
-#define PROJET_CPP_MYSCENE_H
+#ifndef PROJET_CPP_GAMESCENE_H
+#define PROJET_CPP_GAMESCENE_H
 
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QTimer>
 #include "../entities/CharacterItem.h"
 #include <QKeyEvent>
+#include <QPointF>
+#include <QPushButton>
 
-class MyScene : public QGraphicsScene {
+class GameScene : public QGraphicsScene {
     Q_OBJECT
 
 private:
@@ -18,8 +20,8 @@ protected:
     void keyPressEvent(QKeyEvent* event);
 
 public :
-    MyScene(QObject* parent = nullptr);
-    virtual ~MyScene();
+    GameScene(QObject* parent = nullptr);
+    virtual ~GameScene();
 
 public slots:
     void timerUpdate();
@@ -32,4 +34,4 @@ public slots:
 
 
 
-#endif //PROJET_CPP_MYSCENE_H
+#endif //PROJET_CPP_GAMESCENE_H

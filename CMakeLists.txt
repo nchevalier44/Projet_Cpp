@@ -14,7 +14,6 @@ qt_standard_project_setup(
         VERSION 1.0
         DESCRIPTION "Projet C++"
         LANGUAGES CXX
-
 )
 
 add_executable(Projet_Cpp ${sourceCode})

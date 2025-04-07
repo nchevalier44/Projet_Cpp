@@ -8,15 +8,16 @@
 #include <QAction>
 #include <QMessageBox>
 
-#include "MyScene.h"
+#include "GameScene.h"
+#include "StartMenuScene.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 private :
-    MyScene* mainScene;
+    GameScene* gameScene;
+    StartMenuScene* startMenuScene;
     QGraphicsView* mainView;
-    QMenu* helpMenu;
 
 
 public:
@@ -24,7 +25,7 @@ public:
     virtual ~MainWindow();
 
 public slots:
-    void slot_aboutMenu();
+    void startGame();
 };
 
 #endif //PROJET_CPP_MAINWINDOW_H
