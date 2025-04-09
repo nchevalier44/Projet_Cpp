@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QTimer>
-#include "../entities/CharacterItem.h"
+#include "../entities/EntityItem.h"
 #include <QKeyEvent>
 #include <QPointF>
 #include <QPushButton>
@@ -14,7 +14,7 @@ class GameScene : public QGraphicsScene {
 
 private:
     QTimer* timer;
-    CharacterItem* character;
+    EntityItem* character;
 
 protected:
     void keyPressEvent(QKeyEvent* event);

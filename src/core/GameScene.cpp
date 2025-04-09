@@ -1,7 +1,7 @@
 #include "GameScene.h"
 
 GameScene::GameScene(QObject* parent) : QGraphicsScene(parent){
-    character = new CharacterItem("../assets/images/characters/test-char.png");
+    character = new EntityItem("../assets/images/characters/test-char.png", new Entity);
     this->addItem(character);
 
     this->timer = new QTimer(this);
