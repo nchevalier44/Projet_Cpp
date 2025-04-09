@@ -14,7 +14,7 @@ class GameScene : public QGraphicsScene {
 
 private:
     QTimer* timer;
-    EntityItem* character;
+    Entity* character;
 
 protected:
     void keyPressEvent(QKeyEvent* event);

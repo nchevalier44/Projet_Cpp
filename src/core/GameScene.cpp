@@ -1,8 +1,12 @@
 #include "GameScene.h"
 
 GameScene::GameScene(QObject* parent) : QGraphicsScene(parent){
-    character = new EntityItem("../assets/images/characters/test-char.png", new Entity);
-    this->addItem(character);
+
+
+
+    this->character = new Entity("../assets/images/characters/Front_idle.png", 8, 100, "Character", 100);
+    this->character->setPos(400, 300);
+    this->addItem(this->character);
 
     this->timer = new QTimer(this);
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));

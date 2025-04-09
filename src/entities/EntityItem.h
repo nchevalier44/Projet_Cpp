@@ -7,9 +7,9 @@
 
 class EntityItem : public QGraphicsPixmapItem {
     public:
-        EntityItem(QString imageFileName, Entity* entity) : QGraphicsPixmapItem(QPixmap(imageFileName)), entity(entity){
-            //std::cout << "Character creation" << std::endl;
-        }
+        EntityItem(QString imageFileName, Entity* entity);
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+
 
 private:
     Entity* entity;
