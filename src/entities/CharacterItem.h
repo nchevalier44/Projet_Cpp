@@ -7,7 +7,7 @@
 class CharacterItem : public QGraphicsPixmapItem {
     public:
         CharacterItem(QString imageFileName) : QGraphicsPixmapItem(QPixmap(imageFileName)){
-            std::cout << "Character creation" << std::endl;
+            //std::cout << "Character creation" << std::endl;
         }
 
 };

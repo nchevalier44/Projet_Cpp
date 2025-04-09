@@ -1,9 +1,10 @@
 #include "MainWindow.h"
+#include "MainView.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     startMenuScene = new StartMenuScene();
-    mainView = new QGraphicsView();
+    mainView = new MainView();
     mainView->setScene(startMenuScene);
 
     connect(startMenuScene, &StartMenuScene::startGameRequested, this, &MainWindow::startGame);
