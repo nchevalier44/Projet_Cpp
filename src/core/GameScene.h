@@ -15,9 +15,12 @@ class GameScene : public QGraphicsScene {
 private:
     QTimer* timer;
     Entity* character;
+    QSet<int> activeKeys; // Set to keep track of active keys
 
 protected:
-    void keyPressEvent(QKeyEvent* event);
+    //Handle the mouvement and animation of the player
+    void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
 
 public :
     GameScene(QObject* parent = nullptr);
