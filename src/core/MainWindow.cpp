@@ -19,5 +19,6 @@ MainWindow::~MainWindow(){
 
 void MainWindow::startGame(){
     gameScene = new GameScene();
+    gameScene->setView(mainView);
     mainView->setScene(gameScene);
 }

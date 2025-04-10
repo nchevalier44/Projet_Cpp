@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow {
 private :
     GameScene* gameScene;
     StartMenuScene* startMenuScene;
-    QGraphicsView* mainView;
+    MainView* mainView;
 
 
 public:

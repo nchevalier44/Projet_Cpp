@@ -18,6 +18,7 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
         return; // No change in sprite sheet
     }
 
+
     // Clean up the old sprite sheet if it exists
     if (spriteSheet) {
         delete spriteSheet;
@@ -47,14 +48,12 @@ QRectF Entity::boundingRect() const {
 void Entity::updateAnimation() {
     // Update the current frame
     currentFrame = (currentFrame + 1) % frameCount;
-    qDebug() << "Current frame:" << currentFrame;
     update();
 }
 
 
 
 void Entity::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-
 
     // Draw the current frame of the sprite sheet
     QRect sourceRect(currentFrame * frameWidth, 0, frameWidth, frameHeight);

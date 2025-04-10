@@ -1,7 +1,5 @@
 #include "EntityItem.h"
 
-#include "EntityItem.h"
-
 EntityItem::EntityItem(QString imageFileName, Entity* entity) : entity(entity) {
     std::cout << "Character creation" << std::endl;
 }

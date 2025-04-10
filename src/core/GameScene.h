@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 #include <QPointF>
 #include <QPushButton>
+#include "MainView.h"
 
 class GameScene : public QGraphicsScene {
     Q_OBJECT
@@ -15,15 +16,17 @@ class GameScene : public QGraphicsScene {
 private:
     QTimer* timer;
     Entity* character;
-    QSet<int> activeKeys; // Set to keep track of active keys
+    MainView* mainView;
+    QList<int> activeKeys; // Set to keep track of active keys
 
 protected:
     //Handle the mouvement and animation of the player
     void keyPressEvent(QKeyEvent* event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
 
 public :
     GameScene(QObject* parent = nullptr);
+    void setView(MainView* view) { mainView = view; }
     virtual ~GameScene();
 
 public slots:
