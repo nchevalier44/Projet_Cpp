@@ -18,7 +18,7 @@ private :
     GameScene* gameScene;
     StartMenuScene* startMenuScene;
     MainView* mainView;
-    double window_ratio = 1;
+    float window_ratio = 0.5;
 
 public:
     //Getters
@@ -27,7 +27,7 @@ public:
     //Setters
     void setWindowRatio(double new_ratio) { window_ratio = new_ratio; }
 
-    //void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event);
 
     MainWindow(QWidget* parent = nullptr);
     virtual ~MainWindow();
