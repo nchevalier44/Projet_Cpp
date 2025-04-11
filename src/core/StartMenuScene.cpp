@@ -2,20 +2,20 @@
 
 StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
 
-
-    //Ajouter la police Jersey10 (pixel art)
+    //Add font Jersey10 (pixel art)
     int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
     QString pixel_family = QFontDatabase::applicationFontFamilies(fontId).at(0);
     QFont button_font(pixel_family, 40);
     QFont title_font(pixel_family, 65);
 
 
-    //Ajouter le fond d'écran
-    this->background.load("../assets/images/menu/background_start_menu.png");
-    this->setSceneRect(0, 0, background.width(), background.height());
+    //Add background
+    this->background = new QPixmap();
+    this->background->load("../assets/images/menu/background_start_menu.png");
+    this->setSceneRect(0, 0, background->width(), background->height());
 
 
-    //Ajouter les bouttons
+    //Add buttons
     buttonsContainer = new QWidget();
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsContainer);
 
@@ -28,7 +28,7 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     exitButton->setFont(button_font);
 
     QObject::connect(startButton, &QPushButton::clicked, this, &StartMenuScene::startGameRequested);
-    //A FAIRE : clique sur options
+    //TO DO : click on options button
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
 
     buttonsLayout->addWidget(startButton);
@@ -37,8 +37,8 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
 
     buttonsContainer->setLayout(buttonsLayout);
 
-    buttonsContainer->setAttribute(Qt::WA_OpaquePaintEvent); //Rendre le fond du widget transparent
-    buttonsLayout->setSpacing(50); //Espacer les bouttons
+    buttonsContainer->setAttribute(Qt::WA_OpaquePaintEvent); //get background of the widget transparent
+    buttonsLayout->setSpacing(50); //Spacing between buttons
 
     QGraphicsProxyWidget* proxyButtonsContainer = this->addWidget(buttonsContainer);
     qreal posX_buttons = (this->width() - buttonsContainer->width()) / 2;
@@ -46,7 +46,7 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     proxyButtonsContainer->setPos(posX_buttons, posY_buttons);
 
 
-    //Ajouter le titre
+    //Add title
     QLabel* titleLabel = new QLabel("Title of the game");
     titleLabel->setFont(title_font);
     titleLabel->setAttribute(Qt::WA_OpaquePaintEvent);
@@ -60,5 +60,5 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
 
 void StartMenuScene::drawBackground(QPainter *painter, const QRectF &rect) {
     Q_UNUSED(rect);
-    painter->drawPixmap(QPointF(0,0), background, sceneRect());
+    painter->drawPixmap(QPointF(0,0), *background, sceneRect());
 }

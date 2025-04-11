@@ -18,9 +18,17 @@ private :
     GameScene* gameScene;
     StartMenuScene* startMenuScene;
     MainView* mainView;
-
+    double window_ratio = 1;
 
 public:
+    //Getters
+    double getWindowRatio() const { return window_ratio; }
+
+    //Setters
+    void setWindowRatio(double new_ratio) { window_ratio = new_ratio; }
+
+    //void resizeEvent(QResizeEvent* event);
+
     MainWindow(QWidget* parent = nullptr);
     virtual ~MainWindow();
 

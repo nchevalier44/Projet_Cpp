@@ -17,10 +17,12 @@ public:
     //Getters
     int getHp() const{ return hp; }
     std::string getName() const { return name; }
+    int getSpeed() const { return speed; }
 
     //Setters
     void setHp(int new_hp) { hp = new_hp; }
     void setName(std::string new_name) { name = new_name; }
+    void setSpeed(int new_speed) { speed = new_speed; }
 
     //Other methods
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
@@ -69,6 +71,7 @@ private slots :
 private:
     int hp;
     std::string name;
+    int speed=1;
 
     QPixmap* spriteSheet;
     QString currentSpriteSheetPath;

@@ -18,7 +18,6 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
         return; // No change in sprite sheet
     }
 
-
     // Clean up the old sprite sheet if it exists
     if (spriteSheet) {
         delete spriteSheet;

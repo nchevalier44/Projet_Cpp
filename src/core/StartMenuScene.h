@@ -18,12 +18,16 @@ class StartMenuScene : public QGraphicsScene{
     Q_OBJECT
 
     public:
+        //Getters
+        QPixmap* getBackground() const { return background; }
+
         void drawBackground(QPainter* painter, const QRectF& rect);
+
         StartMenuScene(QObject* parent = nullptr);
         virtual ~StartMenuScene() {};
 
     private:
-        QPixmap background;
+        QPixmap* background;
         QWidget* buttonsContainer;
 
     signals:

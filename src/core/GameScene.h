@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QTimer>
-#include "../entities/EntityItem.h"
+#include "../entities/Entity.h"
 #include <QKeyEvent>
 #include <QPointF>
 #include <QPushButton>
@@ -17,6 +17,7 @@ private:
     QTimer* timer;
     Entity* character;
     MainView* mainView;
+    QPixmap background;
     QList<int> activeKeys; // Set to keep track of active keys
 
 protected:
@@ -27,6 +28,7 @@ protected:
 public :
     GameScene(QObject* parent = nullptr);
     void setView(MainView* view) { mainView = view; }
+    void drawBackground(QPainter *painter, const QRectF &rect) override;
     virtual ~GameScene();
 
 public slots:
