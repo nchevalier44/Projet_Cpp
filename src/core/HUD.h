@@ -14,7 +14,7 @@
 class HPWidget : public QWidget {
 Q_OBJECT
 private:
-    QVector<QMovie*> life;
+    QVector<QLabel*> life;
     int maxLife;
 
 public :

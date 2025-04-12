@@ -35,8 +35,8 @@ HUD::HUD(int maxHP, QWidget* parent) : QWidget(parent) {
 
 HPWidget::HPWidget(int maxLife, QWidget *parent) : QWidget(parent), maxLife(maxLife) {
     QHBoxLayout* lifeLayout = new QHBoxLayout(this);
-    lifeLayout->setContentsMargins(10, 10, 10, 10);
-    lifeLayout->setSpacing(5);
+    lifeLayout->setContentsMargins(0, 0, 0, 0);
+
 
 
     for(int i = 0 ; i < maxLife ; i++){
@@ -47,22 +47,29 @@ HPWidget::HPWidget(int maxLife, QWidget *parent) : QWidget(parent), maxLife(maxL
             label->setMovie(heart);
             heart->start();
             label->setAttribute(Qt::WA_OpaquePaintEvent);
-
+            life.append(label);
             lifeLayout->addWidget(label);
         }
 
     }
+    setLife(maxLife-2);
     this->setLayout(lifeLayout);
 
 }
 
 void HPWidget::setLife(int hp) {
+    QMovie* lifeMovie = new QMovie("../assets/images/characters/Fire_head.gif");
+    QMovie* emptyLifeMovie = new QMovie("../assets/images/characters/Fireless_head.gif");
     for(int i = 0 ; i < maxLife ; i++){
         if(i < hp){
-            life[i]->setFileName("../assets/images/characters/Fire_head.gif");
+            life[i]->setAttribute(Qt::WA_OpaquePaintEvent);
+            life[i]->setMovie(lifeMovie);
+            lifeMovie->start();
         }
         else{
-            life[i]->setFileName("../assets/images/characters/Dead_head.png");
+            life[i]->setAttribute(Qt::WA_OpaquePaintEvent);
+            life[i]->setMovie(emptyLifeMovie);
+            emptyLifeMovie->start();
         }
     }
 }
