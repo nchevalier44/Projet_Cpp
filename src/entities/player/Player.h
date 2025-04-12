@@ -58,17 +58,6 @@ public :
     }
 };
 
-class HPWidget : public QWidget {
-    Q_OBJECT
-private:
-    QVector<QMovie*> life;
-    int maxLife;
 
-public :
-    HPWidget(int maxLife, QWidget* parent = nullptr);
-    void setLife(int life);
-
-
-};
 
 #endif //PROJET_CPP_PLAYER_H
