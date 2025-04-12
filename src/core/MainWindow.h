@@ -16,9 +16,10 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 private :
-    GameScene* gameScene;
-    StartMenuScene* startMenuScene;
-    MainView* mainView;
+    GameScene* gameScene = nullptr;
+    StartMenuScene* startMenuScene = nullptr;
+    MainView* mainView = nullptr;
+    HUD* hud = nullptr;
     float windowRatio = 0.5;
 
 public:
@@ -30,11 +31,15 @@ public:
 
     void resizeEvent(QResizeEvent* event);
 
+    void resetGame();
+
     MainWindow(QWidget* parent = nullptr);
     virtual ~MainWindow();
 
 public slots:
     void startGame();
+    void goToStartMenu();
+    void restartGame();
 };
 
 #endif //PROJET_CPP_MAINWINDOW_H

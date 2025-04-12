@@ -1,7 +1,3 @@
-//
-// Created by maxim on 12/04/2025.
-//
-
 #ifndef PROJET_CPP_PLAYER_H
 #define PROJET_CPP_PLAYER_H
 
@@ -10,20 +6,25 @@
 #include <QMovie>
 #include "../Entity.h"
 #include "../../core/MainView.h"
+#include "../../core/HUD.h"
 
 class Player : public Entity {
 private :
     MainView* mainView;
+    HUD* hud;
+    bool isDead = false;
 
 public :
     Player(std::string name = "Player", int life = 100);
 
     //Getters
     MainView* getMainView() const { return mainView; }
+    bool isPlayerDead() const { return isDead; }
 
     //Setters
     void setMainView(MainView* new_main_view) { mainView = new_main_view; }
-
+    virtual void setHp(int newhp);
+    void setHUD(HUD* newHud) { hud = newHud; }
     //UI
 
     //Animation methods

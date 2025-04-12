@@ -52,7 +52,7 @@ HPWidget::HPWidget(int maxLife, QWidget *parent) : QWidget(parent), maxLife(maxL
         }
 
     }
-    setLife(maxLife-2);
+    setLife(maxLife);
     this->setLayout(lifeLayout);
 
 }
@@ -60,16 +60,15 @@ HPWidget::HPWidget(int maxLife, QWidget *parent) : QWidget(parent), maxLife(maxL
 void HPWidget::setLife(int hp) {
     QMovie* lifeMovie = new QMovie("../assets/images/characters/Fire_head.gif");
     QMovie* emptyLifeMovie = new QMovie("../assets/images/characters/Fireless_head.gif");
-    for(int i = 0 ; i < maxLife ; i++){
+    for(int i = maxLife-1 ; i >= 0 ; i--){
         if(i < hp){
-            life[i]->setAttribute(Qt::WA_OpaquePaintEvent);
             life[i]->setMovie(lifeMovie);
             lifeMovie->start();
         }
         else{
-            life[i]->setAttribute(Qt::WA_OpaquePaintEvent);
             life[i]->setMovie(emptyLifeMovie);
             emptyLifeMovie->start();
         }
     }
+
 }

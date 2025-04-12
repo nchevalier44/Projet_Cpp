@@ -5,7 +5,7 @@
 enum Direction {None, Up, Down, Left, Right};
 Direction currentDirection = None;
 
-GameScene::GameScene(QObject* parent) : QGraphicsScene(parent){
+GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), mainView(view){
     //Setting up the scene
     this->background.load("../assets/images/menu/background_start_menu.png");
     this->setSceneRect(0, 0, background.width(), background.height());
@@ -18,20 +18,22 @@ GameScene::GameScene(QObject* parent) : QGraphicsScene(parent){
     this->addItem(character);
     this->character->setMainView(mainView);
 
-
-    //Setting up the HUD
-
-
-
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer(this);
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
     this->timer->start(30); //every 30 milliseconds
+
+    qDebug() << "Set hp to 0 in  5 seconds";
+    QTimer::singleShot(5000, [this]() {
+        qDebug() << "Set hp to 0";
+        character->setHp(0);
+    });
 }
 
 //Mouvement functions
 //Adapt the animation according to the direction
 void GameScene::keyPressEvent(QKeyEvent* event){
+    if(character->isPlayerDead()) return;
     if(event->isAutoRepeat()){
         return; //They key stay pressed so the walk animation can continue
     }
@@ -119,6 +121,7 @@ void GameScene::timerUpdate(){
 
     character->setPos(posX, posY);
     mainView->centerOn(character);
+
 }
 
 GameScene::~GameScene(){

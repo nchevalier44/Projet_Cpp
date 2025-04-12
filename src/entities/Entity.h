@@ -21,7 +21,7 @@ public:
     int getMaxHp() const { return maxHp; }
 
     //Setters
-    void setHp(int newHp) { hp = newHp; }
+    virtual void setHp(int newHp) { hp = newHp; }
     void setMaxHp(int newMaxHp) { maxHp = newMaxHp; }
     void setName(std::string newName) { name = newName; }
     void setSpeed(int newSpeed) { speed = newSpeed; }

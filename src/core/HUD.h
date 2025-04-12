@@ -1,7 +1,3 @@
-//
-// Created by maxim on 12/04/2025.
-//
-
 #ifndef PROJET_CPP_HUD_H
 #define PROJET_CPP_HUD_H
 
@@ -28,6 +24,7 @@ class HUD : public QWidget {
 
 public :
     HUD(int maxHP, QWidget* parent = nullptr);
+    HPWidget* getHPWidget() const { return hpWidget; };
 private:
     HPWidget* hpWidget;
 };

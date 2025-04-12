@@ -43,7 +43,7 @@ public :
     QList<int> getActiveKeys() const { return activeKeys; }
 
     //Constructor and destructor
-    GameScene(QObject* parent = nullptr);
+    GameScene(MainView* view, QObject* parent = nullptr);
     void setView(MainView* view) { mainView = view; }
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     virtual ~GameScene();

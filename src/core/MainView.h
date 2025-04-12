@@ -12,6 +12,7 @@ class MainView : public QGraphicsView {
         //Setters
         void setFitView(bool newFitView) { fitView = newFitView; }
 
+        void deleteDeathScreen();
 
     protected:
         virtual void resizeEvent (QResizeEvent* event);
@@ -21,6 +22,11 @@ class MainView : public QGraphicsView {
 
     public slots:
         void displayDeathScreen();
+
+
+signals:
+        void startGameRequested();
+        void goToStartMenuRequested();
 };
 
 #endif //PROJET_CPP_MAINVIEW_H
