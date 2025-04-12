@@ -22,7 +22,6 @@ private:
     MainView* mainView;
     QPixmap background;
     QList<int> activeKeys; // Set to keep track of active keys
-    QGraphicsProxyWidget* proxyWidget;
 
 protected:
     //Handle the mouvement and animation of the player
@@ -30,6 +29,20 @@ protected:
     void keyReleaseEvent(QKeyEvent* event) override;
 
 public :
+
+    //Setters
+    void setCharacter(Player* new_character) { character = new_character; }
+    void setBackground(const QPixmap& new_background) { background = new_background; }
+    void setTimer(QTimer* new_timer) { timer = new_timer; }
+    void setActiveKeys(const QList<int>& keys) { activeKeys = keys; }
+
+    //Getters
+    Player* getCharacter() const { return character; }
+    QPixmap getBackground() const { return background; }
+    QTimer* getTimer() const { return timer; }
+    QList<int> getActiveKeys() const { return activeKeys; }
+
+    //Constructor and destructor
     GameScene(QObject* parent = nullptr);
     void setView(MainView* view) { mainView = view; }
     void drawBackground(QPainter *painter, const QRectF &rect) override;

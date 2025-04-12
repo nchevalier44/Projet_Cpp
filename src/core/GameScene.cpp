@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "HUD.h"
 
 
 enum Direction {None, Up, Down, Left, Right};
@@ -17,15 +18,8 @@ GameScene::GameScene(QObject* parent) : QGraphicsScene(parent){
     this->addItem(character);
     this->character->setMainView(mainView);
 
-    //Setting up the UI
-    HPWidget* hpWidget = new HPWidget(character->getMaxHp());
-    hpWidget->setAttribute(Qt::WA_OpaquePaintEvent);
 
-    hpWidget->move(10, 10);
-    proxyWidget = addWidget(hpWidget);
-    proxyWidget->setPos(10, 10);
-    proxyWidget->setZValue(100); // Set the z-value to ensure it appears above other items
-    proxyWidget->setAttribute(Qt::WA_OpaquePaintEvent); //get background of the widget transparent
+    //Setting up the HUD
 
 
 
@@ -35,7 +29,7 @@ GameScene::GameScene(QObject* parent) : QGraphicsScene(parent){
     this->timer->start(30); //every 30 milliseconds
 }
 
-//Mouvement fonction
+//Mouvement functions
 //Adapt the animation according to the direction
 void GameScene::keyPressEvent(QKeyEvent* event){
     if(event->isAutoRepeat()){
@@ -54,7 +48,7 @@ void GameScene::keyReleaseEvent(QKeyEvent *event) {
     activeKeys.removeAll(event->key());
 
     if(!activeKeys.isEmpty()){
-        return; //We change the animation to idle only if there are not others key pressed
+        return; //We change the animation to idle only if there are no others key pressed
     }
     switch(event->key()){
         case Qt::Key_Up:
@@ -125,9 +119,6 @@ void GameScene::timerUpdate(){
 
     character->setPos(posX, posY);
     mainView->centerOn(character);
-
-    QPointF cameraPos = views().first()->mapToScene(0, 0);
-    proxyWidget->setPos(cameraPos.x() + 10, cameraPos.y() + 10);
 }
 
 GameScene::~GameScene(){

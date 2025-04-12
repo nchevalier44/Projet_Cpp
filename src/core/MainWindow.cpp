@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "MainView.h"
+#include "HUD.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -23,10 +24,17 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::startGame(){
+    //Set the scene to the game scene
     gameScene = new GameScene();
-    mainView->setFitView(false);
+    //Setting up the HUD
+    HUD* hud = new HUD(gameScene->getCharacter()->getMaxHp(), this->mainView);
+    hud->move(10, 10);
+    hud->raise();
+
+
     gameScene->setView(mainView);
     mainView->setScene(gameScene);
+    mainView->setFitView(false);
     mainView->scale(1.5, 1.5);
 }
 
