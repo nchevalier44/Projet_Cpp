@@ -36,11 +36,17 @@ void MainView::resizeEvent (QResizeEvent* event){
 }
 
 void MainView::displayDeathScreen() {
+    int ratioWidth = this->window()->width() / 1539;
+    int ratioHeight = this->window()->height() / 1026;
+
     //Add font Jersey10 (pixel art)
     int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    QFont buttonFont(fontFamily, 50);
-    QFont titleFont(fontFamily, 150);
+    qDebug() << this->window()->width() << ", " << this->window()->height();
+    QFont buttonFont(fontFamily, 50 * ratioWidth);
+    QFont titleFont(fontFamily, 150 * ratioWidth);
+
+
 
     deathScreen = new QWidget(this);
     deathScreen->setGeometry(this->rect());
@@ -57,6 +63,7 @@ void MainView::displayDeathScreen() {
     title->setStyleSheet("color: white;");
     title->setAlignment(Qt::AlignCenter);
     title->setFont(titleFont);
+    title->adjustSize();
     QPushButton* buttonRestart = new QPushButton("Restart the game");
     buttonRestart->setFont(buttonFont);
     QObject::connect(buttonRestart, &QPushButton::clicked, this, &MainView::startGameRequested);
@@ -66,13 +73,13 @@ void MainView::displayDeathScreen() {
 
     //Creation buttons layout
     QHBoxLayout* buttonsLayout = new QHBoxLayout();
-    buttonsLayout->setSpacing(150);
+    buttonsLayout->setSpacing(150*ratioWidth);
     buttonsLayout->addWidget(buttonRestart);
     buttonsLayout->addWidget(buttonBackToMenu);
 
     //Creation container layout
     QVBoxLayout* containerLayout = new QVBoxLayout();
-    containerLayout->setSpacing(200);
+    containerLayout->setSpacing(200*ratioHeight);
     containerLayout->addWidget(title, Qt::AlignHCenter);
     containerLayout->addLayout(buttonsLayout, Qt::AlignCenter);
 
@@ -101,4 +108,10 @@ void MainView::displayDeathScreen() {
     animationContent->setStartValue(0);
     animationContent->setEndValue(1);
     animationContent->start(QAbstractAnimation::DeleteWhenStopped);
+
+    qDebug() << "contentContainer : " << contentContainer->width() << contentContainer->height();
+    qDebug() << "buttonBackToMenu : " << buttonBackToMenu->width() << buttonBackToMenu->height();
+    qDebug() << "buttonsRestart : " << buttonRestart->width() << buttonRestart->height();
+    qDebug() << "QLabel : " << title->width() << title->height();
+
 }
