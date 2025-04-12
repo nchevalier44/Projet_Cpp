@@ -1,0 +1,74 @@
+//
+// Created by maxim on 12/04/2025.
+//
+
+#ifndef PROJET_CPP_PLAYER_H
+#define PROJET_CPP_PLAYER_H
+
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QMovie>
+#include "../Entity.h"
+#include "../../core/MainView.h"
+
+class Player : public Entity {
+private :
+    MainView* mainView;
+
+public :
+    Player(std::string name = "Player", int life = 100);
+
+    //Getters
+    MainView* getMainView() const { return mainView; }
+
+    //Setters
+    void setMainView(MainView* new_main_view) { mainView = new_main_view; }
+
+    //UI
+
+    //Animation methods
+
+
+    void frontIdleAnimation(){
+        setAnimation("../assets/images/characters/Front_idle.png", 8, 100);
+    }
+    void frontWalkAnimation(){
+        setAnimation("../assets/images/characters/Front_walk.png", 6, 100);
+    }
+    void leftIdleAnimation(){
+        setAnimation("../assets/images/characters/Left_idle.png", 6, 100);
+    }
+    void leftWalkAnimation(){
+        setAnimation("../assets/images/characters/Left_walk.png", 6, 100);
+    }
+    void rightIdleAnimation(){
+        setAnimation("../assets/images/characters/Right_idle.png", 6, 100);
+    }
+    void rightWalkAnimation(){
+        setAnimation("../assets/images/characters/Right_walk.png", 6, 100);
+    }
+    void backIdleAnimation(){
+        setAnimation("../assets/images/characters/Back_idle.png", 8, 100);
+    }
+    void backWalkAnimation(){
+        setAnimation("../assets/images/characters/Back_walk.png", 8, 100);
+    }
+    void hpAnimation(){
+        setAnimation("../assets/images/characters/Fire_head.png", 8, 150);
+    }
+};
+
+class HPWidget : public QWidget {
+    Q_OBJECT
+private:
+    QVector<QMovie*> life;
+    int maxLife;
+
+public :
+    HPWidget(int maxLife, QWidget* parent = nullptr);
+    void setLife(int life);
+
+
+};
+
+#endif //PROJET_CPP_PLAYER_H

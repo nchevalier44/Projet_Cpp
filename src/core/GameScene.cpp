@@ -1,19 +1,35 @@
 #include "GameScene.h"
 
+
 enum Direction {None, Up, Down, Left, Right};
 Direction currentDirection = None;
 
 GameScene::GameScene(QObject* parent) : QGraphicsScene(parent){
-
+    //Setting up the scene
     this->background.load("../assets/images/menu/background_start_menu.png");
     this->setSceneRect(0, 0, background.width(), background.height());
 
-    this->character = new Entity("Character", 100);
+    //Setting up the player's character
+    this->character = new Player("Character", 3);
     this->character->setPos(400, 300);
     this->character->setSpeed(10);
     this->character->setScale(0.5);
     this->addItem(character);
+    this->character->setMainView(mainView);
 
+    //Setting up the UI
+    HPWidget* hpWidget = new HPWidget(character->getMaxHp());
+    hpWidget->setAttribute(Qt::WA_OpaquePaintEvent);
+
+    hpWidget->move(10, 10);
+    proxyWidget = addWidget(hpWidget);
+    proxyWidget->setPos(10, 10);
+    proxyWidget->setZValue(100); // Set the z-value to ensure it appears above other items
+    proxyWidget->setAttribute(Qt::WA_OpaquePaintEvent); //get background of the widget transparent
+
+
+
+    //Starting the timer to update the animation and mouvement
     this->timer = new QTimer(this);
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
     this->timer->start(30); //every 30 milliseconds
@@ -109,6 +125,9 @@ void GameScene::timerUpdate(){
 
     character->setPos(posX, posY);
     mainView->centerOn(character);
+
+    QPointF cameraPos = views().first()->mapToScene(0, 0);
+    proxyWidget->setPos(cameraPos.x() + 10, cameraPos.y() + 10);
 }
 
 GameScene::~GameScene(){

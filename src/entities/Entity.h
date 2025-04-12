@@ -18,9 +18,11 @@ public:
     int getHp() const{ return hp; }
     std::string getName() const { return name; }
     int getSpeed() const { return speed; }
+    int getMaxHp() const { return maxHp; }
 
     //Setters
     void setHp(int new_hp) { hp = new_hp; }
+    void setMaxHp(int new_max_hp) { maxHp = new_max_hp; }
     void setName(std::string new_name) { name = new_name; }
     void setSpeed(int new_speed) { speed = new_speed; }
 
@@ -38,41 +40,29 @@ public:
     //Method to call setAnimation with the right parameters
     //Will make the main code easier to read
 
-    void frontIdleAnimation(){
-        setAnimation("../assets/images/characters/Front_idle.png", 8, 100);
-    }
-    void frontWalkAnimation(){
-        setAnimation("../assets/images/characters/Front_walk.png", 6, 100);
-    }
-    void leftIdleAnimation(){
-        setAnimation("../assets/images/characters/Left_idle.png", 6, 100);
-    }
-    void leftWalkAnimation(){
-        setAnimation("../assets/images/characters/Left_walk.png", 6, 100);
-    }
-    void rightIdleAnimation(){
-        setAnimation("../assets/images/characters/Right_idle.png", 6, 100);
-    }
-    void rightWalkAnimation(){
-        setAnimation("../assets/images/characters/Right_walk.png", 6, 100);
-    }
-    void backIdleAnimation(){
-        setAnimation("../assets/images/characters/Back_idle.png", 8, 100);
-    }
-    void backWalkAnimation(){
-        setAnimation("../assets/images/characters/Back_walk.png", 8, 100);
-    }
+    virtual void frontIdleAnimation(){}
+    virtual void frontWalkAnimation(){}
+    virtual void leftIdleAnimation(){}
+    virtual void leftWalkAnimation(){}
+    virtual void rightIdleAnimation(){}
+    virtual void rightWalkAnimation(){}
+    virtual void backIdleAnimation(){}
+    virtual void backWalkAnimation(){}
+    virtual void hpAnimation(){}
 
 
 
 private slots :
     void updateAnimation();
 
-private:
+protected:
+    //Entity variables
+    int maxHp;
     int hp;
     std::string name;
     int speed=1;
 
+    //Animation variables
     QPixmap* spriteSheet;
     QString currentSpriteSheetPath;
     QTimer* timer;

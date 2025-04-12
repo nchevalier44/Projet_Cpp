@@ -2,7 +2,6 @@
 #include <iostream>
 
 Entity::Entity(std::string name, int hp) : hp(hp), name(name) , spriteSheet(nullptr), currentFrame(0), frameCount(0), frameWidth(0), frameHeight(0), animationSpeed(100), timer(nullptr) {
-    frontIdleAnimation();
 }
 
 void Entity::stopAnimation(){

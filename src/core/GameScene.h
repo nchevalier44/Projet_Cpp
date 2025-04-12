@@ -8,17 +8,21 @@
 #include <QKeyEvent>
 #include <QPointF>
 #include <QPushButton>
+#include <QGraphicsProxyWidget>
 #include "MainView.h"
+#include "../entities/player/Player.h"
+
 
 class GameScene : public QGraphicsScene {
     Q_OBJECT
 
 private:
     QTimer* timer;
-    Entity* character;
+    Player* character;
     MainView* mainView;
     QPixmap background;
     QList<int> activeKeys; // Set to keep track of active keys
+    QGraphicsProxyWidget* proxyWidget;
 
 protected:
     //Handle the mouvement and animation of the player
