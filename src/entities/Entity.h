@@ -21,10 +21,10 @@ public:
     int getMaxHp() const { return maxHp; }
 
     //Setters
-    void setHp(int new_hp) { hp = new_hp; }
-    void setMaxHp(int new_max_hp) { maxHp = new_max_hp; }
-    void setName(std::string new_name) { name = new_name; }
-    void setSpeed(int new_speed) { speed = new_speed; }
+    void setHp(int newHp) { hp = newHp; }
+    void setMaxHp(int newMaxHp) { maxHp = newMaxHp; }
+    void setName(std::string newName) { name = newName; }
+    void setSpeed(int newSpeed) { speed = newSpeed; }
 
     //Other methods
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;

@@ -7,6 +7,7 @@
 #include <QMenuBar>
 #include <QAction>
 #include <QMessageBox>
+#include <QMainWindow>
 
 #include "GameScene.h"
 #include "StartMenuScene.h"
@@ -18,14 +19,14 @@ private :
     GameScene* gameScene;
     StartMenuScene* startMenuScene;
     MainView* mainView;
-    float window_ratio = 0.5;
+    float windowRatio = 0.5;
 
 public:
     //Getters
-    double getWindowRatio() const { return window_ratio; }
+    double getWindowRatio() const { return windowRatio; }
 
     //Setters
-    void setWindowRatio(double new_ratio) { window_ratio = new_ratio; }
+    void setWindowRatio(double newRatio) { windowRatio = newRatio; }
 
     void resizeEvent(QResizeEvent* event);
 

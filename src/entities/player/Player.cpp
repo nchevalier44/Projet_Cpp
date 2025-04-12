@@ -1,8 +1,4 @@
 #include "Player.h"
-#include <QPixmap>
-#include <QGraphicsPixmapItem>
-#include <QPainter>
-#include <QDebug>
 #include <QTimer>
 #include <QVBoxLayout>
 

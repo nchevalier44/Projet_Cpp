@@ -4,9 +4,9 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
 
     //Add font Jersey10 (pixel art)
     int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
-    QString pixel_family = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    QFont button_font(pixel_family, 40);
-    QFont title_font(pixel_family, 65);
+    QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
+    QFont buttonFont(fontFamily, 40);
+    QFont titleFont(fontFamily, 65);
 
 
     //Add background
@@ -23,9 +23,9 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     QPushButton* optionsButton = new QPushButton("Options");
     QPushButton* exitButton = new QPushButton("Exit");
 
-    startButton->setFont(button_font);
-    optionsButton->setFont(button_font);
-    exitButton->setFont(button_font);
+    startButton->setFont(buttonFont);
+    optionsButton->setFont(buttonFont);
+    exitButton->setFont(buttonFont);
 
     QObject::connect(startButton, &QPushButton::clicked, this, &StartMenuScene::startGameRequested);
     //TO DO : click on options button
@@ -41,24 +41,24 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     buttonsLayout->setSpacing(50); //Spacing between buttons
 
     QGraphicsProxyWidget* proxyButtonsContainer = this->addWidget(buttonsContainer);
-    qreal posX_buttons = (this->width() - buttonsContainer->width()) / 2;
-    qreal posY_buttons = (this->height() - buttonsContainer->height()) / 2 + 100;
-    proxyButtonsContainer->setPos(posX_buttons, posY_buttons);
+    qreal posXButtons = (this->width() - buttonsContainer->width()) / 2;
+    qreal posYButtons = (this->height() - buttonsContainer->height()) / 2 + 100;
+    proxyButtonsContainer->setPos(posXButtons, posYButtons);
 
 
     //Add title
     QLabel* titleLabel = new QLabel("Title of the game");
-    titleLabel->setFont(title_font);
+    titleLabel->setFont(titleFont);
     titleLabel->setAttribute(Qt::WA_OpaquePaintEvent);
     QGraphicsProxyWidget* proxyTitleContainer = this->addWidget(titleLabel);
 
-    qreal posX_title = (this->width() - titleLabel->width()) / 2;
-    qreal posY_title = (this->width() - titleLabel->height()) / 2 - 600;
-    proxyTitleContainer->setPos(posX_title, posY_title);
+    qreal posXTitle = (this->width() - titleLabel->width()) / 2;
+    qreal posYTitle = (this->width() - titleLabel->height()) / 2 - 600;
+    proxyTitleContainer->setPos(posXTitle, posYTitle);
 
 }
 
-void StartMenuScene::drawBackground(QPainter *painter, const QRectF &rect) {
+void StartMenuScene::drawBackground(QPainter* painter, const QRectF& rect) {
     Q_UNUSED(rect);
     painter->drawPixmap(QPointF(0,0), *background, sceneRect());
 }

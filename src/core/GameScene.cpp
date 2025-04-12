@@ -91,29 +91,29 @@ void GameScene::timerUpdate(){
         currentDirection = None;
     }
     else{
-        int last_key = activeKeys[n-1];
-        if(last_key == Qt::Key_Up || last_key == Qt::Key_Z){
+        int lastKey = activeKeys[n-1];
+        if(lastKey == Qt::Key_Up || lastKey == Qt::Key_Z){
             if(currentDirection != Up){
                 character->backWalkAnimation();
                 currentDirection = Up;
             }
             posY -= character->getSpeed();
         }
-        else if(last_key == Qt::Key_Down || last_key == Qt::Key_S){
+        else if(lastKey == Qt::Key_Down || lastKey == Qt::Key_S){
             if(currentDirection != Down){
                 character->frontWalkAnimation();
                 currentDirection = Down;
             }
             posY += character->getSpeed();
         }
-        else if(last_key == Qt::Key_Left || last_key == Qt::Key_Q){
+        else if(lastKey == Qt::Key_Left || lastKey == Qt::Key_Q){
             if(currentDirection != Left){
                 character->leftWalkAnimation();
                 currentDirection = Left;
             }
             posX -= character->getSpeed();
         }
-        else if(last_key == Qt::Key_Right || last_key == Qt::Key_D){
+        else if(lastKey == Qt::Key_Right || lastKey == Qt::Key_D){
             if(currentDirection != Right){
                 character->rightWalkAnimation();
                 currentDirection = Right;
@@ -134,7 +134,7 @@ GameScene::~GameScene(){
 
 }
 
-void GameScene::drawBackground(QPainter *painter, const QRectF &rect) {
+void GameScene::drawBackground(QPainter* painter, const QRectF& rect) {
     Q_UNUSED(rect);
     painter->drawPixmap(QPointF(0,0), background, sceneRect());
 }

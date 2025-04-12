@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setWindowTitle("C++ Project");
 
     QPixmap* background = startMenuScene->getBackground();
-    this->window_ratio = float(background->width()) / float(background->height());
+    this->windowRatio = float(background->width()) / float(background->height());
     //this->setFixedSize(background->width(), background->height());
 
 }
@@ -30,29 +30,28 @@ void MainWindow::startGame(){
     mainView->scale(1.5, 1.5);
 }
 
-#include <QMainWindow>
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
-    static bool is_resizing = false;
+    static bool isResizing = false;
 
-    if (is_resizing) {
+    if (isResizing) {
         return;
     }
 
-    is_resizing = true;
+    isResizing = true;
 
-    QSize old_size = event->oldSize();
-    QSize new_size = event->size();
+    QSize oldSize = event->oldSize();
+    QSize newSize = event->size();
 
-    int ideal_width = new_size.width();
-    int ideal_height = new_size.height();
+    int ideal_width = newSize.width();
+    int ideal_height = newSize.height();
 
-    if (old_size.height() == new_size.height()) {
-        ideal_height = new_size.width() / window_ratio;
+    if (oldSize.height() == newSize.height()) {
+        ideal_height = newSize.width() / windowRatio;
     } else {
-        ideal_width = new_size.height() * window_ratio;
+        ideal_width = newSize.height() * windowRatio;
     }
     this->resize(ideal_width, ideal_height);
 
-    is_resizing = false;
+    isResizing = false;
 }

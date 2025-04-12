@@ -9,16 +9,18 @@ class MainView : public QGraphicsView {
         MainView(QWidget* parent = nullptr);
         virtual ~MainView();
 
-        //Getters
-        bool getFitView() const { return fit_view; }
-
         //Setters
-        void setFitView(bool new_fit_view) { fit_view = new_fit_view; }
+        void setFitView(bool newFitView) { fitView = newFitView; }
+
 
     protected:
         virtual void resizeEvent (QResizeEvent* event);
     private:
-        bool fit_view = true;
+        bool fitView = true;
+        QWidget* deathScreen = nullptr;
+
+    public slots:
+        void displayDeathScreen();
 };
 
 #endif //PROJET_CPP_MAINVIEW_H

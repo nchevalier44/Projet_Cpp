@@ -38,12 +38,6 @@ public :
 public slots:
     void timerUpdate();
 
-
-
 };
-
-
-
-
 
 #endif //PROJET_CPP_GAMESCENE_H
