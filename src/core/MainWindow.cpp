@@ -35,9 +35,13 @@ void MainWindow::goToStartMenu() {
     resetGame();
     mainView->setScene(startMenuScene);
     mainView->setFitView(true);
+    startMenuScene->getAudioPlayer()->play();
 }
 
 void MainWindow::startGame(){
+    //Stop music
+    startMenuScene->getAudioPlayer()->stop();
+
     //Set the scene to the game scene
     gameScene = new GameScene(mainView);
     gameScene->setView(mainView);

@@ -19,7 +19,7 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
     this->timer->start(30); //every 30 milliseconds
 
-    QTimer::singleShot(2000, [this]() {
+    /*QTimer::singleShot(2000, [this]() {
         character->takeDamage(1);
     });
     QTimer::singleShot(4000, [this]() {
@@ -27,7 +27,7 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     });
     QTimer::singleShot(6000, [this]() {
         character->takeDamage(1);
-    });
+    });*/
 
 }
 

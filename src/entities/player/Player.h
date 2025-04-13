@@ -4,15 +4,17 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QMovie>
+#include <QSoundEffect>
 #include "../Entity.h"
 #include "../../core/MainView.h"
 #include "../../core/HUD.h"
 
 class Player : public Entity {
 private :
-    MainView* mainView;
-    HUD* hud;
+    MainView* mainView = nullptr;
+    HUD* hud = nullptr;
     bool isDead = false;
+    QSoundEffect* movingSound = nullptr;
 
 public :
     Player(std::string name = "Player", int life = 100);
@@ -32,27 +34,35 @@ public :
 
     void frontIdleAnimation(){
         setAnimation("../assets/images/characters/Front_idle.png", 8, 100);
+        if(movingSound->isPlaying()) movingSound->stop();
     }
     void frontWalkAnimation(){
         setAnimation("../assets/images/characters/Front_walk.png", 6, 100);
+        if(!movingSound->isPlaying()) movingSound->play();
     }
     void leftIdleAnimation(){
         setAnimation("../assets/images/characters/Left_idle.png", 6, 100);
+        if(movingSound->isPlaying()) movingSound->stop();
     }
     void leftWalkAnimation(){
         setAnimation("../assets/images/characters/Left_walk.png", 6, 100);
+        if(!movingSound->isPlaying()) movingSound->play();
     }
     void rightIdleAnimation(){
         setAnimation("../assets/images/characters/Right_idle.png", 6, 100);
+        if(movingSound->isPlaying()) movingSound->stop();
     }
     void rightWalkAnimation(){
         setAnimation("../assets/images/characters/Right_walk.png", 6, 100);
+        if(!movingSound->isPlaying()) movingSound->play();
     }
     void backIdleAnimation(){
         setAnimation("../assets/images/characters/Back_idle.png", 8, 100);
+        if(movingSound->isPlaying()) movingSound->stop();
     }
     void backWalkAnimation(){
         setAnimation("../assets/images/characters/Back_walk.png", 8, 100);
+        if(!movingSound->isPlaying()) movingSound->play();
     }
     void hpAnimation(){
         setAnimation("../assets/images/characters/Fire_head.png", 8, 150);

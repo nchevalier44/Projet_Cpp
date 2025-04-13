@@ -1,6 +1,9 @@
 #include "StartMenuScene.h"
 
+
 StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
+
+
 
     //Add font Jersey10 (pixel art)
     int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
@@ -9,7 +12,16 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     QFont titleFont(fontFamily, 65);
 
 
-    //Add background
+    //Add background music
+    audioPlayer = new QMediaPlayer(this);
+    QAudioOutput* audioOutput = new QAudioOutput(this);
+    audioOutput->setVolume(50);
+    audioPlayer->setAudioOutput(audioOutput);
+    audioPlayer->setSource(QUrl::fromLocalFile("../assets/musics/start_menu_theme.wav"));
+    audioPlayer->setLoops(QMediaPlayer::Infinite);
+    audioPlayer->play();
+
+    //Add background image
     this->background = new QPixmap();
     this->background->load("../assets/images/menu/background_start_menu.png");
     this->setSceneRect(0, 0, background->width(), background->height());
@@ -30,6 +42,14 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     QObject::connect(startButton, &QPushButton::clicked, this, &StartMenuScene::startGameRequested);
     //TO DO : click on options button
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
+
+    sound = new QSoundEffect();
+    sound->setSource(QUrl::fromLocalFile("../assets/sounds_effects/button.wav"));
+    sound->setVolume(20);
+
+    QObject::connect(startButton, &QPushButton::clicked, sound, &QSoundEffect::play);
+    QObject::connect(optionsButton, &QPushButton::clicked, sound, &QSoundEffect::play);
+    QObject::connect(exitButton, &QPushButton::clicked, sound, &QSoundEffect::play);
 
     buttonsLayout->addWidget(startButton);
     buttonsLayout->addWidget(optionsButton);

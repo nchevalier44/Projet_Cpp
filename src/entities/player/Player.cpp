@@ -8,6 +8,10 @@
 Player::Player(std::string name, int life) : Entity(name, life) {
     this->maxHp = life;
     setAnimation("../assets/images/characters/Front_idle.png", 8, 100);
+    movingSound = new QSoundEffect(this);
+    movingSound->setSource(QUrl::fromLocalFile("../assets/sounds_effects/footsteps.wav"));
+    movingSound->setLoopCount(QSoundEffect::Infinite);
+    movingSound->setVolume(30);
 }
 
 

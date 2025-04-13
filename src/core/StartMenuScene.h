@@ -12,6 +12,9 @@
 #include <QFontDatabase>
 #include <QGraphicsProxyWidget>
 #include <iostream>
+#include <QMediaPlayer>
+#include <QAudioOutput>
+#include <QSoundEffect>
 
 
 class StartMenuScene : public QGraphicsScene{
@@ -20,6 +23,7 @@ class StartMenuScene : public QGraphicsScene{
     public:
         //Getters
         QPixmap* getBackground() const { return background; }
+        QMediaPlayer* getAudioPlayer() const { return audioPlayer; }
 
         void drawBackground(QPainter* painter, const QRectF& rect);
 
@@ -27,8 +31,10 @@ class StartMenuScene : public QGraphicsScene{
         virtual ~StartMenuScene() {};
 
     private:
-        QPixmap* background;
-        QWidget* buttonsContainer;
+        QPixmap* background = nullptr;
+        QWidget* buttonsContainer = nullptr;
+        QMediaPlayer* audioPlayer = nullptr;
+        QSoundEffect* sound;
 
     signals:
         void startGameRequested();
