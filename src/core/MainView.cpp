@@ -10,6 +10,8 @@
 
 
 MainView::MainView(QWidget* parent) : QGraphicsView(parent) {
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 MainView::~MainView() {}
@@ -36,8 +38,8 @@ void MainView::resizeEvent (QResizeEvent* event){
 }
 
 void MainView::displayDeathScreen() {
-    //Width : 65% of the window : 27% buttonBack, 27% button restart, 11% spacing | 67% title
-    //Height : 50% of the window : 19% spacing, 20% title, 7% buttons
+    //Width : contentContainer is 65% of the window : 27% buttonBack, 27% button restart, 11% spacing | 67% title
+    //Height : contentContainer is 50% of the window : 19% spacing, 20% title, 7% buttons
 
     //Add font Jersey10 (pixel art)
     int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
@@ -88,6 +90,7 @@ void MainView::displayDeathScreen() {
     QWidget* contentContainer = new QWidget(deathScreen);
     contentContainer->setLayout(containerLayout);
     contentContainer->show();
+    contentContainer->adjustSize();
     contentContainer->move((deathScreen->width() - contentContainer->width()) / 2,
                            (deathScreen->height() - contentContainer->height()) / 2);
 

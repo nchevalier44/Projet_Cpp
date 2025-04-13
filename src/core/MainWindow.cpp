@@ -15,9 +15,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setCentralWidget(mainView);
     this->setWindowTitle("C++ Project");
 
-    QPixmap* background = startMenuScene->getBackground();
-    this->windowRatio = float(background->width()) / float(background->height());
-    //this->setFixedSize(background->width(), background->height());
+    QPixmap* background = this->startMenuScene->getBackground();
+    this->backgroundRatio = float(background->width()) / float(background->height());
+    this->resize(background->width()*0.75, background->height()*0.75);
 
 }
 
@@ -55,7 +55,6 @@ void MainWindow::startGame(){
 void MainWindow::resetGame(){
     mainView->deleteDeathScreen();
     mainView->scale(0.66666666, 0.66666666); // 0.666666 to reset the view to 1:1 which was changed by scale(1.5, 1.5) in startGame
-
     if(gameScene != nullptr){
         delete gameScene;
         gameScene = nullptr;
@@ -68,26 +67,18 @@ void MainWindow::resetGame(){
 
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
-    static bool isResizing = false;
+    QMainWindow::resizeEvent(event);
 
-    if (isResizing) {
-        return;
+    QSize currentSize = event->size();
+
+    int newWidth = currentSize.width();
+    int newHeight = newWidth / backgroundRatio;
+
+    if (newHeight > currentSize.height()) {
+        newHeight = currentSize.height();
+        newWidth = newHeight * backgroundRatio;
     }
 
-    isResizing = true;
+    this->resize(newWidth, newHeight);
 
-    QSize oldSize = event->oldSize();
-    QSize newSize = event->size();
-
-    int ideal_width = newSize.width();
-    int ideal_height = newSize.height();
-
-    if (oldSize.height() == newSize.height()) {
-        ideal_height = newSize.width() / windowRatio;
-    } else {
-        ideal_width = newSize.height() * windowRatio;
-    }
-    this->resize(ideal_width, ideal_height);
-
-    isResizing = false;
 }

@@ -20,14 +20,9 @@ private :
     StartMenuScene* startMenuScene = nullptr;
     MainView* mainView = nullptr;
     HUD* hud = nullptr;
-    float windowRatio = 0.5;
+    float backgroundRatio = 0.5;
 
 public:
-    //Getters
-    double getWindowRatio() const { return windowRatio; }
-
-    //Setters
-    void setWindowRatio(double newRatio) { windowRatio = newRatio; }
 
     void resizeEvent(QResizeEvent* event);
 
