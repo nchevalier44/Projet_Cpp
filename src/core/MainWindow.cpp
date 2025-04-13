@@ -69,13 +69,13 @@ void MainWindow::resetGame(){
 void MainWindow::resizeEvent(QResizeEvent* event) {
     QMainWindow::resizeEvent(event);
 
-    QSize currentSize = event->size();
+    QSize newSize = event->size();
 
-    int newWidth = currentSize.width();
+    int newWidth = newSize.width();
     int newHeight = newWidth / backgroundRatio;
 
-    if (newHeight > currentSize.height()) {
-        newHeight = currentSize.height();
+    if (newHeight >  newSize.height()) {
+        newHeight = newSize.height();
         newWidth = newHeight * backgroundRatio;
     }
 

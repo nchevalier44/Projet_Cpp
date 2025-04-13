@@ -1,10 +1,6 @@
 #include "GameScene.h"
 #include "HUD.h"
 
-
-enum Direction {None, Up, Down, Left, Right};
-Direction currentDirection = None;
-
 GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), mainView(view){
     //Setting up the scene
     this->background.load("../assets/images/menu/background_start_menu.png");
@@ -23,13 +19,6 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
     this->timer->start(30); //every 30 milliseconds
 
-    /*
-    qDebug() << "Set hp to 0 in  5 seconds";
-    QTimer::singleShot(5000, [this]() {
-        qDebug() << "Set hp to 0";
-        character->setHp(0);
-    });
-     */
     QTimer::singleShot(2000, [this]() {
         character->takeDamage(1);
     });

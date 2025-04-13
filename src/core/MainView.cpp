@@ -38,16 +38,15 @@ void MainView::resizeEvent (QResizeEvent* event){
 }
 
 void MainView::displayDeathScreen() {
-    //Width : contentContainer is 65% of the window : 27% buttonBack, 27% button restart, 11% spacing | 67% title
+    //Width : contentContainer is 65% of the window : 27% buttonBack, 27% button restart, 11% spacing | 65% title
     //Height : contentContainer is 50% of the window : 19% spacing, 20% title, 7% buttons
 
     //Add font Jersey10 (pixel art)
     int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    qDebug() << this->window()->width() << ", " << this->window()->height();
     QFont buttonFont(fontFamily);
     QFont titleFont(fontFamily);
-    buttonFont.setPixelSize(this->window()->height()*0.07);
+    buttonFont.setPixelSize(this->window()->height()*0.07); //setPixelSize set the pixel number of the height of a line (letter + margins)
     titleFont.setPixelSize(this->window()->height()*0.2);
 
 
@@ -76,7 +75,6 @@ void MainView::displayDeathScreen() {
 
     //Creation buttons layout
     QHBoxLayout* buttonsLayout = new QHBoxLayout();
-    //buttonsLayout->setSpacing(150*ratioWidth);
     buttonsLayout->addWidget(buttonRestart);
     buttonsLayout->addWidget(buttonBackToMenu);
 
@@ -112,17 +110,4 @@ void MainView::displayDeathScreen() {
     animationContent->setStartValue(0);
     animationContent->setEndValue(1);
     animationContent->start(QAbstractAnimation::DeleteWhenStopped);
-
-    contentContainer->setStyleSheet("background-color: blue;");
-    buttonRestart->setStyleSheet("background-color: red;");
-    buttonBackToMenu->setStyleSheet("background-color: green;");
-    title->setStyleSheet("background-color: yellow;");
-
-
-
-    qDebug() << "contentContainer : " << contentContainer->width() << contentContainer->height();
-    qDebug() << "buttonBackToMenu : " << buttonBackToMenu->width() << buttonBackToMenu->height();
-    qDebug() << "buttonsRestart : " << buttonRestart->width() << buttonRestart->height();
-    qDebug() << "QLabel : " << title->width() << title->height();
-
 }
