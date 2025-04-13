@@ -23,12 +23,12 @@ public :
 
     //Setters
     void setMainView(MainView* new_main_view) { mainView = new_main_view; }
-    virtual void setHp(int newhp);
+    virtual void setHp(int newHp){hp = newHp; hud->getHPWidget()->setLife(hp);}
     void setHUD(HUD* newHud) { hud = newHud; }
-    //UI
 
+    //Take damage
+    void takeDamage(int damage);
     //Animation methods
-
 
     void frontIdleAnimation(){
         setAnimation("../assets/images/characters/Front_idle.png", 8, 100);

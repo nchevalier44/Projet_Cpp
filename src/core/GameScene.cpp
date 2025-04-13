@@ -23,11 +23,23 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
     this->timer->start(30); //every 30 milliseconds
 
+    /*
     qDebug() << "Set hp to 0 in  5 seconds";
     QTimer::singleShot(5000, [this]() {
         qDebug() << "Set hp to 0";
         character->setHp(0);
     });
+     */
+    QTimer::singleShot(2000, [this]() {
+        character->takeDamage(1);
+    });
+    QTimer::singleShot(4000, [this]() {
+        character->takeDamage(1);
+    });
+    QTimer::singleShot(6000, [this]() {
+        character->takeDamage(1);
+    });
+
 }
 
 //Mouvement functions
