@@ -47,7 +47,7 @@ void MainWindow::startGame(){
     gameScene->setView(mainView);
     mainView->setScene(gameScene);
     mainView->setFitView(false);
-    mainView->scale(1.5, 1.5);
+    mainView->scale(4, 4);
 
     //Setting up the HUD
     hud = new HUD(gameScene->getCharacter()->getMaxHp(), this->mainView);
@@ -58,7 +58,7 @@ void MainWindow::startGame(){
 
 void MainWindow::resetGame(){
     mainView->deleteDeathScreen();
-    mainView->scale(0.66666666, 0.66666666); // 0.666666 to reset the view to 1:1 which was changed by scale(1.5, 1.5) in startGame
+    mainView->scale(0.25, 0.25); // 0.25 to reset the view to 1:1 which was changed by scale(4, 4) in startGame
     if(gameScene != nullptr){
         delete gameScene;
         gameScene = nullptr;

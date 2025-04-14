@@ -20,10 +20,11 @@ private:
     enum Direction {None, Up, Down, Left, Right};
     Direction currentDirection = None;
 
-    QTimer* timer;
-    Player* character;
-    MainView* mainView;
-    QPixmap background;
+    QTimer* timer = nullptr;
+    Player* character = nullptr;
+    MainView* mainView = nullptr;
+    int backgroundWidth = 0;
+    int backgroundHeight = 0;
     QList<int> activeKeys; // Set to keep track of active keys
 
 protected:
@@ -35,21 +36,21 @@ public :
 
     //Setters
     void setCharacter(Player* new_character) { character = new_character; }
-    void setBackground(const QPixmap& new_background) { background = new_background; }
     void setTimer(QTimer* new_timer) { timer = new_timer; }
     void setActiveKeys(const QList<int>& keys) { activeKeys = keys; }
+    void setView(MainView* view) { mainView = view; }
 
     //Getters
     Player* getCharacter() const { return character; }
-    QPixmap getBackground() const { return background; }
     QTimer* getTimer() const { return timer; }
     QList<int> getActiveKeys() const { return activeKeys; }
 
     //Constructor and destructor
     GameScene(MainView* view, QObject* parent = nullptr);
-    void setView(MainView* view) { mainView = view; }
-    void drawBackground(QPainter *painter, const QRectF &rect) override;
     virtual ~GameScene();
+
+    //Functions
+    void loadMap();
 
 public slots:
     void timerUpdate();

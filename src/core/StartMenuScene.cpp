@@ -4,7 +4,6 @@
 StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
 
 
-
     //Add font Jersey10 (pixel art)
     int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
