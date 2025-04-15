@@ -30,6 +30,8 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     buttonsContainer = new QWidget();
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsContainer);
 
+
+
     MenuButton* startButton = new MenuButton("Start");
     MenuButton* optionsButton = new MenuButton("Options");
     MenuButton* exitButton = new MenuButton("Exit");
@@ -38,9 +40,12 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     optionsButton->setFont(buttonFont);
     exitButton->setFont(buttonFont);
 
-    startButton->setImagePath("../assets/images/menu/button.png");
-    optionsButton->setImagePath("../assets/images/menu/button.png");
-    exitButton->setImagePath("../assets/images/menu/button.png");
+    startButton->setImagePath("../assets/images/menu/Mainmenu_button.png");
+    optionsButton->setImagePath("../assets/images/menu/Mainmenu_button.png");
+    exitButton->setImagePath("../assets/images/menu/Mainmenu_button.png");
+
+    //Scale the button
+
 
     QObject::connect(startButton, &QPushButton::clicked, this, &StartMenuScene::startGameRequested);
     //TO DO : click on options button
