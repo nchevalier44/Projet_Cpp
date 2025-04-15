@@ -51,6 +51,7 @@ public :
 
     //Functions
     void loadMap();
+    qreal* getDeltaPosition();
 
 public slots:
     void timerUpdate();

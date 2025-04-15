@@ -7,8 +7,6 @@
 
 GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), mainView(view){
 
-    this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
-
     try{
         loadMap();
     } catch(QException e){
@@ -17,9 +15,13 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
         qCritical() << "Error when loading the map : " << e.what();
     }
 
+
+    this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
+
+
     //Setting up the player's character
     this->character = new Player("Character", 3);
-    this->character->setPos(400, 300);
+    this->character->setPos(400, 200);
     this->character->setSpeed(4);
     this->character->setScale(0.15);
 
@@ -94,6 +96,7 @@ void GameScene::loadMap(){
                     if(tileID != 0){
                         QGraphicsPixmapItem* tile = new QGraphicsPixmapItem(listPixmap[tileID]);
                         tile->setPos(x * 32, y * 32);
+                        tile->setOpacity(layer["opacity"].toDouble());
                         this->addItem(tile);//draw the tile at the right position
                     }
                 }
@@ -112,21 +115,21 @@ void GameScene::loadMap(){
                 int height = object["height"].toInt();
                 bool isEllipse = object.contains("ellipse") && object["ellipse"].toBool();
 
-
                 if (isEllipse) {
                     QGraphicsEllipseItem* ellipse = new QGraphicsEllipseItem(x, y, width, height);
+                    ellipse->setBrush(Qt::red);
                     ellipse->setPen(Qt::NoPen);
                     ellipse->setData(0, "collision");
                     ellipse->setZValue(100);
                     this->addItem(ellipse);
                 } else {
                     QGraphicsRectItem* rect = new QGraphicsRectItem(x, y, width, height);
+                    rect->setBrush(Qt::red);
                     rect->setPen(Qt::NoPen);
                     rect->setData(0, "collision");
                     rect->setZValue(100);
                     this->addItem(rect);
                 }
-
             }
         }
     }
@@ -180,9 +183,51 @@ void GameScene::keyReleaseEvent(QKeyEvent *event) {
 
 void GameScene::timerUpdate(){
 
-    QPointF pos = character->pos();
-    qreal posX = pos.rx();
-    qreal posY = pos.ry();
+    qreal posX = character->pos().x();
+    qreal posY = character->pos().y();
+
+    qreal* deltaPosition = getDeltaPosition();
+    qreal dx = deltaPosition[0];
+    qreal dy = deltaPosition[1];
+    delete[] deltaPosition;
+
+    //Now we move the player considering eventual collision
+
+    QList<QGraphicsItem*> collisions;
+    int numberCollisions;
+    int i;
+
+    //Check if there is horizontal collision with an object
+    character->setX(posX + dx);
+    collisions = character->collidingItems();
+    numberCollisions = collisions.count();
+    i = 0;
+    while(i < numberCollisions && collisions[i]->data(0) != "collision"){
+        i++;
+    }
+    if(i != numberCollisions){
+        character->setX(posX);
+    }
+
+    //Check if there is vertical collision with an object
+    character->setY(posY + dy);
+    collisions = character->collidingItems();
+    numberCollisions = collisions.count();
+    i = 0;
+    while(i < numberCollisions && collisions[i]->data(0) != "collision"){
+        i++;
+    }
+    if(i != numberCollisions){
+        character->setY(posY);
+    }
+
+    mainView->centerOn(character);
+
+}
+
+qreal* GameScene::getDeltaPosition(){
+    qreal dx = 0;
+    qreal dy = 0;
 
     int n = activeKeys.length();
 
@@ -190,60 +235,38 @@ void GameScene::timerUpdate(){
     if(n==0){
         currentDirection = None;
     }
-    else{
-        int lastKey = activeKeys[n-1];
-        if(lastKey == Qt::Key_Up || lastKey == Qt::Key_Z){
-            if(currentDirection != Up){
+    else {
+        int lastKey = activeKeys[n - 1];
+        if (lastKey == Qt::Key_Up || lastKey == Qt::Key_Z) {
+            if (currentDirection != Up) {
                 character->backWalkAnimation();
                 currentDirection = Up;
             }
-            posY -= character->getSpeed();
-        }
-        else if(lastKey == Qt::Key_Down || lastKey == Qt::Key_S){
-            if(currentDirection != Down){
+            dy -= character->getSpeed();
+        } else if (lastKey == Qt::Key_Down || lastKey == Qt::Key_S) {
+            if (currentDirection != Down) {
                 character->frontWalkAnimation();
                 currentDirection = Down;
             }
-            posY += character->getSpeed();
-        }
-        else if(lastKey == Qt::Key_Left || lastKey == Qt::Key_Q){
-            if(currentDirection != Left){
+            dy += character->getSpeed();
+        } else if (lastKey == Qt::Key_Left || lastKey == Qt::Key_Q) {
+            if (currentDirection != Left) {
                 character->leftWalkAnimation();
                 currentDirection = Left;
             }
-            posX -= character->getSpeed();
-        }
-        else if(lastKey == Qt::Key_Right || lastKey == Qt::Key_D){
-            if(currentDirection != Right){
+            dx -= character->getSpeed();
+        } else if (lastKey == Qt::Key_Right || lastKey == Qt::Key_D) {
+            if (currentDirection != Right) {
                 character->rightWalkAnimation();
                 currentDirection = Right;
             }
-            posX += character->getSpeed();
+            dx += character->getSpeed();
         }
     }
-
-    //Check if there is a collision with an object
-    QList<QGraphicsItem*> collisions = character->collidingItems();
-    for (QGraphicsItem* item : collisions) {
-        if (item->data(0) == "collision") { //We stop the player
-            posX = pos.rx();
-            posY = pos.ry();
-            if(currentDirection == Up){
-                posY -= character->getSpeed();
-            } else if(currentDirection == Down){
-                posY += character->getSpeed();
-            } else if(currentDirection == Left){
-                posX += character->getSpeed();
-            } else if(currentDirection == Right){
-                posX -= character->getSpeed();
-            }
-        }
-    }
-
-
-    character->setPos(posX, posY);
-    mainView->centerOn(character);
-
+    qreal* deltaPosition = new qreal[2];
+    deltaPosition[0] = dx;
+    deltaPosition[1] = dy;
+    return deltaPosition;
 }
 
 GameScene::~GameScene(){
