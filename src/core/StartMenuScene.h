@@ -16,6 +16,18 @@
 #include <QAudioOutput>
 #include <QSoundEffect>
 
+class MenuButton : public QPushButton{
+    Q_OBJECT
+public:
+    MenuButton(QString text, QWidget* parent=nullptr)  : QPushButton(text, parent) {};
+    virtual ~MenuButton() {};
+
+    void setImagePath(QString path) { background = QPixmap(path); };
+    void paintEvent(QPaintEvent* event);
+
+private:
+    QPixmap background;
+};
 
 class StartMenuScene : public QGraphicsScene{
     Q_OBJECT
@@ -34,7 +46,7 @@ class StartMenuScene : public QGraphicsScene{
         QPixmap* background = nullptr;
         QWidget* buttonsContainer = nullptr;
         QMediaPlayer* audioPlayer = nullptr;
-        QSoundEffect* sound;
+        QSoundEffect* sound = nullptr;
 
     signals:
         void startGameRequested();

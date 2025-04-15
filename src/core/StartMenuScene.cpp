@@ -1,5 +1,6 @@
 #include "StartMenuScene.h"
-
+#include <QTimer>
+#include <QStyleOptionButton>
 
 StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
 
@@ -25,18 +26,21 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     this->background->load("../assets/images/menu/background_start_menu.png");
     this->setSceneRect(0, 0, background->width(), background->height());
 
-
     //Add buttons
     buttonsContainer = new QWidget();
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsContainer);
 
-    QPushButton* startButton = new QPushButton("Start");
-    QPushButton* optionsButton = new QPushButton("Options");
-    QPushButton* exitButton = new QPushButton("Exit");
+    MenuButton* startButton = new MenuButton("Start");
+    MenuButton* optionsButton = new MenuButton("Options");
+    MenuButton* exitButton = new MenuButton("Exit");
 
     startButton->setFont(buttonFont);
     optionsButton->setFont(buttonFont);
     exitButton->setFont(buttonFont);
+
+    startButton->setImagePath("../assets/images/menu/button.png");
+    optionsButton->setImagePath("../assets/images/menu/button.png");
+    exitButton->setImagePath("../assets/images/menu/button.png");
 
     QObject::connect(startButton, &QPushButton::clicked, this, &StartMenuScene::startGameRequested);
     //TO DO : click on options button
@@ -80,4 +84,22 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
 void StartMenuScene::drawBackground(QPainter* painter, const QRectF& rect) {
     Q_UNUSED(rect);
     painter->drawPixmap(QPointF(0,0), *background, sceneRect());
+}
+
+void MenuButton::paintEvent(QPaintEvent* event) {
+    QPainter painter(this);
+
+    // Dessiner l'image de fond redimensionnée
+    if (!background.isNull()) {
+        painter.drawPixmap(rect(), background);
+    }
+
+    // Appeler le paintEvent de QPushButton pour dessiner le texte
+    QPushButton::paintEvent(event);
+
+    QStyleOptionButton option;
+    option.initFrom(this);
+    option.text = this->text();
+    option.icon = this->icon();
+    style()->drawControl(QStyle::CE_PushButtonLabel, &option, &painter, this);
 }
