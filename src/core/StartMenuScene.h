@@ -15,18 +15,53 @@
 #include <QMediaPlayer>
 #include <QAudioOutput>
 #include <QSoundEffect>
+#include <QSlider>
+#include <QComboBox>
 
-class MenuButton : public QPushButton{
+#include "MainMenuButton.h"
+
+class VolumeSlider : public QSlider{
+Q_OBJECT
+public:
+    VolumeSlider(Qt::Orientation orientation, QWidget* parent=nullptr) : QSlider(orientation, parent){}
+    virtual ~VolumeSlider() {};
+
+/*protected:
+    void paintEvent(QPaintEvent* event) override {
+        QSlider::paintEvent(event);  // Dessiner la partie par défaut du slider
+
+        QPainter painter(this);
+        QStyleOptionSlider opt;
+        initStyleOption(&opt);
+
+        // Dessiner la barre du slider avec une image de fond
+        QPixmap grooveImage("../assets/images/menu/slider_bar.png");
+        grooveImage = grooveImage.scaled(size(), Qt::KeepAspectRatio);  // Ajuster l'image à la taille du slider
+        painter.drawPixmap(0, height() / 2 - grooveImage.height() / 2, grooveImage);
+
+        // Dessiner la poignée du slider avec une image
+        QPixmap handleImage("../assets/images/menu/slider_handle.png");
+        int handlePos = opt.rect.x() + opt.sliderPosition - handleImage.width() / 2;
+        painter.drawPixmap(handlePos, height() / 2 - handleImage.height() / 2, handleImage);
+    }*/
+};
+
+class SettingsWidget : public QWidget {
     Q_OBJECT
 public:
-    MenuButton(QString text, QWidget* parent=nullptr)  : QPushButton(text, parent) {};
-    virtual ~MenuButton() {};
+    SettingsWidget(int* volume, QWidget* parent=nullptr);
+    virtual ~SettingsWidget() {};
 
-    void setImagePath(QString path) { background = QPixmap(path); };
-    void paintEvent(QPaintEvent* event);
+    void resetValues();
+
+public slots:
+    void cancelSettings();
+    void saveSettings();
 
 private:
-    QPixmap background;
+    VolumeSlider* volumeSlider = nullptr;
+    QComboBox* windowSizeDropdown = nullptr;
+    int* volumePercentage = nullptr;
 };
 
 class StartMenuScene : public QGraphicsScene{
@@ -39,7 +74,7 @@ class StartMenuScene : public QGraphicsScene{
 
         void drawBackground(QPainter* painter, const QRectF& rect);
 
-        StartMenuScene(QObject* parent = nullptr);
+        StartMenuScene(int* volume, QObject* parent = nullptr);
         virtual ~StartMenuScene() {};
 
     private:
@@ -47,6 +82,8 @@ class StartMenuScene : public QGraphicsScene{
         QWidget* buttonsContainer = nullptr;
         QMediaPlayer* audioPlayer = nullptr;
         QSoundEffect* sound = nullptr;
+        SettingsWidget* settingsWidget = nullptr;
+        int* volumePercentage = nullptr;
 
     signals:
         void startGameRequested();

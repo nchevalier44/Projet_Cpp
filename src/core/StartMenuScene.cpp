@@ -2,15 +2,58 @@
 #include <QTimer>
 #include <QStyleOptionButton>
 
-StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
+SettingsWidget::SettingsWidget(int* volume, QWidget* parent) : QWidget(parent), volumePercentage(volume) {
+    //Title
+    QLabel* title = new QLabel("Settings");
 
+    //Volume widgets (slider) and layout
+    QWidget* volumeWidget = new QWidget(this);
+    QVBoxLayout* volumeLayout = new QVBoxLayout(volumeWidget);
+    QLabel* volumeLabel = new QLabel("Volume", volumeWidget);
+    volumeSlider = new VolumeSlider(Qt::Horizontal, volumeWidget);
+    volumeLayout->addWidget(volumeLabel);
+    volumeLayout->addWidget(volumeSlider);
+    volumeWidget->setLayout(volumeLayout);
+
+    //Window size widgets (dropdown) and layout
+    QWidget* windowSizeWidget = new QWidget(this);
+    QVBoxLayout* windowSizeLayout = new QVBoxLayout(windowSizeWidget);
+    QLabel* windowSizeLabel = new QLabel("Window size", windowSizeWidget);
+    windowSizeDropdown = new QComboBox(windowSizeWidget);
+    windowSizeLayout->addWidget(windowSizeLabel);
+    windowSizeLayout->addWidget(windowSizeDropdown);
+    windowSizeWidget->setLayout(windowSizeLayout);
+
+    //Button (cancel and save) widgets and layout
+    QWidget* buttonsWidget = new QWidget(this);
+    QHBoxLayout* buttonsLayout = new QHBoxLayout(buttonsWidget);
+    QPushButton* cancelButton = new QPushButton("Cancel", buttonsWidget);
+    QPushButton* saveButton = new QPushButton("Save", buttonsWidget);
+    buttonsLayout->addWidget(cancelButton);
+    buttonsLayout->addWidget(saveButton);
+    buttonsWidget->setLayout(buttonsLayout);
+
+    //Container layout (of SettingsWidget)
+    QVBoxLayout* containerLayout = new QVBoxLayout(this);
+    containerLayout->addWidget(title);
+    containerLayout->addWidget(volumeWidget);
+    containerLayout->addWidget(windowSizeWidget);
+    containerLayout->addWidget(buttonsWidget);
+    this->setLayout(containerLayout);
+
+    resetValues();
+
+    QObject::connect(cancelButton, &QPushButton::clicked, this, &SettingsWidget::cancelSettings);
+    QObject::connect(saveButton, &QPushButton::clicked, this, &SettingsWidget::saveSettings);
+}
+
+StartMenuScene::StartMenuScene(int* volume, QObject* parent) : QGraphicsScene(parent), volumePercentage(volume){
 
     //Add font Jersey10 (pixel art)
     int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
     QFont buttonFont(fontFamily, 40);
     QFont titleFont(fontFamily, 65);
-
 
     //Add background music
     audioPlayer = new QMediaPlayer(this);
@@ -30,25 +73,25 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     buttonsContainer = new QWidget();
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsContainer);
 
-
-
-    MenuButton* startButton = new MenuButton("Start");
-    MenuButton* optionsButton = new MenuButton("Options");
-    MenuButton* exitButton = new MenuButton("Exit");
+    MainMenuButton* startButton = new MainMenuButton("Start");
+    MainMenuButton* settingsButton = new MainMenuButton("Options");
+    MainMenuButton* exitButton = new MainMenuButton("Exit");
 
     startButton->setFont(buttonFont);
-    optionsButton->setFont(buttonFont);
+    settingsButton->setFont(buttonFont);
     exitButton->setFont(buttonFont);
 
     startButton->setImagePath("../assets/images/menu/Mainmenu_button.png");
-    optionsButton->setImagePath("../assets/images/menu/Mainmenu_button.png");
+    startButton->setGifPath("../assets/images/menu/Mainmenu_buttonGif.gif");
+    settingsButton->setImagePath("../assets/images/menu/Mainmenu_button.png");
+    settingsButton->setGifPath("../assets/images/menu/Mainmenu_buttonGif.gif");
     exitButton->setImagePath("../assets/images/menu/Mainmenu_button.png");
+    exitButton->setGifPath("../assets/images/menu/Mainmenu_buttonGif.gif");
 
-    //Scale the button
-
+    settingsWidget = new SettingsWidget(volumePercentage);
 
     QObject::connect(startButton, &QPushButton::clicked, this, &StartMenuScene::startGameRequested);
-    //TO DO : click on options button
+    QObject::connect(settingsButton, &QPushButton::clicked, settingsWidget, &SettingsWidget::show);
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
 
     sound = new QSoundEffect();
@@ -56,11 +99,11 @@ StartMenuScene::StartMenuScene(QObject* parent) : QGraphicsScene(parent){
     sound->setVolume(20);
 
     QObject::connect(startButton, &QPushButton::clicked, sound, &QSoundEffect::play);
-    QObject::connect(optionsButton, &QPushButton::clicked, sound, &QSoundEffect::play);
+    QObject::connect(settingsButton, &QPushButton::clicked, sound, &QSoundEffect::play);
     QObject::connect(exitButton, &QPushButton::clicked, sound, &QSoundEffect::play);
 
     buttonsLayout->addWidget(startButton);
-    buttonsLayout->addWidget(optionsButton);
+    buttonsLayout->addWidget(settingsButton);
     buttonsLayout->addWidget(exitButton);
 
     buttonsContainer->setLayout(buttonsLayout);
@@ -91,20 +134,16 @@ void StartMenuScene::drawBackground(QPainter* painter, const QRectF& rect) {
     painter->drawPixmap(QPointF(0,0), *background, sceneRect());
 }
 
-void MenuButton::paintEvent(QPaintEvent* event) {
-    QPainter painter(this);
+void SettingsWidget::resetValues(){
+    volumeSlider->setValue(*volumePercentage);
+}
 
-    // Dessiner l'image de fond redimensionnée
-    if (!background.isNull()) {
-        painter.drawPixmap(rect(), background);
-    }
+void SettingsWidget::cancelSettings() {
+    resetValues();
+    hide();
+}
 
-    // Appeler le paintEvent de QPushButton pour dessiner le texte
-    QPushButton::paintEvent(event);
-
-    QStyleOptionButton option;
-    option.initFrom(this);
-    option.text = this->text();
-    option.icon = this->icon();
-    style()->drawControl(QStyle::CE_PushButtonLabel, &option, &painter, this);
+void SettingsWidget::saveSettings(){
+    *volumePercentage = volumeSlider->value();
+    hide();
 }

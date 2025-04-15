@@ -4,8 +4,9 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    startMenuScene = new StartMenuScene();
-    mainView = new MainView();
+
+    startMenuScene = new StartMenuScene(&volumePercentage);
+    mainView = new MainView(this);
     mainView->setScene(startMenuScene);
 
     connect(startMenuScene, &StartMenuScene::startGameRequested, this, &MainWindow::startGame); //When the player start from the principal menu
