@@ -29,7 +29,7 @@ public:
     //Other methods
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     //Redefining the boundingRect method
-    QRectF boundingRect() const override;
+    virtual QRectF boundingRect() const override;
 
     //Animation method
     void stopAnimation();

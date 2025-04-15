@@ -4,15 +4,16 @@
 
 HUD::HUD(int maxHP, QWidget* parent) : QWidget(parent) {
         //Base attribute of HUD
+
         setAttribute(Qt::WA_OpaquePaintEvent);
         setAttribute(Qt::WA_TranslucentBackground);
         setAttribute(Qt::WA_TransparentForMouseEvents);
         setAttribute(Qt::WA_NoSystemBackground);
         setStyleSheet("background: transparent;");
 
+
         //Setting up the HUD using a layout
         QHBoxLayout* layout = new QHBoxLayout(this);
-        layout->setContentsMargins(0, 0, 0, 0);
 
 
         //HPWidget
@@ -36,6 +37,7 @@ HUD::HUD(int maxHP, QWidget* parent) : QWidget(parent) {
 HPWidget::HPWidget(int maxLife, QWidget *parent) : QWidget(parent), maxLife(maxLife) {
     QHBoxLayout* lifeLayout = new QHBoxLayout(this);
     lifeLayout->setContentsMargins(0, 0, 0, 0);
+    lifeLayout->setSpacing(20);
 
 
 

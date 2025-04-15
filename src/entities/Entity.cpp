@@ -57,8 +57,13 @@ void Entity::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
     // Draw the current frame of the sprite sheet
     QRect sourceRect(currentFrame * frameWidth, 0, frameWidth, frameHeight);
     painter->drawPixmap(0, 0, frameWidth, frameHeight, *spriteSheet, sourceRect.x(), sourceRect.y(), sourceRect.width(), sourceRect.height());
+    painter->drawRect(boundingRect()); // Optional: Draw the bounding rect for debugging
+
+    painter->setPen(QPen(Qt::green, 2, Qt::DashLine));
+    painter->drawPath(shape());
     Q_UNUSED(option);
     Q_UNUSED(widget);
+    //Draw the shape
 }
 
 

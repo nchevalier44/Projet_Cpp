@@ -27,7 +27,15 @@ public :
     void setMainView(MainView* new_main_view) { mainView = new_main_view; }
     virtual void setHp(int newHp){hp = newHp; hud->getHPWidget()->setLife(hp);}
     void setHUD(HUD* newHud) { hud = newHud; }
-
+    //Override bounding rect to reduce hitbox
+    QRectF boundingRect() const{
+        return QRectF(0, 0, frameWidth, frameHeight);
+    }
+    QPainterPath shape() const{
+        QPainterPath path;
+        path.addRect(frameWidth*0.25, frameHeight*0.25, frameWidth*0.5, frameHeight*0.75);
+        return path;
+    }
     //Take damage
     void takeDamage(int damage);
     //Animation methods
