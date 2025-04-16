@@ -2,8 +2,10 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QException>
+#include <QGraphicsSceneMouseEvent>
 #include "GameScene.h"
 #include "HUD.h"
+
 
 GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), mainView(view){
 
@@ -21,7 +23,7 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     this->character = new Player("Character", 3);
     this->character->setPos(400, 200);
     this->character->setSpeed(4);
-    this->character->setScale(0.15);
+    this->character->setScale(0.1);
 
     this->addItem(character);
     this->character->setMainView(mainView);
@@ -270,3 +272,14 @@ qreal* GameScene::getDeltaPosition(){
 GameScene::~GameScene(){
 
 }
+
+
+//Detection des clics
+
+void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    if(event->button() == Qt::LeftButton){
+        QPointF scenePos = event->scenePos();
+        character->shootProjectile(scenePos, this);
+    }
+}
+

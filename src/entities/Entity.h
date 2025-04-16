@@ -8,6 +8,9 @@
 #include <QPainter>
 #include <QString>
 #include <QDebug>
+#include <QMovie>
+
+
 
 class Entity  : public QGraphicsObject{
     Q_OBJECT
@@ -62,6 +65,7 @@ protected:
     std::string name;
     int speed=1;
 
+
     //Animation variables
     QPixmap* spriteSheet;
     QString currentSpriteSheetPath;
@@ -71,6 +75,51 @@ protected:
     int frameWidth;
     int frameHeight;
     int animationSpeed;
+};
+
+class Projectile : public QGraphicsObject{
+    Q_OBJECT
+private :
+    int damage = 0;
+    int speed = 0;
+    int distanceMax = 0;
+    int distanceTravelled = 0;
+    int frameWidth = 0;
+    int frameHeight = 0;
+    qreal rotationAngle = 0;
+    qreal dy=0;
+    qreal dx=0;
+    qreal erreur = 0.1;
+    QMovie* movie = nullptr;
+    QTimer * timer = nullptr;
+
+
+public :
+    Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction);
+    ~Projectile(){}
+    QRectF boundingRect() const override;
+    QPainterPath shape() const override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
+
+
+    //Getters
+    int getDamage() const { return damage; }
+    int getSpeed() const { return speed; }
+    int getDistanceMax() const { return distanceMax; }
+    int getDistanceTravelled() const { return distanceTravelled; }
+
+    //Setters
+    void setDamage(int newDamage) { damage = newDamage; }
+    void setSpeed(int newSpeed) { speed = newSpeed; }
+    void setDistanceMax(int newDistanceMax) { distanceMax = newDistanceMax; }
+    void setDistanceTravelled(int newDistanceTravelled) { distanceTravelled = newDistanceTravelled; }
+
+    public slots:
+    void move();
+
+
+
 };
 
 

@@ -9,9 +9,12 @@
 #include "../../core/MainView.h"
 #include "../../core/HUD.h"
 
+
+
 class Player : public Entity {
 private :
     MainView* mainView = nullptr;
+
     HUD* hud = nullptr;
     bool isDead = false;
     QSoundEffect* movingSound = nullptr;
@@ -75,6 +78,9 @@ public :
     void hpAnimation(){
         setAnimation("../assets/images/characters/Fire_head.png", 8, 150);
     }
+
+    //Attack
+    void shootProjectile(QPointF target, QGraphicsScene* scene);
 };
 
 

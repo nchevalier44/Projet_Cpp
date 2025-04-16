@@ -53,7 +53,10 @@ public :
     void loadMap();
     qreal* getDeltaPosition();
 
-public slots:
+    //Mouse interactions
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+        public slots:
     void timerUpdate();
 
 };

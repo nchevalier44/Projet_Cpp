@@ -40,6 +40,21 @@ void Player::takeDamage(int damage) {
         animationBackground->start(QAbstractAnimation::DeleteWhenStopped);
         QTimer::singleShot(150, [DamageScreen]() {
             DamageScreen->deleteLater();
+
         });
+
     }
+}
+
+void Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
+    //Ajust the position of the projectile
+    QPointF posInit = this->pos();
+    posInit.setX(posInit.x() + frameWidth/20);
+    posInit.setY(posInit.y() + frameHeight/20);
+    QPointF direction = target - posInit;
+    Projectile* projectile = new Projectile(0,1, 200, "../assets/images/characters/Missile_spell.gif", posInit, direction);
+
+    projectile->setZValue(10);
+    projectile->setScale(0.5);
+    scene->addItem(projectile);
 }

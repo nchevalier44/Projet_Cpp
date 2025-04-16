@@ -16,7 +16,7 @@ void MainMenuButton::setGifPath(const QString& path){
     if (hoverMovie) delete hoverMovie;
     hoverMovie = new QMovie(path);
     hoverMovie->setCacheMode(QMovie::CacheAll);
-    hoverMovie->setSpeed(80);
+    hoverMovie->setSpeed(200);
 
     connect(hoverMovie, &QMovie::frameChanged, this, [this]() {
         if(hoverMovie->currentFrameNumber() == hoverMovie->frameCount() - 1){
