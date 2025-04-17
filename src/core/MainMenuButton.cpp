@@ -26,10 +26,6 @@ MainMenuButton::~MainMenuButton() {
     delete hoverMovie;
 }
 
-void MainMenuButton::setGifPath(const QString& path){
-
-}
-
 void MainMenuButton::enterEvent(QEnterEvent* event) {
     QPushButton::enterEvent(event);
     hover = true;

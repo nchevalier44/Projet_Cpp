@@ -9,8 +9,6 @@ public:
     MainMenuButton(QString text, QWidget* parent=nullptr);
     virtual ~MainMenuButton();
 
-    void setGifPath(const QString& path);
-
 protected:
     void paintEvent(QPaintEvent* event) override;
     void enterEvent(QEnterEvent* event) override;
