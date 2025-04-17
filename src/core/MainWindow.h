@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QMainWindow>
 
+#include "../constants.h"
 #include "GameScene.h"
 #include "StartMenuScene.h"
 

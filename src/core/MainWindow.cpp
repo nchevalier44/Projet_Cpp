@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->setCentralWidget(mainView);
     this->setWindowTitle("C++ Project");
-    this->resize(backgroundRatio*1080, 1080);
+    this->resize(backgroundRatio*720, 720);
 
 }
 

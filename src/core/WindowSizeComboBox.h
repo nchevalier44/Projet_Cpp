@@ -5,11 +5,16 @@
 #include <QComboBox>
 #include <QPainter>
 
+#include "../constants.h"
+
 class WindowSizeComboBox : public QComboBox{
 Q_OBJECT
 public:
+    //Constructor
     WindowSizeComboBox(QWidget* parent);
+    virtual ~WindowSizeComboBox();
 
+    //Getters
     float getRatioItem() const { return ratioItem; };
     QPixmap* getBackgroundPixmap() const { return backgroundPixmap; }
 
@@ -18,7 +23,9 @@ private:
     float ratioArrow = 1;
     QPixmap* backgroundPixmap = nullptr;
     QPixmap* arrowPixmap = nullptr;
+
 protected:
+    //Function redefined
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
 
@@ -28,6 +35,7 @@ protected:
 class ComboBoxItemDelegate : public QStyledItemDelegate {
 public:
     ComboBoxItemDelegate(WindowSizeComboBox* parent=nullptr);
+    virtual ~ComboBoxItemDelegate();
 
 private:
     QPixmap* backgroundPixmap = nullptr;

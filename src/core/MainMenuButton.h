@@ -2,14 +2,17 @@
 #define PROJET_CPP_MAINMENUBUTTON_H
 
 #include <QPushButton>
+#include "../constants.h"
 
 class MainMenuButton : public QPushButton{
     Q_OBJECT
 public:
+    //Constructor and destructor
     MainMenuButton(QString text, QWidget* parent=nullptr);
     virtual ~MainMenuButton();
 
 protected:
+    //Function redefined
     void paintEvent(QPaintEvent* event) override;
     void enterEvent(QEnterEvent* event) override;
     void leaveEvent(QEvent* event) override;
@@ -17,7 +20,7 @@ protected:
 
 private:
     QMovie* hoverMovie = nullptr;
-    bool hover = false;
+    bool isHovering = false;
     QPixmap* backgroundPixmap = nullptr;
 };
 
