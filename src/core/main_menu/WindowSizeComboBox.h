@@ -4,8 +4,12 @@
 #include <QStyledItemDelegate>
 #include <QComboBox>
 #include <QPainter>
+#include <QResizeEvent>
+#include <QAbstractItemView>
+#include <QTimer>
+#include <QFontDatabase>
 
-#include "../constants.h"
+#include "../../constants.h"
 
 class WindowSizeComboBox : public QComboBox{
 Q_OBJECT
@@ -32,8 +36,12 @@ protected:
 
     };
 
+
+
+
 class ComboBoxItemDelegate : public QStyledItemDelegate {
 public:
+    //Constructor and destructor
     ComboBoxItemDelegate(WindowSizeComboBox* parent=nullptr);
     virtual ~ComboBoxItemDelegate();
 
@@ -43,6 +51,7 @@ private:
     WindowSizeComboBox* parent = nullptr;
 
 protected:
+    //Function redefined
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 };

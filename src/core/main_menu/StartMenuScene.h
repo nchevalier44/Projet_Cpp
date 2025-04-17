@@ -28,12 +28,12 @@ class StartMenuScene : public QGraphicsScene{
 
     public:
         //Getters
-        QPixmap* getBackground() const { return background; }
         QMediaPlayer* getAudioPlayer() const { return audioPlayer; }
 
         void drawBackground(QPainter* painter, const QRectF& rect);
 
         StartMenuScene(MainWindow* mainWindow, QObject* parent = nullptr);
+        virtual ~StartMenuScene();
 
     private:
         QPixmap* background = nullptr;
@@ -41,6 +41,7 @@ class StartMenuScene : public QGraphicsScene{
         QMediaPlayer* audioPlayer = nullptr;
         QSoundEffect* sound = nullptr;
         SettingsWidget* settingsWidget = nullptr;
+        QGraphicsProxyWidget* settingsProxyWidget = nullptr;
 
     signals:
         void startGameRequested();

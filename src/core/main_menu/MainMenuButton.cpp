@@ -1,8 +1,4 @@
 #include "MainMenuButton.h"
-#include <QMovie>
-#include <QEnterEvent>
-#include <QPainter>
-#include <QStyleOptionButton>
 
 //Constructor
 MainMenuButton::MainMenuButton(QString text, QWidget* parent): QPushButton(text, parent) {
@@ -57,7 +53,6 @@ void MainMenuButton::leaveEvent(QEvent* event) {
 
 //Redefinition of the paintEvent function to draw the background image and the hover animation
 void MainMenuButton::paintEvent(QPaintEvent* event) {
-    QPushButton::paintEvent(event); //We call the default paintEvent function
     QPainter painter(this);
 
     if (isHovering && hoverMovie && hoverMovie->isValid()) { //Draw the hover animation at the good frame and the good size
@@ -66,6 +61,7 @@ void MainMenuButton::paintEvent(QPaintEvent* event) {
     } else if(backgroundPixmap && !backgroundPixmap->isNull()){
          painter.drawPixmap(rect(), backgroundPixmap->scaled(rect().size())); //Draw the background image at the good size
      } else{
+        QPushButton::paintEvent(event);//We call the default paintEvent function
         qWarning() << "The hover animation or background image is not valid ";
     }
 

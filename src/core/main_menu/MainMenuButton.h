@@ -2,7 +2,12 @@
 #define PROJET_CPP_MAINMENUBUTTON_H
 
 #include <QPushButton>
-#include "../constants.h"
+#include <QMovie>
+#include <QEnterEvent>
+#include <QPainter>
+#include <QStyleOptionButton>
+
+#include "../../constants.h"
 
 class MainMenuButton : public QPushButton{
     Q_OBJECT
