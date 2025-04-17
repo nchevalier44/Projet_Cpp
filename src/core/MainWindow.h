@@ -20,11 +20,18 @@ private :
     StartMenuScene* startMenuScene = nullptr;
     MainView* mainView = nullptr;
     HUD* hud = nullptr;
-    int volumePercentage;
-    float backgroundRatio = 0.5;
+    int volumePercentage = 100;
+    float backgroundRatio = 1;
 
 public:
     void resizeEvent(QResizeEvent* event);
+
+    float getBackgroundRatio() const { return backgroundRatio; }
+    int getVolumePercentage() const { return volumePercentage; }
+
+    void setBackgroundRatio(float newRatio) { backgroundRatio = newRatio; }
+    void setVolumePercentage(int newPercentage) { volumePercentage = newPercentage; }
+
 
     void resetGame();
 

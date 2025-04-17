@@ -4,8 +4,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-
-    startMenuScene = new StartMenuScene(&volumePercentage);
+    startMenuScene = new StartMenuScene(this);
     mainView = new MainView(this);
     mainView->setScene(startMenuScene);
 
@@ -15,10 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->setCentralWidget(mainView);
     this->setWindowTitle("C++ Project");
-
-    QPixmap* background = this->startMenuScene->getBackground();
-    this->backgroundRatio = float(background->width()) / float(background->height());
-    this->resize(background->width()*0.75, background->height()*0.75);
+    this->resize(backgroundRatio*1080, 1080);
 
 }
 

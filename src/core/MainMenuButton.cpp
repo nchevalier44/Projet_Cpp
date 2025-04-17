@@ -5,7 +5,21 @@
 #include <QStyleOptionButton>
 
 MainMenuButton::MainMenuButton(QString text, QWidget* parent): QPushButton(text, parent) {
+    //Set color of the text white
     setStyleSheet("color: white;");
+
+    //Setup the background image and hover animation
+    backgroundPixmap = new QPixmap("../assets/images/menu/button_background.png");
+    hoverMovie = new QMovie("../assets/images/menu/button_animation.gif");
+
+    connect(hoverMovie, &QMovie::frameChanged, this, [this]() {
+        //We stop at the last frame in order to get only one loop
+        if(hoverMovie->currentFrameNumber() == hoverMovie->frameCount() - 1){
+            hoverMovie->stop();
+        }
+        //
+        update(); //We update to let the last frame as the background while hovering
+    });
 }
 
 MainMenuButton::~MainMenuButton() {
@@ -13,18 +27,7 @@ MainMenuButton::~MainMenuButton() {
 }
 
 void MainMenuButton::setGifPath(const QString& path){
-    if (hoverMovie) delete hoverMovie;
-    hoverMovie = new QMovie(path);
-    hoverMovie->setCacheMode(QMovie::CacheAll);
-    hoverMovie->setSpeed(80);
 
-    connect(hoverMovie, &QMovie::frameChanged, this, [this]() {
-        if(hoverMovie->currentFrameNumber() == hoverMovie->frameCount() - 1){
-            hoverMovie->stop();
-        }
-
-        update();  // Redessine le bouton avec la dernière frame
-    });
 }
 
 void MainMenuButton::enterEvent(QEnterEvent* event) {
@@ -39,7 +42,7 @@ void MainMenuButton::leaveEvent(QEvent* event) {
     QPushButton::leaveEvent(event);
     hover = false;
     if (hoverMovie) hoverMovie->stop();
-    update(); // Pour forcer le repaint sans le GIF
+    update();
 }
 
 void MainMenuButton::paintEvent(QPaintEvent* event) {
@@ -48,12 +51,10 @@ void MainMenuButton::paintEvent(QPaintEvent* event) {
 
     if (hover && hoverMovie && hoverMovie->isValid()) {
         QPixmap currentFrame = hoverMovie->currentPixmap();
-        //painter.drawPixmap(rect(), currentFrame);
-        painter.drawPixmap(rect(), currentFrame.scaled(this->size(), Qt::KeepAspectRatio));
-    } else if(!background.isNull()){
-         painter.drawPixmap(rect(), background);
+        painter.drawPixmap(rect(), currentFrame.scaled(rect().size()));
+    } else if(!backgroundPixmap->isNull()){
+         painter.drawPixmap(rect(), backgroundPixmap->scaled(rect().size()));
      }
-
 
     QStyleOptionButton option;
     option.initFrom(this);
@@ -64,6 +65,7 @@ void MainMenuButton::paintEvent(QPaintEvent* event) {
 }
 
 void MainMenuButton::resizeEvent(QResizeEvent* event) {
+    QPushButton::resizeEvent(event);
     QSize newSize = event->size();
-    this->setFixedSize(newSize.width() * 2.5, newSize.height() * 2.5);
+    this->setFixedSize(newSize.width() * 2.5, newSize.height() * 2);
 }

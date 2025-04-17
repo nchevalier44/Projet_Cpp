@@ -9,7 +9,6 @@ public:
     MainMenuButton(QString text, QWidget* parent=nullptr);
     virtual ~MainMenuButton();
 
-    void setImagePath(QString path) { background = QPixmap(path); };
     void setGifPath(const QString& path);
 
 protected:
@@ -21,8 +20,7 @@ protected:
 private:
     QMovie* hoverMovie = nullptr;
     bool hover = false;
-    QPixmap background;
-
+    QPixmap* backgroundPixmap = nullptr;
 };
 
 
