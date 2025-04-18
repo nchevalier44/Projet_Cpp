@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->setCentralWidget(mainView);
     this->setWindowTitle("C++ Project");
-    this->resize(backgroundRatio*720, 720);
+    this->setFixedSize(backgroundRatio * DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_HEIGHT);
 
 }
 
@@ -75,7 +75,7 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
     int newWidth = newSize.width();
     int newHeight = newWidth / backgroundRatio;
 
-    if (newHeight >  newSize.height()) {
+    if (newHeight != newSize.height()) {
         newHeight = newSize.height();
         newWidth = newHeight * backgroundRatio;
     }

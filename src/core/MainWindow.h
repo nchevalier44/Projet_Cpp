@@ -11,7 +11,7 @@
 
 #include "../constants.h"
 #include "GameScene.h"
-#include "StartMenuScene.h"
+#include "main_menu/StartMenuScene.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT

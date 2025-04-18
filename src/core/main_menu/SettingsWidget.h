@@ -2,39 +2,28 @@
 #define PROJET_CPP_SETTINGSWIDGET_H
 
 #include "WindowSizeComboBox.h"
+#include "VolumeSlider.h"
 
-class MainWindow;
+class MainWindow; //Forward declaration
 
-class VolumeSlider : public QSlider{
-    Q_OBJECT
-
-public:
-    VolumeSlider(Qt::Orientation orientation, QWidget* parent=nullptr);
-
-private:
-    double ratioHandle = 1;
-    double ratioBar = 1;
-    QPixmap* barPixmap = nullptr;
-    QPixmap* handlePixmap = nullptr;
-
-protected:
-    void paintEvent(QPaintEvent* event) override;
-    void resizeEvent(QResizeEvent* event) override;
-    };
 
 class SettingsWidget : public QWidget {
     Q_OBJECT
 public:
+    //Constructor and destructor
     SettingsWidget(MainWindow* mainWindow, QWidget* parent=nullptr);
+    virtual ~SettingsWidget();
 
 private:
+    float ratioSettingsPixmap = 1;
+
     VolumeSlider* volumeMusicSlider = nullptr;
     VolumeSlider* volumeSFXSlider = nullptr;
     WindowSizeComboBox* windowSizeComboBox = nullptr;
-    float ratioSettingsPixmap = 1;
     QPixmap* settingsBackgroundPixmap = nullptr;
 
 protected:
+    //Redifined functions
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     };

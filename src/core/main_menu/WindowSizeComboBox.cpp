@@ -1,9 +1,4 @@
 #include "WindowSizeComboBox.h"
-#include <QResizeEvent>
-#include <QAbstractItemView>
-#include <QTimer>
-#include <QFontDatabase>
-
 
 
 //=====================================================
@@ -42,17 +37,23 @@ void WindowSizeComboBox::paintEvent(QPaintEvent* event) {
     //Draw the background
     painter.drawPixmap(0, 0, backgroundPixmap->scaled(QSize(width(), height())));
 
-    //Draw the arrow
+    //Draw the arrow with the right ratio
     int arrowHeight = height() * 0.33;
     int arrowWidth = arrowHeight * ratioArrow;
 
+    //The arrow is put at 79% of the width of the comboBox (for the right position)
     painter.drawPixmap(width() * 0.79, arrowHeight, arrowPixmap->scaled(arrowWidth, arrowHeight));
 
+    //Draw the text
     QString text = currentText();
     painter.setPen(Qt::white);
-    int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
+
+    //Font
+    int fontId = QFontDatabase::addApplicationFont(PATH_JERSEY10_FONT);
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
     painter.setFont(QFont(fontFamily, 0.4*height()));
+
+    //The text is put at 10% of the width as far as 77% (to put it at the right position)
     painter.drawText(rect().adjusted(width() * 0.1, 0, -width() * 0.23, 0), Qt::AlignCenter, text);
 
 }
@@ -88,38 +89,51 @@ ComboBoxItemDelegate::~ComboBoxItemDelegate(){
     parent = nullptr;
 }
 
+//Redefinition of the sizeHint function to resize the item with the right ratio (resizeEvent doesn't exist in QStyledItemDelegate)
 QSize ComboBoxItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const {
     int itemWidth = parent->width();
     int itemHeight = int(itemWidth / ratioItem);
     return QSize(itemWidth, itemHeight);
 }
 
+//Redefinition of the paint function to draw the background image and the text with the right ratio
 void ComboBoxItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+    //Save the state of the painter (color, transformation, ...)
     painter->save();
+    QRect rect = option.rect;
+    //Draw the background
+    painter->drawPixmap(rect, backgroundPixmap->scaled(rect.size()));
 
-    painter->drawPixmap(option.rect, backgroundPixmap->scaled(option.rect.size()));
-
+    // '&' operator because option can have multiple state like QStyle::State_Selected and QStyle::State_Enabled
+    //so we can't use '==' operator
     if (option.state & QStyle::State_Selected) {
-        QPixmap scaled = backgroundPixmap->scaled(option.rect.size());
+        //Add semi-transparent filter to selected item
 
+        QPixmap scaled = backgroundPixmap->scaled(rect.size());
+
+        //Create a mask from the transparent pixels
         QBitmap alphaMask = scaled.createMaskFromColor(Qt::transparent, Qt::MaskInColor);
 
+        //Clip to remove the transparent pixels (mask) from the region
         QRegion clipRegion(alphaMask);
-        clipRegion.translate(option.rect.topLeft());
+        clipRegion.translate(rect.topLeft());
 
-        painter->save();
         painter->setClipRegion(clipRegion);
-        painter->fillRect(option.rect, QColor(255, 255, 255, 80));
-        painter->restore();
+        painter->fillRect(rect, QColor(255, 255, 255, 80)); //Fill with semi-transparent white
     }
 
+    //Get the text
     QString text = index.data(Qt::DisplayRole).toString();
     painter->setPen(Qt::white);
-    int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
+
+    //Font
+    int fontId = QFontDatabase::addApplicationFont(PATH_JERSEY10_FONT);
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    painter->setFont(QFont(fontFamily, 0.4*option.rect.height()));
-    painter->drawText(option.rect.adjusted(option.rect.width() * 0.1, 0, -option.rect.width() * 0.23, 0), Qt::AlignCenter, text);
+    painter->setFont(QFont(fontFamily, 0.4*rect.height()));
 
+    //The text is put at 10% of the width as far as 77% (to put it at the right position)
+    painter->drawText(rect.adjusted(rect.width() * 0.1, 0, -rect.width() * 0.23, 0), Qt::AlignCenter, text);
+
+    //Restore the state that we have saved before
     painter->restore();
-
 }
