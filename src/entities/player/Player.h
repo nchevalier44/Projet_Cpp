@@ -36,6 +36,7 @@ private :
     QSoundEffect* movingSound = nullptr;
 
 public :
+
     Player(std::string name = "Player", int life = 100);
 
     //Getters

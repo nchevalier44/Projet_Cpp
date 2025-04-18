@@ -18,7 +18,7 @@ class GameScene : public QGraphicsScene {
 
 private:
     enum Direction {None, Up, Down, Left, Right};
-    Direction currentDirection = None;
+    Direction currentDirection = Down;
 
     QTimer* timer = nullptr;
     Player* character = nullptr;

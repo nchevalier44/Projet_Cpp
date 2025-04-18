@@ -27,7 +27,9 @@
 #define LIST_WINDOW_HEIGHT {1440, 1080, 720, 480}
 
 
-//PLayer animation
+//PLayer animation and direction
+
+
 
 
 

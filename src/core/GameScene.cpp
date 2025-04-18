@@ -232,10 +232,8 @@ qreal* GameScene::getDeltaPosition(){
     int n = activeKeys.length();
 
     //Check the last key pressed (currently always pressed)
-    if(n==0){
-        currentDirection = None;
-    }
-    else {
+
+    if(n!=0) {
         int lastKey = activeKeys[n - 1];
         if (lastKey == Qt::Key_Up || lastKey == Qt::Key_Z) {
             if (currentDirection != Up) {
@@ -277,9 +275,39 @@ GameScene::~GameScene(){
 //Detection des clics
 
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    QPointF clickPos = event->scenePos();
+    QPointF playerPos = character->pos();
+
     if(event->button() == Qt::LeftButton){
-        QPointF scenePos = event->scenePos();
-        character->shootProjectile(scenePos, this);
+        //The player can only shoot in a 90° angle in front of him
+        //We check if the player can shoot
+
+        QPointF playerDir;
+        switch(currentDirection) {
+            case Up: playerDir = QPointF(0, -1); break;
+            case Down: playerDir = QPointF(0, 1); break;
+            case Left: playerDir = QPointF(-1, 0); break;
+            case Right: playerDir = QPointF(1, 0); break;
+            default: return; // No direction, no shooting
+        }
+
+        QPointF dirClick = clickPos - playerPos;
+        qreal lenClick = std::hypot(dirClick.x(), dirClick.y());
+        if(lenClick == 0) return; // No click position
+        QPointF normClick = dirClick / lenClick;
+
+        qreal dot = normClick.x() * playerDir.x() + normClick.y() * playerDir.y();
+        qreal angleDeg = qRadiansToDegrees(qAcos(dot));
+
+        qDebug() << "Angle : " << angleDeg;
+
+        if(angleDeg <= 45.0) {
+            character->shootProjectile(clickPos, this);
+        }
+        else{
+            qDebug() << "Angle trop large" << angleDeg;
+        }
+
     }
 }
 

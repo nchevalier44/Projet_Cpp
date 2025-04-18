@@ -17,6 +17,7 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
 
 
 void Projectile::move(){
+    //Adding a small moving to the projectile
     this->setX(this->x() + dx*speed);
     this->setY(this->y() + dy*speed);
     distanceTravelled += speed;
@@ -25,11 +26,7 @@ void Projectile::move(){
         dx = 0;
         dy = 0;
         distanceTravelled = 0;
-        int animationSpeed = 100;
-        int frameCount = 6;
 
-        //Add a singleshot timer
-        QTimer::singleShot(frameCount*animationSpeed, this, &Projectile::deleteProjectile);
     }
 }
 

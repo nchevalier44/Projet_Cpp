@@ -114,7 +114,14 @@ void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
     }
     this->movie = new QMovie(PATH_PLAYER_PROJECTILE_FADE);
     this->movie->start();
-
+    if(movie->currentFrameNumber() == movie->frameCount()){
+        //Delete the projectile
+        deleteProjectile();
+    }
+    //Add a singleshot timer
+    frameCount = 5;
+    animationSpeed = 100;
+    QTimer::singleShot(frameCount*animationSpeed, this, &PlayerProjectile::deleteProjectile);
 }
 
 void PlayerProjectile::startMove() {
