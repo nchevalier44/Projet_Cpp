@@ -3,6 +3,8 @@
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QAbstractAnimation>
+#include <QThread>
+
 
 
 Player::Player(std::string name, int life) : Entity(name, life) {
@@ -46,15 +48,113 @@ void Player::takeDamage(int damage) {
     }
 }
 
-void Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
+Projectile* Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
     //Ajust the position of the projectile
     QPointF posInit = this->pos();
     posInit.setX(posInit.x() + frameWidth/20);
     posInit.setY(posInit.y() + frameHeight/20);
     QPointF direction = target - posInit;
-    Projectile* projectile = new Projectile(0,1, 200, "../assets/images/characters/Missile_spell.gif", posInit, direction);
+    PlayerProjectile* projectile = new PlayerProjectile(0,3, 200, "../assets/images/characters/Missile_spellGrow.gif", posInit, direction);
 
     projectile->setZValue(10);
     projectile->setScale(0.5);
     scene->addItem(projectile);
+    return projectile;
+}
+
+
+//PROJECTILEPLAYER METHODS
+
+PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction)
+    :Projectile(damage, speed, distanceMax, spriteSheet, pos, direction) {
+    frameWidth = 32;
+    frameHeight = 21;
+    QPointF centerOffset(frameWidth / 2, frameHeight / 2);
+    this->setPos(pos - centerOffset);
+
+    throwProjectile();
+
+
+}
+
+void PlayerProjectile::throwProjectile() {
+    setStartAnimation(PATH_PLAYER_PROJECTILE_GROW, 6, 100);
+}
+
+void PlayerProjectile::setStartAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
+    if(movie){
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+    this->movie = new QMovie(spriteSheet);
+    this->movie->start();
+
+    //Add a singleshot timer
+    QTimer::singleShot(frameCount*animationSpeed, this, &PlayerProjectile::startMove);
+
+}
+
+void PlayerProjectile::setMiddleAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
+    if(movie){
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+    this->movie = new QMovie(spriteSheet);
+    this->movie->start();
+    //Add a singleshot timer
+}
+
+void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
+    if(movie){
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+    this->movie = new QMovie(PATH_PLAYER_PROJECTILE_FADE);
+    this->movie->start();
+
+}
+
+void PlayerProjectile::startMove() {
+    setMiddleAnimation(PATH_PLAYER_PROJECTILE);
+    //Starting the moving
+
+    connect(this->timer, &QTimer::timeout, this, &Projectile::move);
+    this->timer->start(30);
+
+}
+
+QRectF Projectile::boundingRect() const {
+    return QRectF(0, 0, 40, 40);
+}
+
+QPainterPath Projectile::shape() const {
+    QPainterPath path;
+    // Hitbox circulaire plus petite que l'image
+    path.addEllipse(boundingRect().center(), 8, 8);  // rayon 8px
+    return path;
+}
+
+void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+    // Affichage de l'image actuelle de l'animation
+    if (movie && !movie->currentPixmap().isNull()) {
+        painter->save();
+        painter->translate(boundingRect().center());
+        painter->rotate(rotationAngle);
+        painter->translate(-boundingRect().center());
+        painter->drawPixmap(0, 10, frameWidth, frameHeight, movie->currentPixmap());
+        painter->restore();
+    }
+    /*
+    // Debug : dessiner boundingRect (en rouge)
+    painter->setPen(QPen(Qt::red, 1, Qt::DashLine));
+    painter->drawRect(boundingRect());
+
+    // Debug : dessiner shape (en bleu)
+    painter->setPen(QPen(Qt::blue, 1));
+    painter->drawPath(shape());
+     */
+
 }

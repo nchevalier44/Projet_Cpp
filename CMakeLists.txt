@@ -16,6 +16,6 @@ qt_standard_project_setup(
         LANGUAGES CXX
 )
 
-add_executable(Projet_Cpp ${sourceCode})
+add_executable(Projet_Cpp ${sourceCode} )
 
 target_link_libraries(Projet_Cpp PRIVATE Qt6::Widgets Qt6::Multimedia)

@@ -1,6 +1,8 @@
 #ifndef PROJET_CPP_ENTITY_H
 #define PROJET_CPP_ENTITY_H
 
+#include "../constants.h"
+
 #include <string>
 #include <QPixmap>
 #include <QTimer>
@@ -79,7 +81,7 @@ protected:
 
 class Projectile : public QGraphicsObject{
     Q_OBJECT
-private :
+protected:
     int damage = 0;
     int speed = 0;
     int distanceMax = 0;
@@ -97,9 +99,10 @@ private :
 public :
     Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction);
     ~Projectile(){}
-    QRectF boundingRect() const override;
-    QPainterPath shape() const override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    void deleteProjectile();
+    virtual QRectF boundingRect() const override;
+    virtual QPainterPath shape() const override;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 
 
@@ -114,6 +117,12 @@ public :
     void setSpeed(int newSpeed) { speed = newSpeed; }
     void setDistanceMax(int newDistanceMax) { distanceMax = newDistanceMax; }
     void setDistanceTravelled(int newDistanceTravelled) { distanceTravelled = newDistanceTravelled; }
+
+
+    //Animation
+    virtual void setStartAnimation(QString spriteSheet, int frameCount, int animationSpeed){}
+    virtual void setMiddleAnimation(QString spriteSheet, int frameCount, int animationSpeed){}
+    virtual void setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed){}
 
     public slots:
     void move();

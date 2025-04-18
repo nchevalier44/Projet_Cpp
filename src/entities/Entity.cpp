@@ -1,38 +1,19 @@
 #include "Entity.h"
 #include <iostream>
+#include <QThread>
 //////////PROJECTILE MEHTODS//////////
 
 Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction)
     : speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0){
-    frameWidth = 32;
-    frameHeight = 21;
-
-    QPointF centerOffset(frameWidth / 2, frameHeight / 2.2);
-    this->setPos(pos - centerOffset);
-
-
 
     this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
     this->dx = std::cos(rotationAngle * M_PI / 180);
     this->dy = std::sin(rotationAngle * M_PI / 180);
     this->movie = new QMovie(path);
     this->timer = new QTimer();
-    this->movie->start();
-
-
-    //Starting the moving
-    connect(this->timer, &QTimer::timeout, this, &Projectile::move);
-    this->timer->start(10);
-    //Verify if the movie is loaded
-    if (!movie->isValid()) {
-        qDebug() << "Error loading movie:" << path;
-        delete this->movie;
-        this->movie = nullptr;
-        return;
-    }
-
 
 }
+
 
 
 void Projectile::move(){
@@ -40,20 +21,34 @@ void Projectile::move(){
     this->setY(this->y() + dy*speed);
     distanceTravelled += speed;
     if(distanceTravelled >= distanceMax){
-        this->movie->stop();
-        delete this->movie;
-        this->movie = nullptr;
-        this->timer->stop();
-        delete this->timer;
-        this->timer = nullptr;
+        setEndAnimation("",0,0);
+        dx = 0;
+        dy = 0;
+        distanceTravelled = 0;
+        int animationSpeed = 100;
+        int frameCount = 6;
 
-        delete this;
+        //Add a singleshot timer
+        QTimer::singleShot(frameCount*animationSpeed, this, &Projectile::deleteProjectile);
     }
 }
 
+void Projectile::deleteProjectile() {
+    if (movie) {
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+    if (timer) {
+        timer->stop();
+        delete timer;
+        timer = nullptr;
+    }
+    delete this;
+}
 
 
-
+/*
 QRectF Projectile::boundingRect() const {
     return QRectF(0, 0, 40, 40);
 }
@@ -83,9 +78,10 @@ void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     // Debug : dessiner shape (en bleu)
     painter->setPen(QPen(Qt::blue, 1));
     painter->drawPath(shape());
-     */
+
 
 }
+*/
 
 
 
