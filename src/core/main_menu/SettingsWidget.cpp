@@ -12,7 +12,7 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     //Font
     int fontId = QFontDatabase::addApplicationFont(PATH_JERSEY10_FONT);
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    QFont textFont(fontFamily, 20);
+    QFont textFont(fontFamily, 23);
     QFont titleFont(fontFamily, 40);
 
 
@@ -28,18 +28,23 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     //Volume slider music widget
     QWidget* volumeMusicWidget = new QWidget(this);
     volumeMusicSlider = new VolumeSlider(Qt::Horizontal, volumeMusicWidget);
-    volumeMusicSlider->setValue(mainWindow->getVolumePercentage());
+    volumeMusicSlider->setValue(mainWindow->getAudioManager()->getMusicVolumePercentage());
 
-    //Volume music label
+    //Volume music labels
     QLabel* volumeMusicLabel = new QLabel("Music Volume", volumeMusicWidget);
     volumeMusicLabel->setStyleSheet("color: white;");
     volumeMusicLabel->setFont(textFont);
+    volumeMusicLabel->setAlignment(Qt::AlignCenter);
+    QLabel* volumeMusicValueLabel = new QLabel("100 %", volumeMusicWidget);
+    volumeMusicValueLabel->setStyleSheet("color: white;");
+    volumeMusicValueLabel->setFont(textFont);
 
     //Volume music layout
     QHBoxLayout* volumeMusicLayout = new QHBoxLayout(volumeMusicWidget);
-    volumeMusicLayout->setSpacing(0.1 * width());
+    volumeMusicLayout->setSpacing(0.05 * width());
     volumeMusicLayout->addWidget(volumeMusicLabel);
     volumeMusicLayout->addWidget(volumeMusicSlider);
+    volumeMusicLayout->addWidget(volumeMusicValueLabel);
     volumeMusicWidget->setLayout(volumeMusicLayout);
 
 
@@ -48,21 +53,37 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     //Volume SFX slider widget
     QWidget* volumeSFXWidget = new QWidget(this);
     volumeSFXSlider = new VolumeSlider(Qt::Horizontal, volumeSFXWidget);
-    volumeSFXSlider->setValue(mainWindow->getVolumePercentage());
+    volumeSFXSlider->setValue(mainWindow->getAudioManager()->getSFXVolumePercentage());
 
-    //Volume SFX label
-    QLabel* volumeLabel = new QLabel("Sounds effects\nvolume", volumeSFXWidget);
-    volumeLabel->setStyleSheet("color: white;");
-    volumeLabel->setAlignment(Qt::AlignCenter);
-    volumeLabel->setFont(textFont);
+    //Volume SFX labels
+    QLabel* volumeSFXLabel = new QLabel("Sounds effects\nvolume", volumeSFXWidget);
+    volumeSFXLabel->setStyleSheet("color: white;");
+    volumeSFXLabel->setAlignment(Qt::AlignCenter);
+    volumeSFXLabel->setFont(textFont);
+    QLabel* volumeSFXValueLabel = new QLabel("100 %", volumeSFXWidget);
+    volumeSFXValueLabel->setStyleSheet("color: white;");
+    volumeSFXValueLabel->setFont(textFont);
+
 
     //Volume SFX layout
     QHBoxLayout* volumeSFXLayout = new QHBoxLayout(volumeSFXWidget);
-    volumeSFXLayout->setSpacing(0.1 * width());
-    volumeSFXLayout->addWidget(volumeLabel);
+    volumeSFXLayout->setSpacing(0.05 * width());
+    volumeSFXLayout->addWidget(volumeSFXLabel);
     volumeSFXLayout->addWidget(volumeSFXSlider);
+    volumeSFXLayout->addWidget(volumeSFXValueLabel);
     volumeSFXWidget->setLayout(volumeSFXLayout);
     
+    //Actions of the sliders
+    connect(volumeMusicSlider, &VolumeSlider::valueChanged, this, [=](int value){
+        volumeMusicValueLabel->setText(QString::number(value) + " %");
+        mainWindow->getAudioManager()->setMusicVolumePercentage(value);
+        mainWindow->getAudioManager()->updateMusicVolume();
+    });
+    connect(volumeSFXSlider, &VolumeSlider::valueChanged, this, [=](int value){
+        volumeSFXValueLabel->setText(QString::number(value) + " %");
+        mainWindow->getAudioManager()->setSFXVolumePercentage(value);
+        mainWindow->getAudioManager()->updateSFXVolume();
+    });
 
 
     //Window size combobox widget
@@ -81,10 +102,11 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     QLabel* windowSizeLabel = new QLabel("Window size", windowSizeWidget);
     windowSizeLabel->setStyleSheet("color: white;");
     windowSizeLabel->setFont(textFont);
+    windowSizeLabel->setAlignment(Qt::AlignCenter);
 
     //Window size layout
     QHBoxLayout* windowSizeLayout = new QHBoxLayout(windowSizeWidget);
-    windowSizeLayout->setSpacing(0.25 * width());
+    windowSizeLayout->setSpacing(0.2 * width());
     windowSizeLayout->setAlignment(Qt::AlignCenter);
     windowSizeLayout->addWidget(windowSizeLabel);
     windowSizeLayout->addWidget(windowSizeComboBox);
@@ -121,7 +143,7 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     //Container layout (of SettingsWidget)
     QVBoxLayout* containerLayout = new QVBoxLayout(this);
     containerLayout->setAlignment(Qt::AlignCenter);
-    containerLayout->setSpacing(0.1 * width());
+    containerLayout->setSpacing(0.1 * height());
     containerLayout->addWidget(title);
     containerLayout->addWidget(volumeMusicWidget);
     containerLayout->addWidget(volumeSFXWidget);
@@ -134,15 +156,19 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
 
     //Set margin
     int margin = width() * 0.1;
-    this->setContentsMargins(margin, margin, margin, margin);
+    this->setContentsMargins(width() * 0.12, margin, margin, margin);
 
     //Set the size of each widget (they will have the ratio of their image with resizeEvent redifined for each of them)
+    volumeSFXLabel->adjustSize(); //Force the size to be updated before setting the fixed width
+    volumeMusicLabel->setFixedWidth(volumeSFXLabel->width());
+
     closeButton->setFixedWidth(width() * 0.2);
     windowSizeComboBox->setFixedWidth(width() * 0.45);
-    volumeMusicSlider->setFixedWidth(width() * 0.6);
-    volumeSFXSlider->setFixedWidth(width() * 0.6);
+    volumeMusicSlider->setFixedWidth(width() * 0.45);
+    volumeSFXSlider->setFixedWidth(width() * 0.45);
     volumeMusicSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     volumeSFXSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
 }
 
 

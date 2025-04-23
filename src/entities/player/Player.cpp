@@ -154,7 +154,7 @@ void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         painter->drawPixmap(0, 10, frameWidth, frameHeight, movie->currentPixmap());
         painter->restore();
     }
-    /*
+
     // Debug : dessiner boundingRect (en rouge)
     painter->setPen(QPen(Qt::red, 1, Qt::DashLine));
     painter->drawRect(boundingRect());
@@ -162,6 +162,6 @@ void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     // Debug : dessiner shape (en bleu)
     painter->setPen(QPen(Qt::blue, 1));
     painter->drawPath(shape());
-     */
+
 
 }

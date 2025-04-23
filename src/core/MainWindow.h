@@ -12,6 +12,7 @@
 #include "../constants.h"
 #include "GameScene.h"
 #include "main_menu/StartMenuScene.h"
+#include "AudioManager.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -21,17 +22,17 @@ private :
     StartMenuScene* startMenuScene = nullptr;
     MainView* mainView = nullptr;
     HUD* hud = nullptr;
-    int volumePercentage = 100;
+    AudioManager* audioManager = nullptr;
     float backgroundRatio = 1;
 
 public:
     void resizeEvent(QResizeEvent* event);
 
+    AudioManager* getAudioManager() const { return audioManager; }
+
     float getBackgroundRatio() const { return backgroundRatio; }
-    int getVolumePercentage() const { return volumePercentage; }
 
     void setBackgroundRatio(float newRatio) { backgroundRatio = newRatio; }
-    void setVolumePercentage(int newPercentage) { volumePercentage = newPercentage; }
 
 
     void resetGame();

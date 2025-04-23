@@ -4,6 +4,8 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
+    audioManager = new AudioManager();
+
     startMenuScene = new StartMenuScene(this);
     mainView = new MainView(this);
     mainView->setScene(startMenuScene);
