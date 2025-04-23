@@ -54,6 +54,16 @@ Projectile* Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
     posInit.setX(posInit.x() + frameWidth/20);
     posInit.setY(posInit.y() + frameHeight/20);
     QPointF direction = target - posInit;
+
+    //Adjusting the position of the projectile to make it appear in front of the player
+
+    switch (currentDirection) {
+        case Up : posInit.setY(posInit.y() - 10); posInit.setX(posInit.x() + 7); break;
+        case Down : posInit.setY(posInit.y() + 5); posInit.setX(posInit.x() + 7); break;
+        case Left : posInit.setX(posInit.x() - 2); break;
+        case Right : posInit.setX(posInit.x() + 8); break;
+        default: break;
+    }
     PlayerProjectile* projectile = new PlayerProjectile(0,3, 200, "../assets/images/characters/Missile_spellGrow.gif", posInit, direction);
 
     projectile->setZValue(10);
@@ -63,7 +73,7 @@ Projectile* Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
 }
 
 
-//PROJECTILEPLAYER METHODS
+///###################PROJECTILEPLAYER METHODS######################
 
 PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction)
     :Projectile(damage, speed, distanceMax, spriteSheet, pos, direction) {
@@ -71,10 +81,8 @@ PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QStri
     frameHeight = 21;
     QPointF centerOffset(frameWidth / 2, frameHeight / 2);
     this->setPos(pos - centerOffset);
-
     throwProjectile();
-
-
+    qDebug() << "Projectile created at position : " << pos;
 }
 
 void PlayerProjectile::throwProjectile() {
@@ -114,10 +122,6 @@ void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
     }
     this->movie = new QMovie(PATH_PLAYER_PROJECTILE_FADE);
     this->movie->start();
-    if(movie->currentFrameNumber() == movie->frameCount()){
-        //Delete the projectile
-        deleteProjectile();
-    }
     //Add a singleshot timer
     frameCount = 5;
     animationSpeed = 100;
@@ -154,6 +158,7 @@ void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         painter->drawPixmap(0, 10, frameWidth, frameHeight, movie->currentPixmap());
         painter->restore();
     }
+
     /*
     // Debug : dessiner boundingRect (en rouge)
     painter->setPen(QPen(Qt::red, 1, Qt::DashLine));

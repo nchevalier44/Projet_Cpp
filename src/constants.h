@@ -26,6 +26,8 @@
 #define DEFAULT_WINDOW_HEIGHT 720
 #define LIST_WINDOW_HEIGHT {1440, 1080, 720, 480}
 
+enum Direction {None, Up, Down, Left, Right};
+
 
 //PLayer animation and direction
 

@@ -236,27 +236,27 @@ qreal* GameScene::getDeltaPosition(){
     if(n!=0) {
         int lastKey = activeKeys[n - 1];
         if (lastKey == Qt::Key_Up || lastKey == Qt::Key_Z) {
-            if (currentDirection != Up) {
+            if (character->getCurrentDirection() != Up) {
                 character->backWalkAnimation();
-                currentDirection = Up;
+                character->setCurrentDirection(Up);
             }
             dy -= character->getSpeed();
         } else if (lastKey == Qt::Key_Down || lastKey == Qt::Key_S) {
-            if (currentDirection != Down) {
+            if (character->getCurrentDirection() != Down) {
                 character->frontWalkAnimation();
-                currentDirection = Down;
+                character->setCurrentDirection(Down);
             }
             dy += character->getSpeed();
         } else if (lastKey == Qt::Key_Left || lastKey == Qt::Key_Q) {
-            if (currentDirection != Left) {
+            if (character->getCurrentDirection() != Left) {
                 character->leftWalkAnimation();
-                currentDirection = Left;
+                character->setCurrentDirection(Left);
             }
             dx -= character->getSpeed();
         } else if (lastKey == Qt::Key_Right || lastKey == Qt::Key_D) {
-            if (currentDirection != Right) {
+            if (character->getCurrentDirection() != Right) {
                 character->rightWalkAnimation();
-                currentDirection = Right;
+                character->setCurrentDirection(Right);
             }
             dx += character->getSpeed();
         }
@@ -283,7 +283,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         //We check if the player can shoot
 
         QPointF playerDir;
-        switch(currentDirection) {
+        switch(character->getCurrentDirection()) {
             case Up: playerDir = QPointF(0, -1); break;
             case Down: playerDir = QPointF(0, 1); break;
             case Left: playerDir = QPointF(-1, 0); break;
@@ -299,13 +299,13 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         qreal dot = normClick.x() * playerDir.x() + normClick.y() * playerDir.y();
         qreal angleDeg = qRadiansToDegrees(qAcos(dot));
 
-        qDebug() << "Angle : " << angleDeg;
 
         if(angleDeg <= 45.0) {
             character->shootProjectile(clickPos, this);
+            //TODO : add a sound to indicate the player shoot
         }
         else{
-            qDebug() << "Angle trop large" << angleDeg;
+            //TODO : add a sound to indicate the player can't shoot
         }
 
     }

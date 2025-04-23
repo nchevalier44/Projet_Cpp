@@ -34,6 +34,7 @@ private :
     HUD* hud = nullptr;
     bool isDead = false;
     QSoundEffect* movingSound = nullptr;
+    Direction currentDirection = Down;
 
 public :
 
@@ -42,11 +43,13 @@ public :
     //Getters
     MainView* getMainView() const { return mainView; }
     bool isPlayerDead() const { return isDead; }
+    Direction getCurrentDirection() const { return currentDirection; }
 
     //Setters
     void setMainView(MainView* new_main_view) { mainView = new_main_view; }
     virtual void setHp(int newHp){hp = newHp; hud->getHPWidget()->setLife(hp);}
     void setHUD(HUD* newHud) { hud = newHud; }
+    void setCurrentDirection(Direction newDirection) { currentDirection = newDirection; }
     //Override bounding rect to reduce hitbox
     QRectF boundingRect() const{
         return QRectF(0, 0, frameWidth, frameHeight);
