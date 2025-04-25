@@ -17,9 +17,13 @@
 #include <QSoundEffect>
 #include <QSlider>
 #include <QComboBox>
+#include <QTimer>
+#include <QStyleFactory>
+#include <QGraphicsDropShadowEffect>
 
 #include "MainMenuButton.h"
 #include "SettingsWidget.h"
+#include "../AudioManager.h"
 
 class MainWindow;
 

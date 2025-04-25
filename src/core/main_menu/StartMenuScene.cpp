@@ -1,9 +1,5 @@
 #include "StartMenuScene.h"
-#include "WindowSizeComboBox.h"
 #include "../MainWindow.h"
-#include <QTimer>
-#include <QStyleFactory>
-#include <QGraphicsDropShadowEffect>
 
 StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraphicsScene(parent) {
 
@@ -16,11 +12,12 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     //Add background music
     audioPlayer = new QMediaPlayer(this);
     QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(50 * mainWindow->getVolumePercentage() / 100);
+    audioOutput->setVolume(50);
     audioPlayer->setAudioOutput(audioOutput);
     audioPlayer->setSource(QUrl::fromLocalFile(PATH_MAIN_MENU_MUSIC));
     audioPlayer->setLoops(QMediaPlayer::Infinite);
     audioPlayer->play();
+    mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
 
     //Add background image
     this->background = new QPixmap();
@@ -51,7 +48,9 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     //Add sound to buttons
     sound = new QSoundEffect();
     sound->setSource(QUrl::fromLocalFile(PATH_MAIN_MENU_BUTTON_SOUND));
-    sound->setVolume(20 * mainWindow->getVolumePercentage() / 100);
+    sound->setVolume(20);
+    mainWindow->getAudioManager()->addSFXObject(sound, sound->volume());
+
 
     settingsWidget = new SettingsWidget(mainWindow);
 

@@ -3,7 +3,7 @@
 
 //Definition of all constants we use in the project
 
-//Main music images
+//Main menu images
 #define PATH_MAIN_MENU_BACKGROUND "../assets/images/menu/background.png"
 
 //Start menu
