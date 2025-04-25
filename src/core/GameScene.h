@@ -17,9 +17,6 @@ class GameScene : public QGraphicsScene {
     Q_OBJECT
 
 private:
-
-
-
     QTimer* timer = nullptr;
     Player* character = nullptr;
     MainView* mainView = nullptr;
