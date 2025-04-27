@@ -58,10 +58,10 @@ Projectile* Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
     //Adjusting the position of the projectile to make it appear in front of the player
 
     switch (currentDirection) {
-        case Up : posInit.setY(posInit.y() - 10); posInit.setX(posInit.x() + 7); break;
-        case Down : posInit.setY(posInit.y() + 5); posInit.setX(posInit.x() + 7); break;
+        case Up : posInit.setY(posInit.y() - 12); posInit.setX(posInit.x() + 7); break;
+        case Down : posInit.setY(posInit.y() + 7); posInit.setX(posInit.x() + 7); break;
         case Left : posInit.setX(posInit.x() - 2); break;
-        case Right : posInit.setX(posInit.x() + 8); break;
+        case Right : posInit.setX(posInit.x() + 15); break;
         default: break;
     }
     PlayerProjectile* projectile = new PlayerProjectile(0,3, 200, "../assets/images/characters/Missile_spellGrow.gif", posInit, direction);
