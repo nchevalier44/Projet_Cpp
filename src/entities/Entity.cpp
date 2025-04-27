@@ -49,7 +49,7 @@ void Projectile::deleteProjectile() {
 
 
 ///////////////ENTITY METHODS///////////////
-Entity::Entity(std::string name, int hp) : hp(hp), name(name) , spriteSheet(nullptr), currentFrame(0), frameCount(0), frameWidth(0), frameHeight(0), animationSpeed(100), timer(nullptr) {
+Entity::Entity(std::string name, int hp) : hp(hp), name(name) {
 }
 
 
@@ -109,6 +109,7 @@ void Entity::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
 
     painter->setPen(QPen(Qt::green, 2, Qt::DashLine));
     painter->drawPath(shape());
+
     Q_UNUSED(option);
     Q_UNUSED(widget);
     //Draw the shape

@@ -28,6 +28,11 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     this->addItem(character);
     this->character->setMainView(mainView);
 
+    Bat* bat = new Bat("Bat", 1);
+    bat->setPos(200, 200);
+    this->addItem(bat);
+    listNPC.append(bat);
+
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer(this);
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
@@ -54,6 +59,9 @@ void GameScene::loadMap(){
 
     this->backgroundWidth = numberTileWidth*tileWidth;
     this->backgroundHeight = numberTileHeight*tileHeight;
+
+    QPixmap mapPixmap(backgroundWidth, backgroundHeight);
+    QPainter painter(&mapPixmap);
 
     //First we get every tiles to add it into listPixmap
     QJsonArray tilesets = mapObject["tilesets"].toArray();
@@ -94,10 +102,12 @@ void GameScene::loadMap(){
                 for(int x = 0; x < width; x++){ //column
                     int tileID = data[width * y + x].toInt();
                     if(tileID != 0){
-                        QGraphicsPixmapItem* tile = new QGraphicsPixmapItem(listPixmap[tileID]);
+                        /*QGraphicsPixmapItem* tile = new QGraphicsPixmapItem(listPixmap[tileID]);
                         tile->setPos(x * 32, y * 32);
-                        tile->setOpacity(layer["opacity"].toDouble());
-                        this->addItem(tile);//draw the tile at the right position
+                        tile->setOpacity(layer["opacity"].toDouble());*/
+                        painter.setOpacity(layer["opacity"].toDouble());
+                        painter.drawPixmap(x * 32, y * 32, listPixmap[tileID]); //Draw the tile at the right position
+                        painter.setOpacity(1);
                     }
                 }
             }
@@ -133,6 +143,10 @@ void GameScene::loadMap(){
             }
         }
     }
+
+    painter.end();
+    QGraphicsPixmapItem* mapItem = new QGraphicsPixmapItem(mapPixmap);
+    this->addItem(mapItem); //Add the map
 
     file.close();
 }
@@ -183,6 +197,13 @@ void GameScene::keyReleaseEvent(QKeyEvent *event) {
 
 void GameScene::timerUpdate(){
 
+    moveNPC();
+    movePlayer();
+
+}
+
+//Move the player
+void GameScene::movePlayer(){
     qreal posX = character->pos().x();
     qreal posY = character->pos().y();
 
@@ -222,7 +243,34 @@ void GameScene::timerUpdate(){
     }
 
     mainView->centerOn(character);
+}
 
+//Move all entities
+void GameScene::moveNPC(){
+    //Get player position
+    qreal posCharacterX = character->pos().x();
+    qreal posCharacterY = character->pos().y();
+
+    //We move each entity in listNPC
+    for(Entity* entity : listNPC){
+        qreal posEntityX = entity->pos().x();
+        qreal posEntityY = entity->pos().y();;
+        qreal dx = posCharacterX - posEntityX;
+        qreal dy = posCharacterY - posEntityY;
+        qreal entitySpeed = entity->getSpeed();
+        if(dx < 0){
+            posEntityX -= entitySpeed;
+        } else if(dx > 0){
+            posEntityX += entitySpeed;
+        }
+        if(dy < 0){
+            posEntityY -= entitySpeed;
+        } else if(dy > 0){
+            posEntityY += entitySpeed;
+        }
+        entity->setPos(posEntityX, posEntityY);
+
+    }
 }
 
 qreal* GameScene::getDeltaPosition(){

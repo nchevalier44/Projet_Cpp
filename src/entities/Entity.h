@@ -69,14 +69,14 @@ protected:
 
 
     //Animation variables
-    QPixmap* spriteSheet;
+    QPixmap* spriteSheet = nullptr;
     QString currentSpriteSheetPath;
-    QTimer* timer;
-    int currentFrame;
-    int frameCount;
-    int frameWidth;
-    int frameHeight;
-    int animationSpeed;
+    QTimer* timer = nullptr;
+    int currentFrame = 0;
+    int frameCount = 0;
+    int frameWidth = 0;
+    int frameHeight = 0;
+    int animationSpeed = 100;
 };
 
 class Projectile : public QGraphicsObject{

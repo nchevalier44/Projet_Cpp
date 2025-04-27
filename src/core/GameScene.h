@@ -11,6 +11,7 @@
 #include <QGraphicsProxyWidget>
 #include "MainView.h"
 #include "../entities/player/Player.h"
+#include "../entities/NPC/Bat.h"
 
 
 class GameScene : public QGraphicsScene {
@@ -18,10 +19,9 @@ class GameScene : public QGraphicsScene {
 
 private:
 
-
-
     QTimer* timer = nullptr;
     Player* character = nullptr;
+    QList<Entity*> listNPC;
     MainView* mainView = nullptr;
     int backgroundWidth = 0;
     int backgroundHeight = 0;
@@ -35,15 +35,10 @@ protected:
 public :
 
     //Setters
-    void setCharacter(Player* new_character) { character = new_character; }
-    void setTimer(QTimer* new_timer) { timer = new_timer; }
-    void setActiveKeys(const QList<int>& keys) { activeKeys = keys; }
     void setView(MainView* view) { mainView = view; }
 
     //Getters
     Player* getCharacter() const { return character; }
-    QTimer* getTimer() const { return timer; }
-    QList<int> getActiveKeys() const { return activeKeys; }
 
     //Constructor and destructor
     GameScene(MainView* view, QObject* parent = nullptr);
@@ -52,6 +47,8 @@ public :
     //Functions
     void loadMap();
     qreal* getDeltaPosition();
+    void moveNPC();
+    void movePlayer();
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
