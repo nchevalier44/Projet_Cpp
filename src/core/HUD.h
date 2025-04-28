@@ -27,6 +27,7 @@ class SpellWidget : public QWidget {
     Q_OBJECT
 private :
     QVector<QLabel*> spell;
+    QVector<bool> selectedSpell;
     QLabel* missileCountLabel;
     int maxSpell;
     int maxMissile = 3;
@@ -34,10 +35,11 @@ private :
 
 public :
     SpellWidget(int maxSpell,QPointF windowSize, QWidget* parent = nullptr);
-    void setSpell(int spell);
     void setCurrentMissile(int newCurrentMissile){currentMissile = newCurrentMissile;};
     int getCurrentMissile() const { return currentMissile; }
     void shootedMissile();
+    void changeSelectedSpell(int spellIndex);
+    QVector<bool> getSelectedSpell() const { return selectedSpell; }
 };
 
 class HUD : public QWidget {

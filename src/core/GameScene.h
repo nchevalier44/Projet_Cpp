@@ -11,6 +11,7 @@
 #include <QGraphicsProxyWidget>
 #include "MainView.h"
 #include "../entities/player/Player.h"
+#include "../entities/NPC/Bat.h"
 
 
 class GameScene : public QGraphicsScene {

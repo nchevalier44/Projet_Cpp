@@ -17,7 +17,7 @@ HUD::HUD(int maxHP, QPointF windowSize, QWidget* parent): QWidget(parent) {
     hpWidget->move(windowSize.x() * 0.01, windowSize.y() * 0.01);
 
     //Spell Widget
-    spellWidget = new SpellWidget(3,windowSize, this);
+    spellWidget = new SpellWidget(1,windowSize, this);
     spellWidget->move(windowSize.x() - windowSize.x() * 0.2 - windowSize.x() * 0.02, windowSize.y() * 0.02);
 
     show();
@@ -77,15 +77,26 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_TransparentForMouseEvents);
 
+    selectedSpell.resize(maxSpell, false);
+
     QVBoxLayout* spellLayout = new QVBoxLayout(this);
     spellLayout->setAlignment(Qt::AlignRight | Qt::AlignTop);
 
     //set the size of the widget according to the size of the window
     this->setFixedSize(windowSize.x() * 0.2, windowSize.y() * 0.2 * maxSpell + 50);
-    for (int i = 0; i < 1; ++i) {
+    for (int i = 0; i < maxSpell; ++i) {
         // Créer une boîte pour chaque sort
         QLabel* spellLabel = new QLabel();
-        QPixmap spellPixmap = QPixmap(PATH_SPELL_BOX);
+        QPixmap spellPixmap;
+        if(i == 0){
+            selectedSpell[0] = true;
+            spellPixmap = QPixmap(PATH_SPELL_BOX_SELECTED);
+        }
+        else{
+            selectedSpell[i] = false;
+            spellPixmap = QPixmap(PATH_SPELL_BOX);
+        }
+
         spellLabel->setFixedSize(windowSize.x() * 0.1, windowSize.y() * 0.1);
         spellLabel->setPixmap(spellPixmap.scaled(spellLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
@@ -145,3 +156,27 @@ void SpellWidget::shootedMissile(){
         missileCountLabel->setText(QString::number(currentMissile));
     });
 }
+
+void SpellWidget::changeSelectedSpell(int spellIndex){
+    QPixmap selectedSpellPixmap;
+
+    for(int i = 0 ; i < maxSpell ; i++){
+        if(i == spellIndex) {
+            if(selectedSpell[i]) {
+                return; // Already selected
+            }
+            else {
+                selectedSpellPixmap = QPixmap(PATH_SPELL_BOX_SELECTED);
+                spell[spellIndex]->setPixmap(selectedSpellPixmap.scaled(spell[i]->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                selectedSpell[i] = true;
+            }
+        }
+        else if(selectedSpell[i]) {
+            selectedSpellPixmap = QPixmap(PATH_SPELL_BOX);
+            selectedSpell[i] = false;
+            spell[i]->setPixmap(selectedSpellPixmap.scaled(spell[i]->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+        }
+    }
+}
+

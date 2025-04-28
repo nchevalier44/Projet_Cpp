@@ -159,6 +159,19 @@ void GameScene::keyPressEvent(QKeyEvent* event){
         return; //They key stay pressed so the walk animation can continue
     }
     activeKeys.append(event->key());
+
+    switch (event->key()){
+        case Qt::Key_A :
+            qDebug("Key A pressed");
+            hud->getSpellWidget()->changeSelectedSpell(0);
+            break;
+        case Qt::Key_W :
+            qDebug("Key W pressed");
+            hud->getSpellWidget()->changeSelectedSpell(1);
+            break;
+        default:
+            break;
+    }
 }
 
 
@@ -325,33 +338,48 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QPointF clickPos = event->scenePos();
     QPointF playerPos = character->pos();
 
-    if(event->button() == Qt::LeftButton){
 
-        if(character->canShoot(clickPos) && hud->getSpellWidget()->getCurrentMissile() != 0){
-            character->shootProjectile(clickPos, this);
-            this->hud->getSpellWidget()->shootedMissile();
-        }
-    }
-    if(event->button() == Qt::RightButton){
-        if(character->canShoot(clickPos)  && hud->getSpellWidget()->getCurrentMissile() > 2){
+    //Check if the player is on the missile spell
+    if(hud->getSpellWidget()->getSelectedSpell()[0]) {
+        if (event->button() == Qt::LeftButton) {
 
-            QPointF clickPosHigh = clickPos;
-            QPointF clickPosLow = clickPos;
-            switch(character->getCurrentDirection()) {
-                case Up: clickPosHigh.setX(clickPos.x() - 25); clickPosLow.setX(clickPos.x() + 25); break;
-                case Down: clickPosHigh.setX(clickPos.x() - 25); clickPosLow.setX(clickPos.x() + 25); break;
-                case Left: clickPosHigh.setY(clickPos.y() - 25); clickPosLow.setY(clickPos.y() + 25); break;
-                case Right: clickPosHigh.setY(clickPos.y() - 25); clickPosLow.setY(clickPos.y() + 25);break;
-                default: return;
+            if (character->canShoot(clickPos) && hud->getSpellWidget()->getCurrentMissile() != 0) {
+                character->shootProjectile(clickPos, this);
+                this->hud->getSpellWidget()->shootedMissile();
             }
-            character->shootProjectile(clickPos, this);
-            character->shootProjectile(clickPosHigh, this);
-            character->shootProjectile(clickPosLow, this);
-            this->hud->getSpellWidget()->shootedMissile();
-            this->hud->getSpellWidget()->shootedMissile();
-            this->hud->getSpellWidget()->shootedMissile();
+        }
+        if (event->button() == Qt::RightButton) {
+            if (character->canShoot(clickPos) && hud->getSpellWidget()->getCurrentMissile() > 2) {
+
+                QPointF clickPosHigh = clickPos;
+                QPointF clickPosLow = clickPos;
+                switch (character->getCurrentDirection()) {
+                    case Up:
+                        clickPosHigh.setX(clickPos.x() - 25);
+                        clickPosLow.setX(clickPos.x() + 25);
+                        break;
+                    case Down:
+                        clickPosHigh.setX(clickPos.x() - 25);
+                        clickPosLow.setX(clickPos.x() + 25);
+                        break;
+                    case Left:
+                        clickPosHigh.setY(clickPos.y() - 25);
+                        clickPosLow.setY(clickPos.y() + 25);
+                        break;
+                    case Right:
+                        clickPosHigh.setY(clickPos.y() - 25);
+                        clickPosLow.setY(clickPos.y() + 25);
+                        break;
+                    default:
+                        return;
+                }
+                character->shootProjectile(clickPos, this);
+                character->shootProjectile(clickPosHigh, this);
+                character->shootProjectile(clickPosLow, this);
+                this->hud->getSpellWidget()->shootedMissile();
+                this->hud->getSpellWidget()->shootedMissile();
+                this->hud->getSpellWidget()->shootedMissile();
+            }
         }
     }
-
 }
-
