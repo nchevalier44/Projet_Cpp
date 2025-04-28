@@ -4,7 +4,7 @@
 #include <QException>
 #include <QGraphicsSceneMouseEvent>
 #include "GameScene.h"
-#include "HUD.h"
+
 
 
 GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), mainView(view){
@@ -220,9 +220,7 @@ void GameScene::timerUpdate(){
     if(i != numberCollisions){
         character->setY(posY);
     }
-
     mainView->centerOn(character);
-
 }
 
 qreal* GameScene::getDeltaPosition(){
@@ -279,35 +277,32 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QPointF playerPos = character->pos();
 
     if(event->button() == Qt::LeftButton){
-        //The player can only shoot in a 90° angle in front of him
-        //We check if the player can shoot
 
-        QPointF playerDir;
-        switch(character->getCurrentDirection()) {
-            case Up: playerDir = QPointF(0, -1); break;
-            case Down: playerDir = QPointF(0, 1); break;
-            case Left: playerDir = QPointF(-1, 0); break;
-            case Right: playerDir = QPointF(1, 0); break;
-            default: return; // No direction, no shooting
-        }
-
-        QPointF dirClick = clickPos - playerPos;
-        qreal lenClick = std::hypot(dirClick.x(), dirClick.y());
-        if(lenClick == 0) return; // No click position
-        QPointF normClick = dirClick / lenClick;
-
-        qreal dot = normClick.x() * playerDir.x() + normClick.y() * playerDir.y();
-        qreal angleDeg = qRadiansToDegrees(qAcos(dot));
-
-
-        if(angleDeg <= 45.0) {
+        if(character->canShoot(clickPos) && hud->getSpellWidget()->getCurrentMissile() != 0){
             character->shootProjectile(clickPos, this);
-            //TODO : add a sound to indicate the player shoot
+            this->hud->getSpellWidget()->shootedMissile();
         }
-        else{
-            //TODO : add a sound to indicate the player can't shoot
-        }
-
     }
+    if(event->button() == Qt::RightButton){
+        if(character->canShoot(clickPos)  && hud->getSpellWidget()->getCurrentMissile() > 2){
+
+            QPointF clickPosHigh = clickPos;
+            QPointF clickPosLow = clickPos;
+            switch(character->getCurrentDirection()) {
+                case Up: clickPosHigh.setX(clickPos.x() - 25); clickPosLow.setX(clickPos.x() + 25); break;
+                case Down: clickPosHigh.setX(clickPos.x() - 25); clickPosLow.setX(clickPos.x() + 25); break;
+                case Left: clickPosHigh.setY(clickPos.y() - 25); clickPosLow.setY(clickPos.y() + 25); break;
+                case Right: clickPosHigh.setY(clickPos.y() - 25); clickPosLow.setY(clickPos.y() + 25);break;
+                default: return;
+            }
+            character->shootProjectile(clickPos, this);
+            character->shootProjectile(clickPosHigh, this);
+            character->shootProjectile(clickPosLow, this);
+            this->hud->getSpellWidget()->shootedMissile();
+            this->hud->getSpellWidget()->shootedMissile();
+            this->hud->getSpellWidget()->shootedMissile();
+        }
+    }
+
 }
 

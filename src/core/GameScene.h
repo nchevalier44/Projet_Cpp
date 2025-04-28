@@ -23,6 +23,8 @@ private:
     int backgroundWidth = 0;
     int backgroundHeight = 0;
     QList<int> activeKeys; // Set to keep track of active keys
+    HUD* hud = nullptr;
+
 
 protected:
     //Handle the mouvement and animation of the player
@@ -36,6 +38,8 @@ public :
     void setTimer(QTimer* new_timer) { timer = new_timer; }
     void setActiveKeys(const QList<int>& keys) { activeKeys = keys; }
     void setView(MainView* view) { mainView = view; }
+    virtual void setHp(int newHp){character->setHp(newHp); hud->getHPWidget()->setLife(character->getHp());}
+    void setHUD(HUD* newHud) { hud = newHud; }
 
     //Getters
     Player* getCharacter() const { return character; }

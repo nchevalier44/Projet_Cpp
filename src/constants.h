@@ -26,11 +26,11 @@
 #define DEFAULT_WINDOW_HEIGHT 720
 #define LIST_WINDOW_HEIGHT {1440, 1080, 720, 480}
 
-enum Direction {None, Up, Down, Left, Right};
+
 
 
 //PLayer animation and direction
-
+enum Direction {None, Up, Down, Left, Right};
 
 
 
@@ -41,5 +41,8 @@ enum Direction {None, Up, Down, Left, Right};
 #define PATH_PLAYER_PROJECTILE_GROW "../assets/images/characters/Missile_spellGrow.gif"
 #define PATH_PLAYER_PROJECTILE_FADE "../assets/images/characters/Missile_spellFade.gif"
 
+//HUD
 
+#define PATH_SPELL_BOX "../assets/images/characters/SpellBox.png"
+#define PATH_MISSILE_SPELL_ICONE "../assets/images/characters/MissileSpell_icone.png"
 #endif //PROJET_CPP_CONSTANTS_H

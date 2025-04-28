@@ -31,7 +31,6 @@ class Player : public Entity {
 private :
     MainView* mainView = nullptr;
 
-    HUD* hud = nullptr;
     bool isDead = false;
     QSoundEffect* movingSound = nullptr;
     Direction currentDirection = Down;
@@ -47,8 +46,7 @@ public :
 
     //Setters
     void setMainView(MainView* new_main_view) { mainView = new_main_view; }
-    virtual void setHp(int newHp){hp = newHp; hud->getHPWidget()->setLife(hp);}
-    void setHUD(HUD* newHud) { hud = newHud; }
+
     void setCurrentDirection(Direction newDirection) { currentDirection = newDirection; }
     //Override bounding rect to reduce hitbox
     QRectF boundingRect() const{
@@ -100,6 +98,7 @@ public :
     }
 
     //Attack
+    bool canShoot(QPointF clickPos);
     Projectile* shootProjectile(QPointF target, QGraphicsScene* scene);
 };
 

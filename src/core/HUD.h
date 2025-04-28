@@ -5,6 +5,10 @@
 #include <QLabel>
 #include <QMovie>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLayout>
+#include <QTimer>
+#include "../constants.h"
 
 
 class HPWidget : public QWidget {
@@ -14,19 +18,38 @@ private:
     int maxLife;
 
 public :
-    HPWidget(int maxLife, QWidget* parent = nullptr);
+    HPWidget(int maxLife, QPointF windowSize, QWidget* parent = nullptr);
     void setLife(int life);
 
+};
+
+class SpellWidget : public QWidget {
+    Q_OBJECT
+private :
+    QVector<QLabel*> spell;
+    QLabel* missileCountLabel;
+    int maxSpell;
+    int maxMissile = 3;
+    int currentMissile = maxMissile;
+
+public :
+    SpellWidget(int maxSpell,QPointF windowSize, QWidget* parent = nullptr);
+    void setSpell(int spell);
+    void setCurrentMissile(int newCurrentMissile){currentMissile = newCurrentMissile;};
+    int getCurrentMissile() const { return currentMissile; }
+    void shootedMissile();
 };
 
 class HUD : public QWidget {
     Q_OBJECT
 
 public :
-    HUD(int maxHP, QWidget* parent = nullptr);
+    HUD(int maxHP, QPointF windowSize, QWidget* parent = nullptr);
     HPWidget* getHPWidget() const { return hpWidget; };
+    SpellWidget* getSpellWidget() const { return spellWidget; };
 private:
     HPWidget* hpWidget;
+    SpellWidget* spellWidget;
 };
 
 #endif //PROJET_CPP_HUD_H

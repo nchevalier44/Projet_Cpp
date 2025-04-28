@@ -69,7 +69,42 @@ Projectile* Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
     projectile->setZValue(10);
     projectile->setScale(0.5);
     scene->addItem(projectile);
+
+
     return projectile;
+}
+
+bool Player::canShoot(QPointF clickPos){
+    //The player can only shoot in a 90° angle in front of him
+    //We check if the player can shoot
+    QPointF playerDir;
+    QPointF playerPos = this->pos();
+    switch(this->getCurrentDirection()) {
+        case Up: playerDir = QPointF(0, -1); break;
+        case Down: playerDir = QPointF(0, 1); break;
+        case Left: playerDir = QPointF(-1, 0); break;
+        case Right: playerDir = QPointF(1, 0); break;
+        default: return false; // No direction, no shooting
+    }
+
+    QPointF dirClick = clickPos - playerPos;
+    qreal lenClick = std::hypot(dirClick.x(), dirClick.y());
+    if(lenClick == 0) return false; // No click position
+    QPointF normClick = dirClick / lenClick;
+
+    qreal dot = normClick.x() * playerDir.x() + normClick.y() * playerDir.y();
+    qreal angleDeg = qRadiansToDegrees(qAcos(dot));
+
+
+    if(angleDeg <= 45.0) {
+
+        //TODO : add a sound to indicate the player shoot
+        return true;
+    }
+    else{
+        //TODO : add a sound to indicate the player can't shoot
+        return false;
+    }
 }
 
 
@@ -82,7 +117,6 @@ PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QStri
     QPointF centerOffset(frameWidth / 2, frameHeight / 2);
     this->setPos(pos - centerOffset);
     throwProjectile();
-    qDebug() << "Projectile created at position : " << pos;
 }
 
 void PlayerProjectile::throwProjectile() {
