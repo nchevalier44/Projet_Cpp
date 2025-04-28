@@ -17,8 +17,12 @@ class GameScene : public QGraphicsScene {
     Q_OBJECT
 
 private:
+
+
+
     QTimer* timer = nullptr;
     Player* character = nullptr;
+    QList<Entity*> listNPC;
     MainView* mainView = nullptr;
     int backgroundWidth = 0;
     int backgroundHeight = 0;
@@ -53,6 +57,8 @@ public :
     //Functions
     void loadMap();
     qreal* getDeltaPosition();
+    void moveNPC();
+    void movePlayer();
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

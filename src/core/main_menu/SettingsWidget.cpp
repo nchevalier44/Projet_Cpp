@@ -8,6 +8,7 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     this->settingsBackgroundPixmap = new QPixmap(PATH_MAIN_MENU_SETTINGS_BACKGROUND);
     this->ratioSettingsPixmap = float(this->settingsBackgroundPixmap->width()) / float(this->settingsBackgroundPixmap->height());
     this->setStyleSheet("background: transparent;");
+    this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
 
     //Font
     int fontId = QFontDatabase::addApplicationFont(PATH_JERSEY10_FONT);
