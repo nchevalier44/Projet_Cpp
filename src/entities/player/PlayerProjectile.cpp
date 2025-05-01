@@ -1,0 +1,65 @@
+#include "PlayerProjectile.h"
+#include "../../core/GameScene.h"
+
+PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, QGraphicsObject* parent)
+        : Projectile(damage, speed, distanceMax, spriteSheet, pos, direction, scene, parent) {
+    frameWidth = 32;
+    frameHeight = 21;
+    QPointF centerOffset(frameWidth / 2, frameHeight / 2);
+    this->setPos(pos - centerOffset);
+    throwProjectile();
+}
+
+void PlayerProjectile::throwProjectile() {
+    setStartAnimation(PATH_PLAYER_PROJECTILE_GROW, 6, 100);
+}
+
+void PlayerProjectile::setStartAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
+    if(movie){
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+    this->movie = new QMovie(this);
+    this->movie->setFileName(spriteSheet);
+    this->movie->start();
+
+    //Add a singleshot timer
+    QTimer::singleShot(frameCount*animationSpeed, this, &PlayerProjectile::startMove);
+
+}
+
+void PlayerProjectile::setMiddleAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
+    if(movie){
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+    this->movie = new QMovie(this);
+    this->movie->setFileName(spriteSheet);
+    this->movie->start();
+    //Add a singleshot timer
+}
+
+void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
+    if(movie){
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+    this->movie = new QMovie(this);
+    this->movie->setFileName(PATH_PLAYER_PROJECTILE_FADE);
+    this->movie->start();
+    //Add a singleshot timer
+    frameCount = 5;
+    animationSpeed = 100;
+    QTimer::singleShot(frameCount*animationSpeed, this, &PlayerProjectile::deleteProjectile);
+}
+
+void PlayerProjectile::startMove() {
+    setMiddleAnimation(PATH_PLAYER_PROJECTILE);
+    //Starting the moving
+
+    gameScene->addProjectile(this);
+
+}

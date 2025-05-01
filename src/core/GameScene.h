@@ -10,8 +10,8 @@
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
 #include "MainView.h"
-#include "../entities/player/Player.h"
 #include "../entities/NPC/Bat.h"
+#include "../entities/player/Player.h"
 
 class MainWindow;
 
@@ -24,6 +24,7 @@ private:
     QTimer* timer = nullptr;
     Player* character = nullptr;
     QList<Entity*> listNPC;
+    QList<Projectile*> listProjectiles;
     MainView* mainView = nullptr;
     int backgroundWidth = 0;
     int backgroundHeight = 0;
@@ -46,6 +47,8 @@ public :
     virtual void setHp(int newHp){character->setHp(newHp); hud->getHPWidget()->setLife(character->getHp());}
     void setHUD(HUD* newHud) { hud = newHud; }
 
+    void addProjectile(Projectile* projectile) { listProjectiles.append(projectile); }
+
     //Getters
     Player* getCharacter() const { return character; }
     QTimer* getTimer() const { return timer; }
@@ -61,6 +64,7 @@ public :
     void moveNPC();
     void movePlayer();
     void checkNPCAttackRange();
+    void moveProjectiles();
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

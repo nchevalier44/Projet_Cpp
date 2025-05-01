@@ -8,24 +8,7 @@
 #include "../Entity.h"
 #include "../../core/MainView.h"
 #include "../../core/HUD.h"
-
-
-class PlayerProjectile : public Projectile {
-public :
-    PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, QGraphicsObject* parent=nullptr);
-    ~PlayerProjectile() {}
-    void throwProjectile();
-
-
-    void setStartAnimation(QString spriteSheet, int frameCount=0, int animationSpeed=0) override;
-    void setMiddleAnimation(QString spriteSheet, int frameCount=0, int animationSpeed=0) override;
-    void setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) override;
-
-        public slots :
-    void startMove();
-
-};
-
+#include "PlayerProjectile.h"
 
 class Player : public Entity {
 private :
@@ -96,9 +79,11 @@ public :
         setAnimation(PATH_HP_DEAD, 8, 150);
     }
 
+    void moveEntity(qreal dx, qreal dy) override;
+
     //Attack
     bool canShoot(QPointF clickPos);
-    Projectile* shootProjectile(QPointF target, QGraphicsScene* scene);
+    Projectile* shootProjectile(QPointF target, GameScene* scene);
 };
 
 

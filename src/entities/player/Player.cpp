@@ -4,8 +4,7 @@
 #include <QPropertyAnimation>
 #include <QAbstractAnimation>
 #include <QThread>
-
-
+#include "../../core/GameScene.h"
 
 Player::Player(std::string name, int life, QGraphicsItem* parent) : Entity(name, life, parent) {
     this->maxHp = life;
@@ -46,7 +45,7 @@ void Player::takeDamage(int damage) {
     }
 }
 
-Projectile* Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
+Projectile* Player::shootProjectile(QPointF target, GameScene* scene) {
     //Ajust the position of the projectile
     QPointF posInit = this->pos();
     posInit.setX(posInit.x() + frameWidth/20);
@@ -62,7 +61,7 @@ Projectile* Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
         case Right : posInit.setX(posInit.x() + 15); break;
         default: break;
     }
-    PlayerProjectile* projectile = new PlayerProjectile(0,3, 200, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction);
+    PlayerProjectile* projectile = new PlayerProjectile(0,3, 200, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene);
 
     projectile->setZValue(10);
     projectile->setScale(0.5);
@@ -104,103 +103,38 @@ bool Player::canShoot(QPointF clickPos){
     }
 }
 
+void Player::moveEntity(qreal dx, qreal dy){
+    qreal posX = this->pos().x();
+    qreal posY = this->pos().y();
+    qDebug() << posX << " " << posY;
 
-///###################PROJECTILEPLAYER METHODS######################
+    //Now we move the player considering eventual collision
+    QList<QGraphicsItem*> collisions;
+    int numberCollisions;
+    int i;
 
-PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, QGraphicsObject* parent)
-    :Projectile(damage, speed, distanceMax, spriteSheet, pos, direction, parent) {
-    frameWidth = 32;
-    frameHeight = 21;
-    QPointF centerOffset(frameWidth / 2, frameHeight / 2);
-    this->setPos(pos - centerOffset);
-    throwProjectile();
-}
-
-void PlayerProjectile::throwProjectile() {
-    setStartAnimation(PATH_PLAYER_PROJECTILE_GROW, 6, 100);
-}
-
-void PlayerProjectile::setStartAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
-    if(movie){
-        movie->stop();
-        delete movie;
-        movie = nullptr;
+    //Check if there is horizontal collision with an object
+    this->setX(posX + dx);
+    collisions = this->collidingItems();
+    numberCollisions = collisions.count();
+    i = 0;
+    while(i < numberCollisions && collisions[i]->data(0) != "collision"){
+        i++;
     }
-    this->movie = new QMovie(this);
-    this->movie->setFileName(spriteSheet);
-    this->movie->start();
-
-    //Add a singleshot timer
-    QTimer::singleShot(frameCount*animationSpeed, this, &PlayerProjectile::startMove);
-
-}
-
-void PlayerProjectile::setMiddleAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
-    if(movie){
-        movie->stop();
-        delete movie;
-        movie = nullptr;
-    }
-    this->movie = new QMovie(this);
-    this->movie->setFileName(spriteSheet);
-    this->movie->start();
-    //Add a singleshot timer
-}
-
-void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
-    if(movie){
-        movie->stop();
-        delete movie;
-        movie = nullptr;
-    }
-    this->movie = new QMovie(this);
-    this->movie->setFileName(PATH_PLAYER_PROJECTILE_FADE);
-    this->movie->start();
-    //Add a singleshot timer
-    frameCount = 5;
-    animationSpeed = 100;
-    QTimer::singleShot(frameCount*animationSpeed, this, &PlayerProjectile::deleteProjectile);
-}
-
-void PlayerProjectile::startMove() {
-    setMiddleAnimation(PATH_PLAYER_PROJECTILE);
-    //Starting the moving
-
-    connect(this->timer, &QTimer::timeout, this, &Projectile::move);
-    this->timer->start(30);
-
-}
-
-QRectF Projectile::boundingRect() const {
-    return QRectF(0, 0, 40, 40);
-}
-
-QPainterPath Projectile::shape() const {
-    QPainterPath path;
-    // Hitbox circulaire plus petite que l'image
-    path.addEllipse(boundingRect().center(), 8, 8);  // rayon 8px
-    return path;
-}
-
-void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
-    // Affichage de l'image actuelle de l'animation
-    if (movie && !movie->currentPixmap().isNull()) {
-        painter->save();
-        painter->translate(boundingRect().center());
-        painter->rotate(rotationAngle);
-        painter->translate(-boundingRect().center());
-        painter->drawPixmap(0, 10, frameWidth, frameHeight, movie->currentPixmap());
-        painter->restore();
+    if(i != numberCollisions){
+        this->setX(posX);
     }
 
-    /*
-    // Debug : dessiner boundingRect (en rouge)
-    painter->setPen(QPen(Qt::red, 1, Qt::DashLine));
-    painter->drawRect(boundingRect());
-
-    // Debug : dessiner shape (en bleu)
-    painter->setPen(QPen(Qt::blue, 1));
-    painter->drawPath(shape());
-     */
-
+    //Check if there is vertical collision with an object
+    this->setY(posY + dy);
+    collisions = this->collidingItems();
+    numberCollisions = collisions.count();
+    i = 0;
+    while(i < numberCollisions && collisions[i]->data(0) != "collision"){
+        i++;
+    }
+    if(i != numberCollisions){
+        this->setY(posY);
+    }
+    mainView->centerOn(this);
 }
