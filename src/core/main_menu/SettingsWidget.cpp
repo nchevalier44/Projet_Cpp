@@ -1,5 +1,6 @@
 #include "SettingsWidget.h"
 #include "../MainWindow.h"
+#include "../FontManager.h"
 
 //Constructor
 SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidget(parent) {
@@ -11,11 +12,8 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
 
     //Font
-    int fontId = QFontDatabase::addApplicationFont(PATH_JERSEY10_FONT);
-    QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    QFont textFont(fontFamily, 23);
-    QFont titleFont(fontFamily, 40);
-
+    QFont textFont(FontManager::fontFamily, 23);
+    QFont titleFont(FontManager::fontFamily, 40);
 
     
     //Title
@@ -46,8 +44,6 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     volumeMusicLayout->addWidget(volumeMusicLabel);
     volumeMusicLayout->addWidget(volumeMusicSlider);
     volumeMusicLayout->addWidget(volumeMusicValueLabel);
-    volumeMusicWidget->setLayout(volumeMusicLayout);
-
 
 
     
@@ -72,8 +68,7 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     volumeSFXLayout->addWidget(volumeSFXLabel);
     volumeSFXLayout->addWidget(volumeSFXSlider);
     volumeSFXLayout->addWidget(volumeSFXValueLabel);
-    volumeSFXWidget->setLayout(volumeSFXLayout);
-    
+
     //Actions of the sliders
     connect(volumeMusicSlider, &VolumeSlider::valueChanged, this, [=](int value){
         volumeMusicValueLabel->setText(QString::number(value) + " %");
@@ -111,7 +106,6 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     windowSizeLayout->setAlignment(Qt::AlignCenter);
     windowSizeLayout->addWidget(windowSizeLabel);
     windowSizeLayout->addWidget(windowSizeComboBox);
-    windowSizeWidget->setLayout(windowSizeLayout);
 
     //Apply change of window size combobox
     connect(windowSizeComboBox, &QComboBox::currentTextChanged, this, [=](const QString &text){
@@ -150,7 +144,6 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     containerLayout->addWidget(volumeSFXWidget);
     containerLayout->addWidget(windowSizeWidget);
     containerLayout->addLayout(closeButtonLayout);
-    this->setLayout(containerLayout);
 
 
 
@@ -177,12 +170,6 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
 SettingsWidget::~SettingsWidget() {
     delete settingsBackgroundPixmap;
     settingsBackgroundPixmap = nullptr;
-    delete volumeMusicSlider;
-    volumeMusicSlider = nullptr;
-    delete volumeSFXSlider;
-    volumeSFXSlider = nullptr;
-    delete windowSizeComboBox;
-    windowSizeComboBox = nullptr;
 }
 
 //Redefinition of the paintEvent function to draw the background with the right ratio

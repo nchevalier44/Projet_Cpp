@@ -1,4 +1,6 @@
 #include "WindowSizeComboBox.h"
+#include "../MainWindow.h"
+#include "../FontManager.h"
 
 
 //=====================================================
@@ -49,9 +51,7 @@ void WindowSizeComboBox::paintEvent(QPaintEvent* event) {
     painter.setPen(Qt::white);
 
     //Font
-    int fontId = QFontDatabase::addApplicationFont(PATH_JERSEY10_FONT);
-    QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    painter.setFont(QFont(fontFamily, 0.4*height()));
+    painter.setFont(QFont(FontManager::fontFamily, 0.4*height()));
 
     //The text is put at 10% of the width as far as 77% (to put it at the right position)
     painter.drawText(rect().adjusted(width() * 0.1, 0, -width() * 0.23, 0), Qt::AlignCenter, text);
@@ -82,12 +82,7 @@ ComboBoxItemDelegate::ComboBoxItemDelegate(WindowSizeComboBox* parent) : QStyled
 }
 
 //Destructor
-ComboBoxItemDelegate::~ComboBoxItemDelegate(){
-    delete backgroundPixmap;
-    backgroundPixmap = nullptr;
-    delete parent;
-    parent = nullptr;
-}
+ComboBoxItemDelegate::~ComboBoxItemDelegate(){}
 
 //Redefinition of the sizeHint function to resize the item with the right ratio (resizeEvent doesn't exist in QStyledItemDelegate)
 QSize ComboBoxItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const {
@@ -127,9 +122,7 @@ void ComboBoxItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
     painter->setPen(Qt::white);
 
     //Font
-    int fontId = QFontDatabase::addApplicationFont(PATH_JERSEY10_FONT);
-    QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    painter->setFont(QFont(fontFamily, 0.4*rect.height()));
+    painter->setFont(QFont(FontManager::fontFamily, 0.4*rect.height()));
 
     //The text is put at 10% of the width as far as 77% (to put it at the right position)
     painter->drawText(rect.adjusted(rect.width() * 0.1, 0, -rect.width() * 0.23, 0), Qt::AlignCenter, text);

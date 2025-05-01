@@ -1,4 +1,5 @@
 #include "MainView.h"
+#include "FontManager.h"
 #include <QTimer>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
@@ -42,10 +43,8 @@ void MainView::displayDeathScreen() {
     //Height : contentContainer is 50% of the window : 19% spacing, 20% title, 7% buttons
 
     //Add font Jersey10 (pixel art)
-    int fontId = QFontDatabase::addApplicationFont("../assets/fonts/Jersey10-Regular.ttf");
-    QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    QFont buttonFont(fontFamily);
-    QFont titleFont(fontFamily);
+    QFont buttonFont(FontManager::fontFamily);
+    QFont titleFont(FontManager::fontFamily);
     buttonFont.setPixelSize(this->window()->height()*0.07); //setPixelSize set the pixel number of the height of a line (letter + margins)
     titleFont.setPixelSize(this->window()->height()*0.2);
 
@@ -60,16 +59,18 @@ void MainView::displayDeathScreen() {
     blackBackground->setGeometry(deathScreen->rect());
     blackBackground->show();
 
+    QWidget* contentContainer = new QWidget(deathScreen);
+
     //Creation of title and buttons
-    QLabel* title = new QLabel("Game over !");
+    QLabel* title = new QLabel("Game over !", contentContainer);
     title->setStyleSheet("color: white;");
     title->setAlignment(Qt::AlignCenter);
     title->setFont(titleFont);
     title->adjustSize();
-    QPushButton* buttonRestart = new QPushButton("Restart the game");
+    QPushButton* buttonRestart = new QPushButton("Restart the game", contentContainer);
     buttonRestart->setFont(buttonFont);
     QObject::connect(buttonRestart, &QPushButton::clicked, this, &MainView::startGameRequested);
-    QPushButton* buttonBackToMenu = new QPushButton("Back to the menu");
+    QPushButton* buttonBackToMenu = new QPushButton("Back to the menu", contentContainer);
     buttonBackToMenu->setFont(buttonFont);
     QObject::connect(buttonBackToMenu, &QPushButton::clicked, this, &MainView::goToStartMenuRequested);
 
@@ -79,14 +80,12 @@ void MainView::displayDeathScreen() {
     buttonsLayout->addWidget(buttonBackToMenu);
 
     //Creation container layout
-    QVBoxLayout* containerLayout = new QVBoxLayout();
+    QVBoxLayout* containerLayout = new QVBoxLayout(contentContainer);
     containerLayout->setSpacing(this->window()->height()*0.19);
     containerLayout->addWidget(title, Qt::AlignHCenter);
     containerLayout->addLayout(buttonsLayout, Qt::AlignCenter);
 
     //Creation container widget
-    QWidget* contentContainer = new QWidget(deathScreen);
-    contentContainer->setLayout(containerLayout);
     contentContainer->show();
     contentContainer->adjustSize();
     contentContainer->move((deathScreen->width() - contentContainer->width()) / 2,
@@ -96,7 +95,7 @@ void MainView::displayDeathScreen() {
     //Fade of black background
     QGraphicsOpacityEffect* fadeBackgroundEffect = new QGraphicsOpacityEffect(blackBackground);
     blackBackground->setGraphicsEffect(fadeBackgroundEffect);
-    QPropertyAnimation *animationBackground = new QPropertyAnimation(fadeBackgroundEffect, "opacity");
+    QPropertyAnimation* animationBackground = new QPropertyAnimation(fadeBackgroundEffect, "opacity", blackBackground);
     animationBackground->setDuration(500);
     animationBackground->setStartValue(0);
     animationBackground->setEndValue(0.6);
@@ -105,7 +104,7 @@ void MainView::displayDeathScreen() {
     //Fade of other content
     QGraphicsOpacityEffect* fadeContentEffect = new QGraphicsOpacityEffect(contentContainer);
     contentContainer->setGraphicsEffect(fadeContentEffect);
-    QPropertyAnimation *animationContent = new QPropertyAnimation(fadeContentEffect, "opacity");
+    QPropertyAnimation* animationContent = new QPropertyAnimation(fadeContentEffect, "opacity", contentContainer);
     animationContent->setDuration(500);
     animationContent->setStartValue(0);
     animationContent->setEndValue(1);

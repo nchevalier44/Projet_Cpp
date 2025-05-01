@@ -1,17 +1,21 @@
 #include "Entity.h"
 #include <iostream>
 #include <QThread>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
+#include <QWidget>
+#include <QGraphicsScene>
 //////////PROJECTILE MEHTODS//////////
 
-Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction)
-    : speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0){
+Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, QGraphicsObject* parent=nullptr)
+    : speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
     this->setPos(pos);
     this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
     this->dx = std::cos(rotationAngle * M_PI / 180);
     this->dy = std::sin(rotationAngle * M_PI / 180);
-    this->movie = new QMovie(path);
-    this->timer = new QTimer();
-    qDebug() << "Angle :" << rotationAngle;
+    this->movie = new QMovie(this);
+    movie->setFileName(path);
+    this->timer = new QTimer(this);
 }
 
 
@@ -49,7 +53,33 @@ void Projectile::deleteProjectile() {
 
 
 ///////////////ENTITY METHODS///////////////
-Entity::Entity(std::string name, int hp) : hp(hp), name(name) {
+Entity::Entity(std::string name, int hp, QGraphicsItem* parent) : hp(hp), name(name), QGraphicsObject(parent) {
+}
+
+Entity::~Entity() {
+    if (spriteSheet) {
+        delete spriteSheet;
+        spriteSheet = nullptr;
+    }
+}
+
+QPointF Entity::getCenterPosition() const {
+    QPointF centerOffset(sceneBoundingRect().width() / 2, sceneBoundingRect().height() / 2);
+    return this->pos() + centerOffset;
+}
+
+void Entity::setCenterPosition(QPointF newPos) {
+    setPos(newPos - boundingRect().center());
+}
+
+void Entity::horizontalFlip(){
+    //We flip the pixmap to change the direction of the animation
+    QPixmap* currentPixmap = this->getSpriteSheet();
+    QPixmap* flippedPixmap = new QPixmap(currentPixmap->transformed(QTransform().scale(-1, 1)));
+    this->setSpriteSheet(flippedPixmap);
+
+    //We delete the old pixmap in order to avoid creating many pixmap we don't use
+    if(currentPixmap != nullptr) delete currentPixmap;
 }
 
 
@@ -82,7 +112,7 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
     this->frameWidth = this->spriteSheet->width() / frameCount;
     this->frameHeight = this->spriteSheet->height();
     this->animationSpeed = newAnimationSpeed;
-    this->timer = new QTimer();
+    this->timer = new QTimer(this);
 
     connect(this->timer, &QTimer::timeout, this, &Entity::updateAnimation);
     this->timer->start(animationSpeed);
@@ -113,6 +143,23 @@ void Entity::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
     Q_UNUSED(option);
     Q_UNUSED(widget);
     //Draw the shape
+}
+
+void Entity::attackEntity(Entity* entity) {
+    attacking = true;
+    this->attackAnimation();
+    entity->takeDamage(this->getDamage());
+
+}
+
+void Entity::takeDamage(int damage) {
+    qDebug() << "Take damage1";
+    if(hp - damage <= 0) {
+        hp = 0;
+        deathAnimation();
+    } else {
+        this->hp -= damage;
+    }
 }
 
 

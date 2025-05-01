@@ -1,13 +1,12 @@
 #include "StartMenuScene.h"
 #include "../MainWindow.h"
+#include "../FontManager.h"
 
 StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraphicsScene(parent) {
 
     //Add font
-    int fontId = QFontDatabase::addApplicationFont(PATH_JERSEY10_FONT);
-    QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-    QFont buttonFont(fontFamily, 40);
-    QFont titleFont(fontFamily, 65);
+    QFont buttonFont(FontManager::fontFamily, 40);
+    QFont titleFont(FontManager::fontFamily, 65);
 
     //Add background music
     audioPlayer = new QMediaPlayer(this);
@@ -28,9 +27,9 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     //Create buttons container and buttons
     buttonsContainer = new QWidget();
     buttonsContainer->setAttribute(Qt::WA_OpaquePaintEvent); //get background of the widget transparent
-    MainMenuButton* startButton = new MainMenuButton("Start");
-    MainMenuButton* settingsButton = new MainMenuButton("Options");
-    MainMenuButton* exitButton = new MainMenuButton("Exit");
+    MainMenuButton* startButton = new MainMenuButton("Start", buttonsContainer);
+    MainMenuButton* settingsButton = new MainMenuButton("Options", buttonsContainer);
+    MainMenuButton* exitButton = new MainMenuButton("Exit", buttonsContainer);
 
     //Create buttons layout
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsContainer);
@@ -38,7 +37,6 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     buttonsLayout->addWidget(startButton);
     buttonsLayout->addWidget(settingsButton);
     buttonsLayout->addWidget(exitButton);
-    buttonsContainer->setLayout(buttonsLayout);
 
     //Set buttons font
     startButton->setFont(buttonFont);
@@ -46,7 +44,7 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     exitButton->setFont(buttonFont);
 
     //Add sound to buttons
-    sound = new QSoundEffect();
+    sound = new QSoundEffect(buttonsContainer);
     sound->setSource(QUrl::fromLocalFile(PATH_MAIN_MENU_BUTTON_SOUND));
     sound->setVolume(20);
     mainWindow->getAudioManager()->addSFXObject(sound, sound->volume());
@@ -85,7 +83,7 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     proxyButtonsContainer->setPos(posXButtons, posYButtons);
 
     //Create title label
-    QLabel* titleLabel = new QLabel("Title of the game");
+    titleLabel = new QLabel("Title of the game");
     titleLabel->setFont(titleFont);
     titleLabel->setStyleSheet("color: white;");
     titleLabel->setAttribute(Qt::WA_OpaquePaintEvent);
@@ -102,16 +100,12 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
 StartMenuScene::~StartMenuScene() {
     delete background;
     background = nullptr;
-    delete buttonsContainer;
-    buttonsContainer = nullptr;
-    delete settingsWidget;
-    settingsWidget = nullptr;
-    delete sound;
-    sound = nullptr;
-    delete audioPlayer;
-    audioPlayer = nullptr;
     delete settingsProxyWidget;
     settingsProxyWidget = nullptr;
+    delete buttonsContainer;
+    buttonsContainer = nullptr;
+    delete titleLabel;
+    titleLabel = nullptr;
 }
 
 

@@ -2,6 +2,7 @@
 #include "MainView.h"
 #include "HUD.h"
 
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     audioManager = new AudioManager();
@@ -20,8 +21,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 }
 
-MainWindow::~MainWindow(){
 
+MainWindow::~MainWindow(){
+    delete audioManager;
+    audioManager = nullptr;
 }
 
 void MainWindow::restartGame(){
@@ -42,7 +45,7 @@ void MainWindow::startGame(){
     startMenuScene->getAudioPlayer()->stop();
 
     //Set the scene to the game scene
-    gameScene = new GameScene(mainView);
+    gameScene = new GameScene(mainView, this);
     gameScene->setView(mainView);
     mainView->setScene(gameScene);
     mainView->setFitView(false);
@@ -54,6 +57,7 @@ void MainWindow::startGame(){
     hud->move(0, 0);
     hud->raise();
     gameScene->setHUD(hud);
+    gameScene->getCharacter()->setHUD(hud);
 }
 
 void MainWindow::resetGame(){

@@ -46,6 +46,7 @@ class StartMenuScene : public QGraphicsScene{
         QSoundEffect* sound = nullptr;
         SettingsWidget* settingsWidget = nullptr;
         QGraphicsProxyWidget* settingsProxyWidget = nullptr;
+        QLabel* titleLabel = nullptr;
 
     signals:
         void startGameRequested();

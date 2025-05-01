@@ -7,7 +7,8 @@ MainMenuButton::MainMenuButton(QString text, QWidget* parent): QPushButton(text,
 
     //Setup the background image and hover animation
     backgroundPixmap = new QPixmap(PATH_MAIN_MENU_BUTTON_BACKGROUND);
-    hoverMovie = new QMovie(PATH_MAIN_MENU_BUTTON_ANIMATION);
+    hoverMovie = new QMovie(this);
+    hoverMovie->setFileName(PATH_MAIN_MENU_BUTTON_ANIMATION);
 
     //We check each frame of the animation to see if it's the last one
     connect(hoverMovie, &QMovie::frameChanged, this, [this]() {
@@ -21,8 +22,6 @@ MainMenuButton::MainMenuButton(QString text, QWidget* parent): QPushButton(text,
 
 //Destructor
 MainMenuButton::~MainMenuButton() {
-    delete hoverMovie;
-    hoverMovie = nullptr;
     delete backgroundPixmap;
     backgroundPixmap = nullptr;
 }
