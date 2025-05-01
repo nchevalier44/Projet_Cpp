@@ -22,6 +22,11 @@
 //Font
 #define PATH_JERSEY10_FONT "../assets/fonts/Jersey10-Regular.ttf"
 
+//Bat
+#define PATH_BAT_ATTACK "../assets/images/bat/Bat-Attack1.png"
+#define PATH_BAT_MOVE "../assets/images/bat/Bat-IdleFly.png"
+#define PATH_BAT_DEATH "../assets/images/bat/Bat-Die.png"
+
 //Other
 #define DEFAULT_WINDOW_HEIGHT 720
 #define LIST_WINDOW_HEIGHT {1440, 1080, 720, 480}

@@ -14,22 +14,34 @@
 
 
 
-class Entity  : public QGraphicsObject{
+class Entity  : public QGraphicsObject {
     Q_OBJECT
 public:
     Entity(std::string name="Default Name", int hp=100);
 
     //Getters
     int getHp() const{ return hp; }
-    std::string getName() const { return name; }
     int getSpeed() const { return speed; }
     int getMaxHp() const { return maxHp; }
+    QPointF getCenterPosition() const;
+    Direction getCurrentDirection() const { return currentDirection; }
+    QPixmap* getSpriteSheet() { return spriteSheet; }
+    int getRangeAttack() const  { return rangeAttack; }
+    int getDamage() const { return damage; }
+    bool isAttacking() const { return attacking; }
+    bool isHorizontalFlipped() const { return horizontalFlipped; }
 
     //Setters
     virtual void setHp(int newHp) { hp = newHp; }
-    void setMaxHp(int newMaxHp) { maxHp = newMaxHp; }
-    void setName(std::string newName) { name = newName; }
     void setSpeed(int newSpeed) { speed = newSpeed; }
+    void setCurrentDirection(Direction newDirection) { currentDirection = newDirection; }
+    void setSpriteSheet(QPixmap* newPixmap) { spriteSheet = newPixmap; }
+    void setCenterPosition(QPointF newPos);
+    void setHorizontalFlip(bool flip) { horizontalFlipped = flip; }
+
+    //Attack Method
+    void attackEntity(Entity* entity);
+    virtual void takeDamage(int damage);
 
     //Other methods
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
@@ -38,6 +50,9 @@ public:
 
     //Animation method
     void stopAnimation();
+    virtual void deathAnimation() {};
+    virtual void attackAnimation() {};
+    void horizontalFlip();
 
     //Method to set the animation
     void setAnimation(QString spriteSheet, int frameCount, int animationSpeed);
@@ -45,14 +60,6 @@ public:
     //Method to call setAnimation with the right parameters
     //Will make the main code easier to read
 
-    virtual void frontIdleAnimation(){}
-    virtual void frontWalkAnimation(){}
-    virtual void leftIdleAnimation(){}
-    virtual void leftWalkAnimation(){}
-    virtual void rightIdleAnimation(){}
-    virtual void rightWalkAnimation(){}
-    virtual void backIdleAnimation(){}
-    virtual void backWalkAnimation(){}
     virtual void hpAnimation(){}
 
 
@@ -66,6 +73,11 @@ protected:
     int hp;
     std::string name;
     int speed=1;
+    Direction currentDirection = None;
+    int rangeAttack = 32;
+    int damage = 1;
+    bool attacking = false;
+    bool horizontalFlipped = false;
 
 
     //Animation variables

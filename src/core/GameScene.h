@@ -60,6 +60,7 @@ public :
     qreal* getDeltaPosition();
     void moveNPC();
     void movePlayer();
+    void checkNPCAttackRange();
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

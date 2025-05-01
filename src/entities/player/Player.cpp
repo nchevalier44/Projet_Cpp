@@ -19,32 +19,30 @@ Player::Player(std::string name, int life) : Entity(name, life) {
 
 void Player::takeDamage(int damage) {
     if(isDead) return;
+
+    //Create a red screen to indicate damage
+    QWidget* DamageScreen = new QWidget(Player::getMainView());
+    DamageScreen->setStyleSheet("background-color: red;");
+    DamageScreen->setGeometry(Player::getMainView()->rect());
+    DamageScreen->show();
+
+    //Fade of black background
+    QGraphicsOpacityEffect* fadeBackgroundEffect = new QGraphicsOpacityEffect(DamageScreen);
+    DamageScreen->setGraphicsEffect(fadeBackgroundEffect);
+    QPropertyAnimation *animationBackground = new QPropertyAnimation(fadeBackgroundEffect, "opacity");
+    animationBackground->setDuration(150);
+    animationBackground->setStartValue(0);
+    animationBackground->setEndValue(0.5);
+    animationBackground->start(QAbstractAnimation::DeleteWhenStopped);
+    QTimer::singleShot(150, [DamageScreen]() {
+        DamageScreen->deleteLater();
+    });
+
     setHp(hp - damage);
+
     if(hp <= 0){
         isDead = true;
         QTimer::singleShot(1000, mainView, &MainView::displayDeathScreen);
-    }
-
-    else{
-        //Create a red screen to indicate damage
-        QWidget* DamageScreen = new QWidget(Player::getMainView());
-        DamageScreen->setStyleSheet("background-color: red;");
-        DamageScreen->setGeometry(Player::getMainView()->rect());
-        DamageScreen->show();
-
-        //Fade of black background
-        QGraphicsOpacityEffect* fadeBackgroundEffect = new QGraphicsOpacityEffect(DamageScreen);
-        DamageScreen->setGraphicsEffect(fadeBackgroundEffect);
-        QPropertyAnimation *animationBackground = new QPropertyAnimation(fadeBackgroundEffect, "opacity");
-        animationBackground->setDuration(150);
-        animationBackground->setStartValue(0);
-        animationBackground->setEndValue(0.5);
-        animationBackground->start(QAbstractAnimation::DeleteWhenStopped);
-        QTimer::singleShot(150, [DamageScreen]() {
-            DamageScreen->deleteLater();
-
-        });
-
     }
 }
 
@@ -97,7 +95,6 @@ bool Player::canShoot(QPointF clickPos){
 
 
     if(angleDeg <= 45.0) {
-
         //TODO : add a sound to indicate the player shoot
         return true;
     }

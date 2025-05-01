@@ -24,6 +24,7 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     this->character->setPos(400, 200);
     this->character->setSpeed(4);
     this->character->setScale(0.1);
+    this->mainView->setFocus(); //Set the focus on the mainView so we can detect the key press
 
     this->addItem(character);
     this->character->setMainView(mainView);
@@ -212,7 +213,20 @@ void GameScene::timerUpdate(){
 
     moveNPC();
     movePlayer();
+    checkNPCAttackRange();
 
+}
+
+void GameScene::checkNPCAttackRange(){
+    qreal posX = character->getCenterPosition().x();
+    qreal posY = character->getCenterPosition().y();
+
+    for(Entity* entity : listNPC){
+        float distance = sqrt(pow(posX - entity->getCenterPosition().x(), 2) + pow(posY - entity->getCenterPosition().y(), 2));
+        if(distance <= entity->getRangeAttack() + 1 && !(entity->isAttacking())){
+            entity->attackEntity(character);
+        }
+    }
 }
 
 //Move the player
@@ -260,27 +274,41 @@ void GameScene::movePlayer(){
 //Move all entities
 void GameScene::moveNPC(){
     //Get player position
-    qreal posCharacterX = character->pos().x();
-    qreal posCharacterY = character->pos().y();
+    qreal posCharacterX = character->getCenterPosition().x();
+    qreal posCharacterY = character->getCenterPosition().y();
 
     //We move each entity in listNPC
     for(Entity* entity : listNPC){
-        qreal posEntityX = entity->pos().x();
-        qreal posEntityY = entity->pos().y();;
+        Direction direction = entity->getCurrentDirection();
+        qreal posEntityX = entity->getCenterPosition().x();
+        qreal posEntityY = entity->getCenterPosition().y();
         qreal dx = posCharacterX - posEntityX;
         qreal dy = posCharacterY - posEntityY;
         qreal entitySpeed = entity->getSpeed();
         if(dx < 0){
             posEntityX -= entitySpeed;
+            entity->setCurrentDirection(Left);
         } else if(dx > 0){
             posEntityX += entitySpeed;
+            entity->setCurrentDirection(Right);
         }
         if(dy < 0){
             posEntityY -= entitySpeed;
         } else if(dy > 0){
             posEntityY += entitySpeed;
         }
-        entity->setPos(posEntityX, posEntityY);
+
+        if(direction != entity->getCurrentDirection()){
+            entity->setHorizontalFlip(!entity->isHorizontalFlipped());
+            entity->horizontalFlip();
+            qDebug() << "Classic Flip";
+        }
+
+        float distance = sqrt(pow(posCharacterX - posEntityX, 2) + pow(posCharacterY - posEntityY, 2));
+        if(distance >= entity->getRangeAttack() && !(entity->isAttacking())){
+            entity->setCenterPosition(QPointF(posEntityX, posEntityY));
+        }
+
 
     }
 }

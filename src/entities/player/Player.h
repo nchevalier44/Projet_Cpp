@@ -33,7 +33,6 @@ private :
 
     bool isDead = false;
     QSoundEffect* movingSound = nullptr;
-    Direction currentDirection = Down;
 
 public :
 
@@ -42,12 +41,10 @@ public :
     //Getters
     MainView* getMainView() const { return mainView; }
     bool isPlayerDead() const { return isDead; }
-    Direction getCurrentDirection() const { return currentDirection; }
 
     //Setters
     void setMainView(MainView* new_main_view) { mainView = new_main_view; }
 
-    void setCurrentDirection(Direction newDirection) { currentDirection = newDirection; }
     //Override bounding rect to reduce hitbox
     QRectF boundingRect() const{
         return QRectF(0, 0, frameWidth, frameHeight);
@@ -58,7 +55,7 @@ public :
         return path;
     }
     //Take damage
-    void takeDamage(int damage);
+    void takeDamage(int damage) override;
     //Animation methods
 
     void frontIdleAnimation(){

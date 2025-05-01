@@ -1,6 +1,10 @@
 #include "Entity.h"
 #include <iostream>
 #include <QThread>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
+#include <QWidget>
+#include <QGraphicsScene>
 //////////PROJECTILE MEHTODS//////////
 
 Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction)
@@ -11,7 +15,6 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
     this->dy = std::sin(rotationAngle * M_PI / 180);
     this->movie = new QMovie(path);
     this->timer = new QTimer();
-
 }
 
 
@@ -50,6 +53,25 @@ void Projectile::deleteProjectile() {
 
 ///////////////ENTITY METHODS///////////////
 Entity::Entity(std::string name, int hp) : hp(hp), name(name) {
+}
+
+QPointF Entity::getCenterPosition() const {
+    QPointF centerOffset(sceneBoundingRect().width() / 2, sceneBoundingRect().height() / 2);
+    return this->pos() + centerOffset;
+}
+
+void Entity::setCenterPosition(QPointF newPos) {
+    setPos(newPos - boundingRect().center());
+}
+
+void Entity::horizontalFlip(){
+    //We flip the pixmap to change the direction of the animation
+    QPixmap* currentPixmap = this->getSpriteSheet();
+    QPixmap* flippedPixmap = new QPixmap(currentPixmap->transformed(QTransform().scale(-1, 1)));
+    this->setSpriteSheet(flippedPixmap);
+
+    //We delete the old pixmap in order to avoid creating many pixmap we don't use
+    if(currentPixmap != nullptr) delete currentPixmap;
 }
 
 
@@ -113,6 +135,23 @@ void Entity::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
     Q_UNUSED(option);
     Q_UNUSED(widget);
     //Draw the shape
+}
+
+void Entity::attackEntity(Entity* entity) {
+    attacking = true;
+    this->attackAnimation();
+    entity->takeDamage(this->getDamage());
+
+}
+
+void Entity::takeDamage(int damage) {
+    qDebug() << "Take damage1";
+    if(hp - damage <= 0) {
+        hp = 0;
+        deathAnimation();
+    } else {
+        this->hp -= damage;
+    }
 }
 
 
