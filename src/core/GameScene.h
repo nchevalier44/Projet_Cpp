@@ -71,6 +71,7 @@ public :
 
         public slots:
     void timerUpdate();
+        void removeProjectile(Projectile* projectile);
 
 };
 

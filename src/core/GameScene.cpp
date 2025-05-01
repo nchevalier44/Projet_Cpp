@@ -215,10 +215,10 @@ void GameScene::keyReleaseEvent(QKeyEvent *event) {
 
 
 void GameScene::timerUpdate(){
-    //moveNPC();
+    moveNPC();
     movePlayer();
-    //checkNPCAttackRange();
-    //moveProjectiles();
+    checkNPCAttackRange();
+    moveProjectiles();
 }
 
 void GameScene::moveProjectiles(){
@@ -226,6 +226,13 @@ void GameScene::moveProjectiles(){
         projectile->moveProjectile();
     }
 }
+
+void GameScene::removeProjectile(Projectile* projectile){
+    listProjectiles.removeAll(projectile);
+    delete projectile;
+    projectile = nullptr;
+}
+
 
 void GameScene::checkNPCAttackRange(){
     qreal posX = character->getCenterPosition().x();

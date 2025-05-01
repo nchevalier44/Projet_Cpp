@@ -19,5 +19,4 @@ public slots :
     void startMove() override;
 };
 
-
 #endif //PROJET_CPP_PLAYERPROJECTILE_H

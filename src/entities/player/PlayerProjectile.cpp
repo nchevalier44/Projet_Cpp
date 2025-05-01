@@ -53,7 +53,9 @@ void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
     //Add a singleshot timer
     frameCount = 5;
     animationSpeed = 100;
-    QTimer::singleShot(frameCount*animationSpeed, this, &PlayerProjectile::deleteProjectile);
+    QTimer::singleShot(frameCount*animationSpeed, gameScene, [this]{
+        gameScene->removeProjectile(this);
+    });
 }
 
 void PlayerProjectile::startMove() {
@@ -61,5 +63,4 @@ void PlayerProjectile::startMove() {
     //Starting the moving
 
     gameScene->addProjectile(this);
-
 }

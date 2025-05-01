@@ -11,52 +11,8 @@
 #include "../../core/MainView.h"
 #include "../../core/HUD.h"
 
-
-class PlayerSlash : public QGraphicsObject {
-    Q_OBJECT
-private :
-    int currentAttackIndex = 0;
-    QElapsedTimer combotimer;
-    const int comboMaxDelay = 1000;
-    QVector<QMovie*> attackAnimation;
-    qreal rotationAngle = 0;
-    QPointF attackPosition;
-    QGraphicsScene* scene = nullptr;
-    QPixmap currentPixmap;
-
-
-public :
-    PlayerSlash(QGraphicsScene* scene);
-    ~PlayerSlash() {delete attackAnimation[0]; delete attackAnimation[1]; delete attackAnimation[2];}
-
-    void playAttackAnimation(QPointF playerPos);
-    void slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection);
-
-    QRectF boundingRect() const override;
-    QPainterPath shape() const override;
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
-};
-
-
-
-class PlayerProjectile : public Projectile {
-    Q_OBJECT
-public :
-    PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, QGraphicsObject* parent=nullptr);
-    ~PlayerProjectile() {}
-    void throwProjectile();
-
-
-    void setStartAnimation(QString spriteSheet, int frameCount=0, int animationSpeed=0) override;
-    void setMiddleAnimation(QString spriteSheet, int frameCount=0, int animationSpeed=0) override;
-    void setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) override;
-
-        public slots :
-    void startMove();
-
-};
-
 #include "PlayerProjectile.h"
+#include "PlayerSlash.h"
 
 class Player : public Entity {
 private :
@@ -136,7 +92,6 @@ public :
 
     //Attack
     bool canShoot(QPointF clickPos);
-    //void shootProjectile(QPointF target, QGraphicsScene* scene);
     void slashAttack(QPointF target, QGraphicsScene* scene);
     Projectile* shootProjectile(QPointF target, GameScene* scene);
 };
