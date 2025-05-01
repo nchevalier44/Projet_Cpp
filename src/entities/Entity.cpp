@@ -11,7 +11,7 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
     this->dy = std::sin(rotationAngle * M_PI / 180);
     this->movie = new QMovie(path);
     this->timer = new QTimer();
-
+    qDebug() << "Angle :" << rotationAngle;
 }
 
 

@@ -24,14 +24,18 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     this->character->setPos(400, 200);
     this->character->setSpeed(4);
     this->character->setScale(0.1);
-
     this->addItem(character);
     this->character->setMainView(mainView);
 
+    //Load slash animation
+    PlayerSlash *slash = new PlayerSlash(this);
+    this->character->setPlayerSlash(slash);
+    /*
     Bat* bat = new Bat("Bat", 1);
     bat->setPos(200, 200);
     this->addItem(bat);
     listNPC.append(bat);
+     */
 
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer(this);
@@ -340,7 +344,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 
     //Check if the player is on the missile spell
-    if(hud->getSpellWidget()->getSelectedSpell()[0]) {
+    if (hud->getSpellWidget()->getSelectedSpell()[0]) {
         if (event->button() == Qt::LeftButton) {
 
             if (character->canShoot(clickPos) && hud->getSpellWidget()->getCurrentMissile() != 0) {
@@ -381,5 +385,13 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
                 this->hud->getSpellWidget()->shootedMissile();
             }
         }
+    }
+    else if (hud->getSpellWidget()->getSelectedSpell()[1]) {
+        if (event->button() == Qt::LeftButton) {
+            if (character->canShoot(clickPos)) {
+                character->slashAttack(clickPos, this);
+            }
+        }
+
     }
 }
