@@ -7,14 +7,15 @@
 #include <QGraphicsScene>
 //////////PROJECTILE MEHTODS//////////
 
-Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction)
-    : speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0){
+Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, QGraphicsObject* parent=nullptr)
+    : speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
     this->setPos(pos);
     this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
     this->dx = std::cos(rotationAngle * M_PI / 180);
     this->dy = std::sin(rotationAngle * M_PI / 180);
-    this->movie = new QMovie(path);
-    this->timer = new QTimer();
+    this->movie = new QMovie(this);
+    movie->setFileName(path);
+    this->timer = new QTimer(this);
 }
 
 
@@ -52,7 +53,14 @@ void Projectile::deleteProjectile() {
 
 
 ///////////////ENTITY METHODS///////////////
-Entity::Entity(std::string name, int hp) : hp(hp), name(name) {
+Entity::Entity(std::string name, int hp, QGraphicsItem* parent) : hp(hp), name(name), QGraphicsObject(parent) {
+}
+
+Entity::~Entity() {
+    if (spriteSheet) {
+        delete spriteSheet;
+        spriteSheet = nullptr;
+    }
 }
 
 QPointF Entity::getCenterPosition() const {
@@ -104,7 +112,7 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
     this->frameWidth = this->spriteSheet->width() / frameCount;
     this->frameHeight = this->spriteSheet->height();
     this->animationSpeed = newAnimationSpeed;
-    this->timer = new QTimer();
+    this->timer = new QTimer(this);
 
     connect(this->timer, &QTimer::timeout, this, &Entity::updateAnimation);
     this->timer->start(animationSpeed);

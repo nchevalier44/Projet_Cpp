@@ -27,6 +27,25 @@
 #define PATH_BAT_MOVE "../assets/images/bat/Bat-IdleFly.png"
 #define PATH_BAT_DEATH "../assets/images/bat/Bat-Die.png"
 
+
+#define PATH_MISSILE_SPELL_GROW_ANIMATION "../assets/images/characters/Missile_spellGrow.gif"
+
+//Character
+#define PATH_PLAYER_FOOTSTEP_SOUND "../assets/sounds_effects/footsteps.wav"
+
+#define PATH_PLAYER_FRONT_IDLE "../assets/images/characters/Front_idle.png"
+#define PATH_PLAYER_FRONT_WALK "../assets/images/characters/Front_walk.png"
+#define PATH_PLAYER_LEFT_IDLE "../assets/images/characters/Left_idle.png"
+#define PATH_PLAYER_LEFT_WALK "../assets/images/characters/Left_walk.png"
+#define PATH_PLAYER_RIGHT_IDLE "../assets/images/characters/Right_idle.png"
+#define PATH_PLAYER_RIGHT_WALK "../assets/images/characters/Right_walk.png"
+#define PATH_PLAYER_BACK_IDLE "../assets/images/characters/Back_idle.png"
+#define PATH_PLAYER_BACK_WALK "../assets/images/characters/Back_walk.png"
+
+//HUD
+#define PATH_HP_ANIMATION "../assets/images/characters/Fire_head.gif"
+#define PATH_HP_DEAD_ANIMATION "../assets/images/characters/Fireless_head.gif"
+#define PATH_HP_DEAD "../assets/images/characters/Fire_head.png"
 //Other
 #define DEFAULT_WINDOW_HEIGHT 720
 #define LIST_WINDOW_HEIGHT {1440, 1080, 720, 480}

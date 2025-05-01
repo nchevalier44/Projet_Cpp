@@ -4,6 +4,7 @@
 #include <QException>
 #include <QGraphicsSceneMouseEvent>
 #include "GameScene.h"
+#include "MainWindow.h"
 
 
 
@@ -24,6 +25,7 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     this->character->setPos(400, 200);
     this->character->setSpeed(4);
     this->character->setScale(0.1);
+    this->character->setFocus();
     this->mainView->setFocus(); //Set the focus on the mainView so we can detect the key press
 
     this->addItem(character);
@@ -103,9 +105,6 @@ void GameScene::loadMap(){
                 for(int x = 0; x < width; x++){ //column
                     int tileID = data[width * y + x].toInt();
                     if(tileID != 0){
-                        /*QGraphicsPixmapItem* tile = new QGraphicsPixmapItem(listPixmap[tileID]);
-                        tile->setPos(x * 32, y * 32);
-                        tile->setOpacity(layer["opacity"].toDouble());*/
                         painter.setOpacity(layer["opacity"].toDouble());
                         painter.drawPixmap(x * 32, y * 32, listPixmap[tileID]); //Draw the tile at the right position
                         painter.setOpacity(1);
@@ -127,14 +126,14 @@ void GameScene::loadMap(){
                 bool isEllipse = object.contains("ellipse") && object["ellipse"].toBool();
 
                 if (isEllipse) {
-                    QGraphicsEllipseItem* ellipse = new QGraphicsEllipseItem(x, y, width, height);
+                    QGraphicsEllipseItem* ellipse = new QGraphicsEllipseItem(x, y, width, height, mapItem);
                     ellipse->setBrush(Qt::red);
                     ellipse->setPen(Qt::NoPen);
                     ellipse->setData(0, "collision");
                     ellipse->setZValue(100);
                     this->addItem(ellipse);
                 } else {
-                    QGraphicsRectItem* rect = new QGraphicsRectItem(x, y, width, height);
+                    QGraphicsRectItem* rect = new QGraphicsRectItem(x, y, width, height, mapItem);
                     rect->setBrush(Qt::red);
                     rect->setPen(Qt::NoPen);
                     rect->setData(0, "collision");
@@ -146,7 +145,7 @@ void GameScene::loadMap(){
     }
 
     painter.end();
-    QGraphicsPixmapItem* mapItem = new QGraphicsPixmapItem(mapPixmap);
+    mapItem = new QGraphicsPixmapItem(mapPixmap);
     this->addItem(mapItem); //Add the map
 
     file.close();
@@ -210,7 +209,6 @@ void GameScene::keyReleaseEvent(QKeyEvent *event) {
 
 
 void GameScene::timerUpdate(){
-
     moveNPC();
     movePlayer();
     checkNPCAttackRange();
@@ -301,7 +299,6 @@ void GameScene::moveNPC(){
         if(direction != entity->getCurrentDirection()){
             entity->setHorizontalFlip(!entity->isHorizontalFlipped());
             entity->horizontalFlip();
-            qDebug() << "Classic Flip";
         }
 
         float distance = sqrt(pow(posCharacterX - posEntityX, 2) + pow(posCharacterY - posEntityY, 2));
@@ -356,7 +353,15 @@ qreal* GameScene::getDeltaPosition(){
 }
 
 GameScene::~GameScene(){
-
+    delete mapItem;
+    mapItem = nullptr;
+    delete character;
+    character = nullptr;
+    for(Entity* entity : listNPC){
+        delete entity;
+        entity = nullptr;
+    }
+    listNPC.clear();
 }
 
 
@@ -365,7 +370,6 @@ GameScene::~GameScene(){
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QPointF clickPos = event->scenePos();
     QPointF playerPos = character->pos();
-
 
     //Check if the player is on the missile spell
     if(hud->getSpellWidget()->getSelectedSpell()[0]) {

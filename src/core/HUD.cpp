@@ -1,7 +1,8 @@
 #include <QPropertyAnimation>
 #include <QFontDatabase>
 #include "HUD.h"
-
+#include "MainWindow.h"
+#include "FontManager.h"
 
 
 HUD::HUD(int maxHP, QPointF windowSize, QWidget* parent): QWidget(parent) {
@@ -37,8 +38,9 @@ HPWidget::HPWidget(int maxLife, QPointF windowSize, QWidget *parent) : QWidget(p
     this->setFixedSize(maxLife * (heartWidth + spacing), heartHeight);
     for(int i = 0 ; i < maxLife ; i++){
         if(i < maxLife){
-            QMovie* heart = new QMovie("../assets/images/characters/Fire_head.gif");
-            QLabel* label = new QLabel();
+            QMovie* heart = new QMovie(this);
+            heart->setFileName(PATH_HP_ANIMATION);
+            QLabel* label = new QLabel(this);
 
             label->setFixedSize(heartWidth, heartHeight);
             heart->setScaledSize(label->size());
@@ -54,8 +56,11 @@ HPWidget::HPWidget(int maxLife, QPointF windowSize, QWidget *parent) : QWidget(p
 }
 
 void HPWidget::setLife(int hp) {
-    QMovie* lifeMovie = new QMovie("../assets/images/characters/Fire_head.gif");
-    QMovie* emptyLifeMovie = new QMovie("../assets/images/characters/Fireless_head.gif");
+    QMovie* lifeMovie = new QMovie(this);
+    QMovie* emptyLifeMovie = new QMovie(this);
+    lifeMovie->setFileName(PATH_HP_ANIMATION);
+    emptyLifeMovie->setFileName(PATH_HP_DEAD_ANIMATION);
+
     for(int i = maxLife-1 ; i >= 0 ; i--){
         if(i < hp){
             life[i]->setMovie(lifeMovie);
@@ -86,7 +91,7 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
     this->setFixedSize(windowSize.x() * 0.2, windowSize.y() * 0.2 * maxSpell + 50);
     for (int i = 0; i < maxSpell; ++i) {
         // Créer une boîte pour chaque sort
-        QLabel* spellLabel = new QLabel();
+        QLabel* spellLabel = new QLabel(this);
         QPixmap spellPixmap;
         if(i == 0){
             selectedSpell[0] = true;
@@ -109,9 +114,7 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
 
         //Ajout du nombre de missile restant
         missileCountLabel = new QLabel(spellLabel);
-        int fontId = QFontDatabase::addApplicationFont(PATH_JERSEY10_FONT);
-        QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
-        QFont font(fontFamily);
+        QFont font(FontManager::fontFamily);
         font.setPointSize(24); // Taille de la police (ajuste selon ton besoin)
         missileCountLabel->setFont(font);
         missileCountLabel->setStyleSheet("color: white; font-size: 20px;");
@@ -141,7 +144,7 @@ void SpellWidget::shootedMissile(){
     cooldownOverlay->show();
     cooldownOverlay->raise();
 
-    QPropertyAnimation* animation = new QPropertyAnimation(cooldownOverlay, "geometry");
+    QPropertyAnimation* animation = new QPropertyAnimation(cooldownOverlay, "geometry", spellLabel);
     animation->setDuration(2000);
     animation->setStartValue(QRect(0, 0,spellLabelWidth, spellLabelHeight));
     animation->setEndValue(QRect(0, spellLabelHeight, spellLabelWidth, 0));

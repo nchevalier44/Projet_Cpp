@@ -17,7 +17,8 @@
 class Entity  : public QGraphicsObject {
     Q_OBJECT
 public:
-    Entity(std::string name="Default Name", int hp=100);
+    Entity(std::string name="Default Name", int hp=100, QGraphicsItem* parent=nullptr);
+    ~Entity();
 
     //Getters
     int getHp() const{ return hp; }
@@ -109,7 +110,7 @@ protected:
 
 
 public :
-    Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction);
+    Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, QGraphicsObject* parent);
     ~Projectile(){}
     void deleteProjectile();
     virtual QRectF boundingRect() const override;

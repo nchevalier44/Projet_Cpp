@@ -12,7 +12,7 @@
 
 class PlayerProjectile : public Projectile {
 public :
-    PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction);
+    PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, QGraphicsObject* parent=nullptr);
     ~PlayerProjectile() {}
     void throwProjectile();
 
@@ -30,13 +30,14 @@ public :
 class Player : public Entity {
 private :
     MainView* mainView = nullptr;
+    HUD* hud = nullptr;
 
     bool isDead = false;
     QSoundEffect* movingSound = nullptr;
 
 public :
 
-    Player(std::string name = "Player", int life = 100);
+    Player(std::string name = "Player", int life = 100, QGraphicsItem* parent=nullptr);
 
     //Getters
     MainView* getMainView() const { return mainView; }
@@ -44,6 +45,7 @@ public :
 
     //Setters
     void setMainView(MainView* new_main_view) { mainView = new_main_view; }
+    void setHUD(HUD* newHud) { hud = newHud;}
 
     //Override bounding rect to reduce hitbox
     QRectF boundingRect() const{
@@ -59,39 +61,39 @@ public :
     //Animation methods
 
     void frontIdleAnimation(){
-        setAnimation("../assets/images/characters/Front_idle.png", 8, 100);
+        setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
         if(movingSound->isPlaying()) movingSound->stop();
     }
     void frontWalkAnimation(){
-        setAnimation("../assets/images/characters/Front_walk.png", 6, 100);
+        setAnimation(PATH_PLAYER_FRONT_WALK, 6, 100);
         if(!movingSound->isPlaying()) movingSound->play();
     }
     void leftIdleAnimation(){
-        setAnimation("../assets/images/characters/Left_idle.png", 6, 100);
+        setAnimation(PATH_PLAYER_LEFT_IDLE, 6, 100);
         if(movingSound->isPlaying()) movingSound->stop();
     }
     void leftWalkAnimation(){
-        setAnimation("../assets/images/characters/Left_walk.png", 6, 100);
+        setAnimation(PATH_PLAYER_LEFT_WALK, 6, 100);
         if(!movingSound->isPlaying()) movingSound->play();
     }
     void rightIdleAnimation(){
-        setAnimation("../assets/images/characters/Right_idle.png", 6, 100);
+        setAnimation(PATH_PLAYER_RIGHT_IDLE, 6, 100);
         if(movingSound->isPlaying()) movingSound->stop();
     }
     void rightWalkAnimation(){
-        setAnimation("../assets/images/characters/Right_walk.png", 6, 100);
+        setAnimation(PATH_PLAYER_RIGHT_WALK, 6, 100);
         if(!movingSound->isPlaying()) movingSound->play();
     }
     void backIdleAnimation(){
-        setAnimation("../assets/images/characters/Back_idle.png", 8, 100);
+        setAnimation(PATH_PLAYER_BACK_IDLE, 8, 100);
         if(movingSound->isPlaying()) movingSound->stop();
     }
     void backWalkAnimation(){
-        setAnimation("../assets/images/characters/Back_walk.png", 8, 100);
+        setAnimation(PATH_PLAYER_BACK_WALK, 8, 100);
         if(!movingSound->isPlaying()) movingSound->play();
     }
     void hpAnimation(){
-        setAnimation("../assets/images/characters/Fire_head.png", 8, 150);
+        setAnimation(PATH_HP_DEAD, 8, 150);
     }
 
     //Attack

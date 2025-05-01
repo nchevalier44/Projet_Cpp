@@ -17,14 +17,11 @@ void Bat::deathAnimation() {
 
 void Bat::attackAnimation() {
     setAnimation(PATH_BAT_ATTACK, 8, 100);
-    if(this->isHorizontalFlipped()){
-        this->horizontalFlip();
-    }
+    if(this->isHorizontalFlipped()) this->horizontalFlip();
+
     QTimer::singleShot(8*100, this, [=]() {
         this->attacking = false;
         setAnimation(PATH_BAT_MOVE, 9, 90);
-        if(this->isHorizontalFlipped()){
-            this->horizontalFlip();
-        }
+        if(this->isHorizontalFlipped()) this->horizontalFlip();
     });
 }

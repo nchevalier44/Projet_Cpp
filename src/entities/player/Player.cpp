@@ -7,11 +7,11 @@
 
 
 
-Player::Player(std::string name, int life) : Entity(name, life) {
+Player::Player(std::string name, int life, QGraphicsItem* parent) : Entity(name, life, parent) {
     this->maxHp = life;
-    setAnimation("../assets/images/characters/Front_idle.png", 8, 100);
+    setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
     movingSound = new QSoundEffect(this);
-    movingSound->setSource(QUrl::fromLocalFile("../assets/sounds_effects/footsteps.wav"));
+    movingSound->setSource(QUrl::fromLocalFile(PATH_PLAYER_FOOTSTEP_SOUND));
     movingSound->setLoopCount(QSoundEffect::Infinite);
     movingSound->setVolume(30);
 }
@@ -21,15 +21,15 @@ void Player::takeDamage(int damage) {
     if(isDead) return;
 
     //Create a red screen to indicate damage
-    QWidget* DamageScreen = new QWidget(Player::getMainView());
+    QWidget* DamageScreen = new QWidget(mainView);
     DamageScreen->setStyleSheet("background-color: red;");
-    DamageScreen->setGeometry(Player::getMainView()->rect());
+    DamageScreen->setGeometry(mainView->rect());
     DamageScreen->show();
 
     //Fade of black background
     QGraphicsOpacityEffect* fadeBackgroundEffect = new QGraphicsOpacityEffect(DamageScreen);
     DamageScreen->setGraphicsEffect(fadeBackgroundEffect);
-    QPropertyAnimation *animationBackground = new QPropertyAnimation(fadeBackgroundEffect, "opacity");
+    QPropertyAnimation* animationBackground = new QPropertyAnimation(fadeBackgroundEffect, "opacity", DamageScreen);
     animationBackground->setDuration(150);
     animationBackground->setStartValue(0);
     animationBackground->setEndValue(0.5);
@@ -39,7 +39,7 @@ void Player::takeDamage(int damage) {
     });
 
     setHp(hp - damage);
-
+    if(hud != nullptr) hud->getHPWidget()->setLife(hp);
     if(hp <= 0){
         isDead = true;
         QTimer::singleShot(1000, mainView, &MainView::displayDeathScreen);
@@ -62,7 +62,7 @@ Projectile* Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
         case Right : posInit.setX(posInit.x() + 15); break;
         default: break;
     }
-    PlayerProjectile* projectile = new PlayerProjectile(0,3, 200, "../assets/images/characters/Missile_spellGrow.gif", posInit, direction);
+    PlayerProjectile* projectile = new PlayerProjectile(0,3, 200, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction);
 
     projectile->setZValue(10);
     projectile->setScale(0.5);
@@ -107,8 +107,8 @@ bool Player::canShoot(QPointF clickPos){
 
 ///###################PROJECTILEPLAYER METHODS######################
 
-PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction)
-    :Projectile(damage, speed, distanceMax, spriteSheet, pos, direction) {
+PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, QGraphicsObject* parent)
+    :Projectile(damage, speed, distanceMax, spriteSheet, pos, direction, parent) {
     frameWidth = 32;
     frameHeight = 21;
     QPointF centerOffset(frameWidth / 2, frameHeight / 2);
@@ -126,7 +126,8 @@ void PlayerProjectile::setStartAnimation(QString spriteSheet, int frameCount, in
         delete movie;
         movie = nullptr;
     }
-    this->movie = new QMovie(spriteSheet);
+    this->movie = new QMovie(this);
+    this->movie->setFileName(spriteSheet);
     this->movie->start();
 
     //Add a singleshot timer
@@ -140,7 +141,8 @@ void PlayerProjectile::setMiddleAnimation(QString spriteSheet, int frameCount, i
         delete movie;
         movie = nullptr;
     }
-    this->movie = new QMovie(spriteSheet);
+    this->movie = new QMovie(this);
+    this->movie->setFileName(spriteSheet);
     this->movie->start();
     //Add a singleshot timer
 }
@@ -151,7 +153,8 @@ void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
         delete movie;
         movie = nullptr;
     }
-    this->movie = new QMovie(PATH_PLAYER_PROJECTILE_FADE);
+    this->movie = new QMovie(this);
+    this->movie->setFileName(PATH_PLAYER_PROJECTILE_FADE);
     this->movie->start();
     //Add a singleshot timer
     frameCount = 5;

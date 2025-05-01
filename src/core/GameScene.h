@@ -13,14 +13,14 @@
 #include "../entities/player/Player.h"
 #include "../entities/NPC/Bat.h"
 
+class MainWindow;
 
 class GameScene : public QGraphicsScene {
     Q_OBJECT
 
 private:
 
-
-
+    QGraphicsPixmapItem* mapItem = nullptr;
     QTimer* timer = nullptr;
     Player* character = nullptr;
     QList<Entity*> listNPC;
