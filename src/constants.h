@@ -65,6 +65,11 @@ enum Direction {None, Up, Down, Left, Right};
 #define PATH_PLAYER_PROJECTILE_GROW "../assets/images/characters/Missile_spellGrow.gif"
 #define PATH_PLAYER_PROJECTILE_FADE "../assets/images/characters/Missile_spellFade.gif"
 
+//Slash attack
+#define PATH_PLAYER_SLASH1 "../assets/images/characters/Slash1.gif"
+#define PATH_PLAYER_SLASH2 "../assets/images/characters/Slash2.gif"
+#define PATH_PLAYER_SLASH3 "../assets/images/characters/Slash3.gif"
+
 //HUD
 
 #define PATH_SPELL_BOX "../assets/images/characters/SpellBox.png"
