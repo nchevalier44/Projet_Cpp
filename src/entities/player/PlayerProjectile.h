@@ -6,7 +6,7 @@
 
 class PlayerProjectile : public Projectile {
 public :
-    PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, QGraphicsObject* parent=nullptr);
+    PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent=nullptr);
     ~PlayerProjectile() {}
     void throwProjectile();
 
@@ -17,6 +17,9 @@ public :
 
 public slots :
     void startMove() override;
+
+private:
+    QTimer* timerEndMovie = nullptr;
 };
 
 #endif //PROJET_CPP_PLAYERPROJECTILE_H

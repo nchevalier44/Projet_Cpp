@@ -12,12 +12,12 @@
 #include <QDebug>
 #include <QMovie>
 
-
+class GameScene;
 
 class Entity  : public QGraphicsObject {
     Q_OBJECT
 public:
-    Entity(std::string name="Default Name", int hp=100, QGraphicsItem* parent=nullptr);
+    Entity(std::string name="Default Name", int hp=100, GameScene* scene=nullptr, QGraphicsItem* parent=nullptr);
     ~Entity();
 
     //Getters
@@ -82,7 +82,7 @@ protected:
     int damage = 1;
     bool attacking = false;
     bool horizontalFlipped = false;
-
+    GameScene* gameScene = nullptr;
 
     //Animation variables
     QPixmap* spriteSheet = nullptr;

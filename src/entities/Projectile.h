@@ -6,13 +6,14 @@
 #include <QMovie>
 #include <QGraphicsObject>
 #include <QTimer>
+#include "Entity.h"
 
 class GameScene;
 
 class Projectile : public QGraphicsObject{
 Q_OBJECT
 protected:
-    int damage = 0;
+    int damage = 1;
     int speed = 0;
     int distanceMax = 0;
     int distanceTravelled = 0;
@@ -24,10 +25,12 @@ protected:
     qreal erreur = 0.1;
     QMovie* movie = nullptr;
     GameScene* gameScene = nullptr;
+    bool isBeenDeleting = false;
+    Entity* proprietary = nullptr;
 
 
 public :
-    Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, QGraphicsObject* parent);
+    Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent);
     ~Projectile(){}
     virtual QRectF boundingRect() const override;
     virtual QPainterPath shape() const override;

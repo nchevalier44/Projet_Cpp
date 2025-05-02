@@ -5,8 +5,11 @@
 #include <QPropertyAnimation>
 #include <QWidget>
 #include <QGraphicsScene>
+#include <QTimer>
 
-Entity::Entity(std::string name, int hp, QGraphicsItem* parent) : hp(hp), name(name), QGraphicsObject(parent) {
+#include "../core/GameScene.h"
+
+Entity::Entity(std::string name, int hp, GameScene* scene, QGraphicsItem* parent) : hp(hp), name(name), gameScene(scene), QGraphicsObject(parent) {
 }
 
 Entity::~Entity() {
@@ -103,17 +106,18 @@ void Entity::attackEntity(Entity* entity) {
 
 }
 
-void Entity::takeDamage(int damage) {
-    qDebug() << "Take damage1";
-    if(hp - damage <= 0) {
+void Entity::takeDamage(int d) {
+    if(hp - d <= 0) {
         hp = 0;
         deathAnimation();
     } else {
-        this->hp -= damage;
+        hp -= d;
     }
 }
 
 void Entity::moveEntity(qreal posX, qreal posY){
+    if(hp == 0) return; //if dead -> don't move
+
     Direction direction = this->getCurrentDirection();
     qreal posEntityX = this->getCenterPosition().x();
     qreal posEntityY = this->getCenterPosition().y();

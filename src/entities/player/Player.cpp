@@ -6,7 +6,7 @@
 #include <QThread>
 #include "../../core/GameScene.h"
 
-Player::Player(std::string name, int life, QGraphicsItem* parent) : Entity(name, life, parent) {
+Player::Player(std::string name, int life, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scene, parent) {
     this->maxHp = life;
     setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
     movingSound = new QSoundEffect(this);
@@ -62,7 +62,7 @@ Projectile* Player::shootProjectile(QPointF target, GameScene* scene) {
         case Right : posInit.setX(posInit.x() + 15); break;
         default: break;
     }
-    PlayerProjectile* projectile = new PlayerProjectile(0,3, 200, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene);
+    PlayerProjectile* projectile = new PlayerProjectile(1,3, 200, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);
 
     projectile->setZValue(10);
     projectile->setScale(0.5);
@@ -110,7 +110,6 @@ void Player::slashAttack(QPointF target, QGraphicsScene* scene){
 void Player::moveEntity(qreal dx, qreal dy){
     qreal posX = this->pos().x();
     qreal posY = this->pos().y();
-    qDebug() << posX << " " << posY;
 
     //Now we move the player considering eventual collision
     QList<QGraphicsItem*> collisions;

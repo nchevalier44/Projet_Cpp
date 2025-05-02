@@ -26,6 +26,8 @@
 #define PATH_BAT_ATTACK "../assets/images/bat/Bat-Attack1.png"
 #define PATH_BAT_MOVE "../assets/images/bat/Bat-IdleFly.png"
 #define PATH_BAT_DEATH "../assets/images/bat/Bat-Die.png"
+#define NB_FRAME_BAT_MOVE 9
+#define ANIM_SPEED_BAT_MOVE 90
 
 
 #define PATH_MISSILE_SPELL_GROW_ANIMATION "../assets/images/characters/Missile_spellGrow.gif"

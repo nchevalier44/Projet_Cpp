@@ -48,6 +48,9 @@ public :
     void setHUD(HUD* newHud) { hud = newHud; }
 
     void addProjectile(Projectile* projectile) { listProjectiles.append(projectile); }
+    void addEntity(Entity* entity) { listNPC.append(entity); }
+    void removeProjectile(Projectile* projectile);
+    void removeEntity(Entity* entity);
 
     //Getters
     Player* getCharacter() const { return character; }
@@ -71,7 +74,6 @@ public :
 
         public slots:
     void timerUpdate();
-        void removeProjectile(Projectile* projectile);
 
 };
 

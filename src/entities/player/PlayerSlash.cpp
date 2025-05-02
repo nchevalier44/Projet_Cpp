@@ -37,7 +37,6 @@ PlayerSlash::PlayerSlash(GameScene* scene) : scene(scene) {
         });
     }
 
-
     this->setScale(0.1);
 
 }

@@ -39,8 +39,8 @@ void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 }
 
 
-Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, QGraphicsObject* parent=nullptr)
-        : gameScene(scene), speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
+Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary=nullptr, QGraphicsObject* parent=nullptr)
+        : proprietary(proprietary), gameScene(scene), speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
     this->setPos(pos);
     this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
     this->dx = std::cos(rotationAngle * M_PI / 180);
@@ -51,16 +51,41 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
 
 
 void Projectile::moveProjectile(){
+    if(isBeenDeleting) return;
+
     //Adding a small moving to the projectile
     this->setX(this->x() + dx*speed);
     this->setY(this->y() + dy*speed);
-    //QList<QGraphicsItem*> collisions = gameScene->collidingItems(this);
 
+    //Check for collisions
+    QList<QGraphicsItem*> collisions = gameScene->collidingItems(this);
+    int n = collisions.length();
+    int i = 0;
+    bool hasCollided = false;
+    while(!hasCollided && i < n){
+        //dynamic_cast<Entity*> return an Entity if it's an entity else nullptr
+        Entity* testEntity = dynamic_cast<Entity*>(collisions[i]);
+        if(testEntity){
+            if(proprietary){
+                if(testEntity != proprietary){
+                    testEntity->takeDamage(damage);
+                    hasCollided = true;
+                }
+            } else{
+                testEntity->takeDamage(damage);
+                hasCollided = true;
+            }
+        }
+        if(collisions[i]->data(0) == "collision"){
+            hasCollided = true;
+        }
+        i++;
+    }
+
+    //Check for max distance travelled
     distanceTravelled += speed;
-    if(distanceTravelled >= distanceMax){
+    if(distanceTravelled >= distanceMax || hasCollided){
         setEndAnimation("",0,0);
-        dx = 0;
-        dy = 0;
-        distanceTravelled = 0;
+        isBeenDeleting = true;
     }
 }

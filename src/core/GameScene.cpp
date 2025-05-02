@@ -33,14 +33,14 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     this->character->setMainView(mainView);
 
     //Load slash animation
-    PlayerSlash *slash = new PlayerSlash(this);
+    PlayerSlash* slash = new PlayerSlash(this);
     this->character->setPlayerSlash(slash);
-    /*
-    Bat* bat = new Bat("Bat", 1);
+
+    Bat* bat = new Bat("Bat", 1, this);
     bat->setPos(200, 200);
     this->addItem(bat);
     listNPC.append(bat);
-     */
+
 
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer(this);
@@ -223,7 +223,9 @@ void GameScene::timerUpdate(){
 
 void GameScene::moveProjectiles(){
     for(Projectile* projectile : listProjectiles){
-        projectile->moveProjectile();
+        if(projectile){
+            projectile->moveProjectile();
+        }
     }
 }
 
@@ -233,15 +235,24 @@ void GameScene::removeProjectile(Projectile* projectile){
     projectile = nullptr;
 }
 
+void GameScene::removeEntity(Entity* entity){
+    listNPC.removeAll(entity);
+    delete entity;
+    entity = nullptr;
+}
+
+
 
 void GameScene::checkNPCAttackRange(){
     qreal posX = character->getCenterPosition().x();
     qreal posY = character->getCenterPosition().y();
 
     for(Entity* entity : listNPC){
-        float distance = sqrt(pow(posX - entity->getCenterPosition().x(), 2) + pow(posY - entity->getCenterPosition().y(), 2));
-        if(distance <= entity->getRangeAttack() + 1 && !(entity->isAttacking())){
-            entity->attackEntity(character);
+        if(entity){
+            float distance = sqrt(pow(posX - entity->getCenterPosition().x(), 2) + pow(posY - entity->getCenterPosition().y(), 2));
+            if(distance <= entity->getRangeAttack() + 1 && !(entity->isAttacking())){
+                entity->attackEntity(character);
+            }
         }
     }
 }
@@ -261,7 +272,9 @@ void GameScene::moveNPC(){
 
     //We move each entity in listNPC
     for(Entity* entity : listNPC){
-        entity->moveEntity(posCharacterX, posCharacterY);
+        if(entity){
+            entity->moveEntity(posCharacterX, posCharacterY);
+        }
     }
 }
 

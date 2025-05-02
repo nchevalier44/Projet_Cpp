@@ -26,7 +26,7 @@ private :
 
 public :
 
-    Player(std::string name = "Player", int life = 100, QGraphicsItem* parent=nullptr);
+    Player(std::string name = "Player", int life = 100, GameScene* scene=nullptr, QGraphicsItem* parent=nullptr);
 
     //Getters
     MainView* getMainView() const { return mainView; }
