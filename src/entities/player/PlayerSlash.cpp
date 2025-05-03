@@ -9,9 +9,9 @@ PlayerSlash::PlayerSlash(GameScene *scene, Player* player) : scene(scene), playe
     QMovie *slash1 = new QMovie(PATH_PLAYER_SLASH1);
     QMovie *slash2 = new QMovie(PATH_PLAYER_SLASH2);
     QMovie *slash3 = new QMovie(PATH_PLAYER_SLASH3);
-    slash1->start();
-    slash2->start();
-    slash3->start();
+
+
+    animationTimer = new QTimer(this);
 
     attackAnimation.push_back(slash1);
     attackAnimation.push_back(slash2);
@@ -19,36 +19,67 @@ PlayerSlash::PlayerSlash(GameScene *scene, Player* player) : scene(scene), playe
 
     for (QMovie *movie : attackAnimation)
     {
-        connect(movie, &QMovie::frameChanged, this, [this, movie](int frameNumber)
-        {
-            if (attackAnimation[currentAttackIndex] == movie) {
-                currentPixmap = movie->currentPixmap();
-                update();
-                if (frameNumber == movie->frameCount() - 1) {
-                    this->setVisible(false);
-                    isSlashing = false;
+        movie->setSpeed(100);
+        connect(animationTimer, &QTimer::timeout, this, [this, movie](){
+            if(isSlashing){
+                if (attackAnimation[currentAttackIndex] == movie) {
+                    currentPixmap = movie->currentPixmap();
+                    if (movie->currentFrameNumber() == movie->frameCount() - 1) {
+                        this->setVisible(false);
+                        movie->jumpToFrame(0);
+                        isSlashing = false;
+                        currentAttackIndex = (currentAttackIndex + 1) % attackAnimation.size();
+                        combotimer.restart();
+                    } else{
+                        movie->jumpToNextFrame();
+                        this->scene->update(this->sceneBoundingRect());
+                        animationTimer->setInterval(movie->nextFrameDelay());
+                    }
                 }
-            } });
-    }
+            }
+        });
+        /*connect(movie, &QMovie::frameChanged, this, [this, movie](int frameNumber)
+        {
+            for(int i = 0; i<=currentAttackIndex; i++){
+                if (attackAnimation[i] == movie) {
+                    currentPixmap = movie->currentPixmap();
+                    if (frameNumber == movie->frameCount() - 1) {
+                        this->setVisible(false);
+                        isSlashing = false;
+                    } else{
+                        QTimer::singleShot(movie->nextFrameDelay(), movie, [this, movie](){
+                            movie->jumpToNextFrame();
+                            this->scene->update(this->sceneBoundingRect());
+                        });
+                    }
+                }
+            }
 
+        //});*/
+    }
+    animationTimer->start();
+    /*slash1->start();
+    slash2->start();
+    slash3->start();*/
     this->setScale(0.1);
 }
 
 void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection)
 {
+    if(isSlashing) return;
     isSlashing = true;
     // Calculate the angle to properly rotate the slash
     attackPosition = pos;
     QPointF direction = attackPosition - playerPos;
     this->rotationAngle = std::atan2(direction.y(), direction.x()) * 180 / M_PI;
 
-    // We check if the combo is stil valid
+    // We check if the combo is still valid
     if (combotimer.isValid() && combotimer.elapsed() > comboMaxDelay)
     {
         currentAttackIndex = 0;
     }
 
-    bool canPerformNextAttack = true;
+    /*bool canPerformNextAttack = true;
     if (combotimer.isValid())
     {
         int prevAttackIndex = currentAttackIndex;
@@ -65,7 +96,7 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     if (!canPerformNextAttack)
     {
         return; // Exit if we can't perform the next attack yet
-    }
+    }*/
 
     // Positionnement de l'attaque
     qreal length = std::sqrt(direction.x() * direction.x() + direction.y() * direction.y());
@@ -99,9 +130,8 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     }
     this->setPos(finalPos);
     this->setVisible(true);
+
     // Playing the attack
-    currentAttackIndex = (currentAttackIndex + 1) % attackAnimation.size();
-    combotimer.restart();
 }
 
 void PlayerSlash::checkCollide() {

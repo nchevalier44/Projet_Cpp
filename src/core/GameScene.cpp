@@ -19,6 +19,7 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
         qCritical() << "Error when loading the map : " << e.what();
     }
 
+
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
 
     //Setting up the player's character

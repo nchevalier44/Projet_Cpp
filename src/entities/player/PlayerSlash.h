@@ -26,6 +26,7 @@ private :
     QPixmap currentPixmap;
     bool isSlashing = false;
     Player *player = nullptr;
+    QTimer* animationTimer = nullptr;
 
 
 public :
