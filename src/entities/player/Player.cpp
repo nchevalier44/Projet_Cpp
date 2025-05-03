@@ -201,8 +201,6 @@ void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     // Debug : dessiner shape (en bleu)
     painter->setPen(QPen(Qt::blue, 1));
     painter->drawPath(shape());
-
-
 }
 
 
@@ -217,13 +215,6 @@ PlayerSlash::PlayerSlash(QGraphicsScene* scene) : scene(scene) {
     slash1->start();
     slash2->start();
     slash3->start();
-
-    /*
-    slash1->setScaledSize(QSize(30, 60));
-    slash2->setScaledSize(QSize(30, 60));
-    slash3->setScaledSize(QSize(80, 40));
-     */
-
 
     attackAnimation.push_back(slash1);
     attackAnimation.push_back(slash2);
@@ -241,9 +232,7 @@ PlayerSlash::PlayerSlash(QGraphicsScene* scene) : scene(scene) {
         });
     }
 
-
     this->setScale(0.1);
-
 }
 
 void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection){
@@ -257,6 +246,21 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     if (combotimer.isValid() && combotimer.elapsed() > comboMaxDelay) {
         currentAttackIndex = 0;
     }
+
+    bool canPerformNextAttack = true;
+    if (combotimer.isValid()) {
+        int prevAttackIndex = currentAttackIndex;
+        if (prevAttackIndex == 0 || prevAttackIndex == 1) {
+            canPerformNextAttack = combotimer.elapsed() >= 400;
+        } else if (prevAttackIndex == 2) {
+            canPerformNextAttack = combotimer.elapsed() >= 700;
+        }
+    }
+
+    if (!canPerformNextAttack) {
+        return; // Exit if we can't perform the next attack yet
+    }
+    
     // Positionnement de l'attaque
     qreal length = std::sqrt(direction.x() * direction.x() + direction.y() * direction.y());
     if (length > 0) {
@@ -266,8 +270,7 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     //adjuste the position of the attack according to the current direction
 
 
-
-    qreal distance = 10; // distance à laquelle l'effet est affiché
+    qreal distance = 20; // distance à laquelle l'effet est affiché
     QPointF finalPos = playerPos + direction * distance;
     switch(CurrentDirection){
         case Up : finalPos.setX(finalPos.x() + 10); finalPos.setY(finalPos.y() - 5); break;
@@ -280,18 +283,12 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     this->setPos(finalPos);
 
     this->setVisible(true);
+
+
+
     //Playing the attack
-    playAttackAnimation(playerPos);
     currentAttackIndex = (currentAttackIndex + 1) % attackAnimation.size();
     combotimer.restart();
-}
-
-void PlayerSlash::playAttackAnimation(QPointF playerPos){
-
-    QMovie* movie = attackAnimation[currentAttackIndex];
-    movie->stop();
-    movie->start();
-
 }
 
 
@@ -341,7 +338,7 @@ void PlayerSlash::paint(QPainter* painter, const QStyleOptionGraphicsItem* optio
     painter->drawPixmap(-width/2, -height/2, width, height, attackAnimation[currentAttackIndex]->currentPixmap());
     painter->restore();
 
-    /*
+
     // Debug - rectangle de délimitation
     painter->setPen(QPen(Qt::red, 1, Qt::DashLine));
     painter->drawRect(boundingRect());
@@ -349,7 +346,5 @@ void PlayerSlash::paint(QPainter* painter, const QStyleOptionGraphicsItem* optio
     // Debug - shape (hitbox)
     painter->setPen(QPen(Qt::blue, 1));
     painter->drawPath(shape());
-*/
-
 
 }
