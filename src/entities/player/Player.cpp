@@ -93,11 +93,10 @@ bool Player::canShoot(QPointF clickPos){
     qreal dot = normClick.x() * playerDir.x() + normClick.y() * playerDir.y();
     qreal angleDeg = qRadiansToDegrees(qAcos(dot));
 
-    if(angleDeg < 45){
+    if(angleDeg < 75){
         return true;
     }
     else{
-
         return false;
     }
 }
@@ -105,39 +104,4 @@ bool Player::canShoot(QPointF clickPos){
 void Player::slashAttack(QPointF target, QGraphicsScene* scene){
     QPointF direction = target - this->pos();
     slash->slashAttack(target, this->pos(), currentDirection);
-}
-
-void Player::moveEntity(qreal dx, qreal dy){
-    qreal posX = this->pos().x();
-    qreal posY = this->pos().y();
-
-    //Now we move the player considering eventual collision
-    QList<QGraphicsItem*> collisions;
-    int numberCollisions;
-    int i;
-
-    //Check if there is horizontal collision with an object
-    this->setX(posX + dx);
-    collisions = this->collidingItems();
-    numberCollisions = collisions.count();
-    i = 0;
-    while(i < numberCollisions && collisions[i]->data(0) != "collision"){
-        i++;
-    }
-    if(i != numberCollisions){
-        this->setX(posX);
-    }
-
-    //Check if there is vertical collision with an object
-    this->setY(posY + dy);
-    collisions = this->collidingItems();
-    numberCollisions = collisions.count();
-    i = 0;
-    while(i < numberCollisions && collisions[i]->data(0) != "collision"){
-        i++;
-    }
-    if(i != numberCollisions){
-        this->setY(posY);
-    }
-    mainView->centerOn(this);
 }

@@ -38,29 +38,8 @@ PlayerSlash::PlayerSlash(GameScene *scene, Player* player) : scene(scene), playe
                 }
             }
         });
-        /*connect(movie, &QMovie::frameChanged, this, [this, movie](int frameNumber)
-        {
-            for(int i = 0; i<=currentAttackIndex; i++){
-                if (attackAnimation[i] == movie) {
-                    currentPixmap = movie->currentPixmap();
-                    if (frameNumber == movie->frameCount() - 1) {
-                        this->setVisible(false);
-                        isSlashing = false;
-                    } else{
-                        QTimer::singleShot(movie->nextFrameDelay(), movie, [this, movie](){
-                            movie->jumpToNextFrame();
-                            this->scene->update(this->sceneBoundingRect());
-                        });
-                    }
-                }
-            }
-
-        //});*/
     }
     animationTimer->start();
-    /*slash1->start();
-    slash2->start();
-    slash3->start();*/
     this->setScale(0.1);
 }
 
@@ -78,25 +57,6 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     {
         currentAttackIndex = 0;
     }
-
-    /*bool canPerformNextAttack = true;
-    if (combotimer.isValid())
-    {
-        int prevAttackIndex = currentAttackIndex;
-        if (prevAttackIndex == 0 || prevAttackIndex == 1)
-        {
-            canPerformNextAttack = combotimer.elapsed() >= 400;
-        }
-        else if (prevAttackIndex == 2)
-        {
-            canPerformNextAttack = combotimer.elapsed() >= 700;
-        }
-    }
-
-    if (!canPerformNextAttack)
-    {
-        return; // Exit if we can't perform the next attack yet
-    }*/
 
     // Positionnement de l'attaque
     qreal length = std::sqrt(direction.x() * direction.x() + direction.y() * direction.y());
@@ -130,8 +90,6 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     }
     this->setPos(finalPos);
     this->setVisible(true);
-
-    // Playing the attack
 }
 
 void PlayerSlash::checkCollide() {

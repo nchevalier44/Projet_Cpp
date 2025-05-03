@@ -106,8 +106,6 @@ public:
         setAnimation(PATH_HP_DEAD, 8, 150);
     }
 
-    void moveEntity(qreal dx, qreal dy) override;
-
     // Attack
     bool canShoot(QPointF clickPos);
     void slashAttack(QPointF target, QGraphicsScene *scene);

@@ -262,7 +262,7 @@ void GameScene::checkNPCAttackRange(){
     qreal posY = character->getCenterPosition().y();
 
     for(Entity* entity : listNPC){
-        if(entity){
+        if(entity &&  entity->getHp() > 0){
             float distance = sqrt(pow(posX - entity->getCenterPosition().x(), 2) + pow(posY - entity->getCenterPosition().y(), 2));
             if(distance <= entity->getRangeAttack() + 1 && !(entity->isAttacking())){
                 entity->attackEntity(character);
@@ -274,7 +274,8 @@ void GameScene::checkNPCAttackRange(){
 //Move the player
 void GameScene::movePlayer(){
     qreal* deltaPosition = getDeltaPosition();
-    character->moveEntity(deltaPosition[0], deltaPosition[1]);
+    character->moveEntityCollision(deltaPosition[0], deltaPosition[1]);
+    mainView->centerOn(character);
     delete[] deltaPosition;
 }
 
