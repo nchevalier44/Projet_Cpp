@@ -6,12 +6,16 @@
 #include <QMovie>
 #include "../../constants.h"
 
+
+
 class GameScene;
+class Player;
 
 
 class PlayerSlash : public QGraphicsObject {
     Q_OBJECT
 private :
+    int damage = 1;
     int currentAttackIndex = 0;
     QElapsedTimer combotimer;
     const int comboMaxDelay = 1000;
@@ -20,15 +24,18 @@ private :
     QPointF attackPosition;
     QGraphicsScene* scene = nullptr;
     QPixmap currentPixmap;
+    bool isSlashing = false;
+    Player *player = nullptr;
 
 
 public :
-    PlayerSlash(GameScene* scene);
+    PlayerSlash(GameScene* scene, Player *player);
     ~PlayerSlash() {delete attackAnimation[0]; delete attackAnimation[1]; delete attackAnimation[2];}
 
-    void playAttackAnimation(QPointF playerPos);
     void slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection);
+    void checkCollide();
 
+    bool getIsSlashing() const { return isSlashing; }
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;

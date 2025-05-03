@@ -22,6 +22,7 @@ public:
 
     //Getters
     int getHp() const{ return hp; }
+    std::string getName() const { return name; }
     int getSpeed() const { return speed; }
     int getMaxHp() const { return maxHp; }
     QPointF getCenterPosition() const;

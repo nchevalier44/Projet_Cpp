@@ -33,13 +33,23 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     this->character->setMainView(mainView);
 
     //Load slash animation
-    PlayerSlash* slash = new PlayerSlash(this);
+    PlayerSlash* slash = new PlayerSlash(this, character);
     this->character->setPlayerSlash(slash);
 
     Bat* bat = new Bat("Bat", 1, this);
     bat->setPos(200, 200);
     this->addItem(bat);
     listNPC.append(bat);
+
+    Bat* bat1 = new Bat("Bat", 1, this);
+    bat1->setPos(200, 400);
+    this->addItem(bat1);
+    listNPC.append(bat1);
+
+    Bat* bat2 = new Bat("Bat", 1, this);
+    bat2->setPos(100, 200);
+    this->addItem(bat2);
+    listNPC.append(bat2);
 
 
     //Starting the timer to update the animation and mouvement
@@ -219,6 +229,9 @@ void GameScene::timerUpdate(){
     movePlayer();
     checkNPCAttackRange();
     moveProjectiles();
+    if(character->getPlayerSlash()->getIsSlashing()){
+        character->getPlayerSlash()->checkCollide();
+    }
 }
 
 void GameScene::moveProjectiles(){

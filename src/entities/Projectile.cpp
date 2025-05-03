@@ -2,6 +2,17 @@
 #include "../core/GameScene.h"
 
 
+
+Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary=nullptr, QGraphicsObject* parent=nullptr)
+        : proprietary(proprietary), gameScene(scene), speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
+    this->setPos(pos);
+    this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
+    this->dx = std::cos(rotationAngle * M_PI / 180);
+    this->dy = std::sin(rotationAngle * M_PI / 180);
+    this->movie = new QMovie(this);
+    movie->setFileName(path);
+}
+
 void Projectile::startMove(){
     gameScene->addProjectile(this);
 }
@@ -39,15 +50,6 @@ void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 }
 
 
-Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary=nullptr, QGraphicsObject* parent=nullptr)
-        : proprietary(proprietary), gameScene(scene), speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
-    this->setPos(pos);
-    this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
-    this->dx = std::cos(rotationAngle * M_PI / 180);
-    this->dy = std::sin(rotationAngle * M_PI / 180);
-    this->movie = new QMovie(this);
-    movie->setFileName(path);
-}
 
 
 void Projectile::moveProjectile(){
@@ -82,7 +84,7 @@ void Projectile::moveProjectile(){
         i++;
     }
 
-    //Check for max distance travelled
+    //Check for max distance traveled
     distanceTravelled += speed;
     if(distanceTravelled >= distanceMax || hasCollided){
         setEndAnimation("",0,0);
