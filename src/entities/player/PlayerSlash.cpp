@@ -45,7 +45,6 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     // We check if the combo is stil valid
     if (combotimer.isValid() && combotimer.elapsed() > comboMaxDelay)
     {
-        isSlashing = false;
         currentAttackIndex = 0;
     }
 
