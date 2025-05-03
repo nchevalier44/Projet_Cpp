@@ -5,6 +5,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include "GameScene.h"
 #include "MainWindow.h"
+#include "../entities/player/Player.h"
 
 
 
@@ -32,14 +33,14 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     this->character->setMainView(mainView);
 
     //Load slash animation
-    PlayerSlash *slash = new PlayerSlash(this);
+    PlayerSlash* slash = new PlayerSlash(this);
     this->character->setPlayerSlash(slash);
-    /*
-    Bat* bat = new Bat("Bat", 1);
+
+    Bat* bat = new Bat("Bat", 1, this);
     bat->setPos(200, 200);
     this->addItem(bat);
     listNPC.append(bat);
-     */
+
 
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer(this);
@@ -217,61 +218,50 @@ void GameScene::timerUpdate(){
     moveNPC();
     movePlayer();
     checkNPCAttackRange();
-
+    moveProjectiles();
 }
+
+void GameScene::moveProjectiles(){
+    for(Projectile* projectile : listProjectiles){
+        if(projectile){
+            projectile->moveProjectile();
+        }
+    }
+}
+
+void GameScene::removeProjectile(Projectile* projectile){
+    listProjectiles.removeAll(projectile);
+    delete projectile;
+    projectile = nullptr;
+}
+
+void GameScene::removeEntity(Entity* entity){
+    listNPC.removeAll(entity);
+    delete entity;
+    entity = nullptr;
+}
+
+
 
 void GameScene::checkNPCAttackRange(){
     qreal posX = character->getCenterPosition().x();
     qreal posY = character->getCenterPosition().y();
 
     for(Entity* entity : listNPC){
-        float distance = sqrt(pow(posX - entity->getCenterPosition().x(), 2) + pow(posY - entity->getCenterPosition().y(), 2));
-        if(distance <= entity->getRangeAttack() + 1 && !(entity->isAttacking())){
-            entity->attackEntity(character);
+        if(entity){
+            float distance = sqrt(pow(posX - entity->getCenterPosition().x(), 2) + pow(posY - entity->getCenterPosition().y(), 2));
+            if(distance <= entity->getRangeAttack() + 1 && !(entity->isAttacking())){
+                entity->attackEntity(character);
+            }
         }
     }
 }
 
 //Move the player
 void GameScene::movePlayer(){
-    qreal posX = character->pos().x();
-    qreal posY = character->pos().y();
-
     qreal* deltaPosition = getDeltaPosition();
-    qreal dx = deltaPosition[0];
-    qreal dy = deltaPosition[1];
+    character->moveEntity(deltaPosition[0], deltaPosition[1]);
     delete[] deltaPosition;
-
-    //Now we move the player considering eventual collision
-
-    QList<QGraphicsItem*> collisions;
-    int numberCollisions;
-    int i;
-
-    //Check if there is horizontal collision with an object
-    character->setX(posX + dx);
-    collisions = character->collidingItems();
-    numberCollisions = collisions.count();
-    i = 0;
-    while(i < numberCollisions && collisions[i]->data(0) != "collision"){
-        i++;
-    }
-    if(i != numberCollisions){
-        character->setX(posX);
-    }
-
-    //Check if there is vertical collision with an object
-    character->setY(posY + dy);
-    collisions = character->collidingItems();
-    numberCollisions = collisions.count();
-    i = 0;
-    while(i < numberCollisions && collisions[i]->data(0) != "collision"){
-        i++;
-    }
-    if(i != numberCollisions){
-        character->setY(posY);
-    }
-    mainView->centerOn(character);
 }
 
 //Move all entities
@@ -282,36 +272,9 @@ void GameScene::moveNPC(){
 
     //We move each entity in listNPC
     for(Entity* entity : listNPC){
-        Direction direction = entity->getCurrentDirection();
-        qreal posEntityX = entity->getCenterPosition().x();
-        qreal posEntityY = entity->getCenterPosition().y();
-        qreal dx = posCharacterX - posEntityX;
-        qreal dy = posCharacterY - posEntityY;
-        qreal entitySpeed = entity->getSpeed();
-        if(dx < 0){
-            posEntityX -= entitySpeed;
-            entity->setCurrentDirection(Left);
-        } else if(dx > 0){
-            posEntityX += entitySpeed;
-            entity->setCurrentDirection(Right);
+        if(entity){
+            entity->moveEntity(posCharacterX, posCharacterY);
         }
-        if(dy < 0){
-            posEntityY -= entitySpeed;
-        } else if(dy > 0){
-            posEntityY += entitySpeed;
-        }
-
-        if(direction != entity->getCurrentDirection()){
-            entity->setHorizontalFlip(!entity->isHorizontalFlipped());
-            entity->horizontalFlip();
-        }
-
-        float distance = sqrt(pow(posCharacterX - posEntityX, 2) + pow(posCharacterY - posEntityY, 2));
-        if(distance >= entity->getRangeAttack() && !(entity->isAttacking())){
-            entity->setCenterPosition(QPointF(posEntityX, posEntityY));
-        }
-
-
     }
 }
 

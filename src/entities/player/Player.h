@@ -11,131 +11,153 @@
 #include "../../core/MainView.h"
 #include "../../core/HUD.h"
 
-
-class PlayerSlash : public QGraphicsObject {
+class PlayerSlash : public QGraphicsObject
+{
     Q_OBJECT
-private :
+private:
     int currentAttackIndex = 0;
     QElapsedTimer combotimer;
     const int comboMaxDelay = 1500;
-    QVector<QMovie*> attackAnimation;
+    QVector<QMovie *> attackAnimation;
     qreal rotationAngle = 0;
     QPointF attackPosition;
-    QGraphicsScene* scene = nullptr;
+    QGraphicsScene *scene = nullptr;
     QPixmap currentPixmap;
 
-
-public :
-    PlayerSlash(QGraphicsScene* scene);
-    ~PlayerSlash() {delete attackAnimation[0]; delete attackAnimation[1]; delete attackAnimation[2];}
+public:
+    PlayerSlash(QGraphicsScene *scene);
+    ~PlayerSlash()
+    {
+        delete attackAnimation[0];
+        delete attackAnimation[1];
+        delete attackAnimation[2];
+    }
 
     void slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection);
 
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 };
 
-
-
-class PlayerProjectile : public Projectile {
+class PlayerProjectile : public Projectile
+{
     Q_OBJECT
-public :
-    PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, QGraphicsObject* parent=nullptr);
+public:
+    PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, QGraphicsObject *parent = nullptr);
     ~PlayerProjectile() {}
     void throwProjectile();
 
-
-    void setStartAnimation(QString spriteSheet, int frameCount=0, int animationSpeed=0) override;
-    void setMiddleAnimation(QString spriteSheet, int frameCount=0, int animationSpeed=0) override;
+    void setStartAnimation(QString spriteSheet, int frameCount = 0, int animationSpeed = 0) override;
+    void setMiddleAnimation(QString spriteSheet, int frameCount = 0, int animationSpeed = 0) override;
     void setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) override;
 
-        public slots :
+public slots:
     void startMove();
-
 };
 
+#include "PlayerProjectile.h"
+#include "PlayerSlash.h"
 
-class Player : public Entity {
-private :
-    MainView* mainView = nullptr;
-    HUD* hud = nullptr;
+class Player : public Entity
+{
+private:
+    MainView *mainView = nullptr;
+    HUD *hud = nullptr;
 
     bool isDead = false;
-    QSoundEffect* movingSound = nullptr;
+    QSoundEffect *movingSound = nullptr;
 
-    PlayerSlash* slash = nullptr;
+    PlayerSlash *slash = nullptr;
 
-public :
+public:
+    Player(std::string name = "Player", int life = 100, GameScene *scene = nullptr, QGraphicsItem *parent = nullptr);
 
-    Player(std::string name = "Player", int life = 100, QGraphicsItem* parent=nullptr);
-
-    //Getters
-    MainView* getMainView() const { return mainView; }
+    // Getters
+    MainView *getMainView() const { return mainView; }
     bool isPlayerDead() const { return isDead; }
     Direction getCurrentDirection() const { return currentDirection; }
-    PlayerSlash* getPlayerSlash() const { return slash; }
+    PlayerSlash *getPlayerSlash() const { return slash; }
 
-    //Setters
-    void setMainView(MainView* new_main_view) { mainView = new_main_view; }
-    void setPlayerSlash(PlayerSlash* new_slash) { slash = new_slash; }
-    void setHUD(HUD* newHud) { hud = newHud;}
+    // Setters
+    void setMainView(MainView *new_main_view) { mainView = new_main_view; }
+    void setPlayerSlash(PlayerSlash *new_slash) { slash = new_slash; }
+    void setHUD(HUD *newHud) { hud = newHud; }
 
-    //Override bounding rect to reduce hitbox
-    QRectF boundingRect() const{
+    // Override bounding rect to reduce hitbox
+    QRectF boundingRect() const
+    {
         return QRectF(0, 0, frameWidth, frameHeight);
     }
-    QPainterPath shape() const{
+    QPainterPath shape() const
+    {
         QPainterPath path;
-        path.addRect(frameWidth*0.25, frameHeight*0.25, frameWidth*0.5, frameHeight*0.75);
+        path.addRect(frameWidth * 0.25, frameHeight * 0.25, frameWidth * 0.5, frameHeight * 0.75);
         return path;
     }
-    //Take damage
+    // Take damage
     void takeDamage(int damage) override;
-    //Animation methods
+    // Animation methods
 
-    void frontIdleAnimation(){
+    void frontIdleAnimation()
+    {
         setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
-        if(movingSound->isPlaying()) movingSound->stop();
+        if (movingSound->isPlaying())
+            movingSound->stop();
     }
-    void frontWalkAnimation(){
+    void frontWalkAnimation()
+    {
         setAnimation(PATH_PLAYER_FRONT_WALK, 6, 100);
-        if(!movingSound->isPlaying()) movingSound->play();
+        if (!movingSound->isPlaying())
+            movingSound->play();
     }
-    void leftIdleAnimation(){
+    void leftIdleAnimation()
+    {
         setAnimation(PATH_PLAYER_LEFT_IDLE, 6, 100);
-        if(movingSound->isPlaying()) movingSound->stop();
+        if (movingSound->isPlaying())
+            movingSound->stop();
     }
-    void leftWalkAnimation(){
+    void leftWalkAnimation()
+    {
         setAnimation(PATH_PLAYER_LEFT_WALK, 6, 100);
-        if(!movingSound->isPlaying()) movingSound->play();
+        if (!movingSound->isPlaying())
+            movingSound->play();
     }
-    void rightIdleAnimation(){
+    void rightIdleAnimation()
+    {
         setAnimation(PATH_PLAYER_RIGHT_IDLE, 6, 100);
-        if(movingSound->isPlaying()) movingSound->stop();
+        if (movingSound->isPlaying())
+            movingSound->stop();
     }
-    void rightWalkAnimation(){
+    void rightWalkAnimation()
+    {
         setAnimation(PATH_PLAYER_RIGHT_WALK, 6, 100);
-        if(!movingSound->isPlaying()) movingSound->play();
+        if (!movingSound->isPlaying())
+            movingSound->play();
     }
-    void backIdleAnimation(){
+    void backIdleAnimation()
+    {
         setAnimation(PATH_PLAYER_BACK_IDLE, 8, 100);
-        if(movingSound->isPlaying()) movingSound->stop();
+        if (movingSound->isPlaying())
+            movingSound->stop();
     }
-    void backWalkAnimation(){
+    void backWalkAnimation()
+    {
         setAnimation(PATH_PLAYER_BACK_WALK, 8, 100);
-        if(!movingSound->isPlaying()) movingSound->play();
+        if (!movingSound->isPlaying())
+            movingSound->play();
     }
-    void hpAnimation(){
+    void hpAnimation()
+    {
         setAnimation(PATH_HP_DEAD, 8, 150);
     }
 
-    //Attack
+    void moveEntity(qreal dx, qreal dy) override;
+
+    // Attack
     bool canShoot(QPointF clickPos);
-    void shootProjectile(QPointF target, QGraphicsScene* scene);
-    void slashAttack(QPointF target, QGraphicsScene* scene);
+    void slashAttack(QPointF target, QGraphicsScene *scene);
+    Projectile *shootProjectile(QPointF target, GameScene *scene);
 };
 
-
-
-#endif //PROJET_CPP_PLAYER_H
+#endif // PROJET_CPP_PLAYER_H

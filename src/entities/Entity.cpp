@@ -5,55 +5,11 @@
 #include <QPropertyAnimation>
 #include <QWidget>
 #include <QGraphicsScene>
-//////////PROJECTILE MEHTODS//////////
+#include <QTimer>
 
-Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, QGraphicsObject* parent=nullptr)
-    : speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
-    this->setPos(pos);
-    this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
-    this->dx = std::cos(rotationAngle * M_PI / 180);
-    this->dy = std::sin(rotationAngle * M_PI / 180);
-    this->movie = new QMovie(this);
-    movie->setFileName(path);
-    this->timer = new QTimer(this);
-}
+#include "../core/GameScene.h"
 
-
-
-void Projectile::move(){
-    //Adding a small moving to the projectile
-    this->setX(this->x() + dx*speed);
-    this->setY(this->y() + dy*speed);
-    distanceTravelled += speed;
-    if(distanceTravelled >= distanceMax){
-        setEndAnimation("",0,0);
-        dx = 0;
-        dy = 0;
-        distanceTravelled = 0;
-    }
-}
-
-void Projectile::deleteProjectile() {
-    if (movie) {
-        movie->stop();
-        delete movie;
-        movie = nullptr;
-    }
-    if (timer) {
-        timer->stop();
-        delete timer;
-        timer = nullptr;
-    }
-    delete this;
-}
-
-
-
-
-
-
-///////////////ENTITY METHODS///////////////
-Entity::Entity(std::string name, int hp, QGraphicsItem* parent) : hp(hp), name(name), QGraphicsObject(parent) {
+Entity::Entity(std::string name, int hp, GameScene* scene, QGraphicsItem* parent) : hp(hp), name(name), gameScene(scene), QGraphicsObject(parent) {
 }
 
 Entity::~Entity() {
@@ -68,9 +24,7 @@ QPointF Entity::getCenterPosition() const {
     return this->pos() + centerOffset;
 }
 
-void Entity::setCenterPosition(QPointF newPos) {
-    setPos(newPos - boundingRect().center());
-}
+
 
 void Entity::horizontalFlip(){
     //We flip the pixmap to change the direction of the animation
@@ -152,14 +106,44 @@ void Entity::attackEntity(Entity* entity) {
 
 }
 
-void Entity::takeDamage(int damage) {
-    qDebug() << "Take damage1";
-    if(hp - damage <= 0) {
+void Entity::takeDamage(int d) {
+    if(hp - d <= 0) {
         hp = 0;
         deathAnimation();
     } else {
-        this->hp -= damage;
+        hp -= d;
     }
 }
 
+void Entity::moveEntity(qreal posX, qreal posY){
+    if(hp == 0) return; //if dead -> don't move
+
+    Direction direction = this->getCurrentDirection();
+    qreal posEntityX = this->getCenterPosition().x();
+    qreal posEntityY = this->getCenterPosition().y();
+    qreal dx = posX - posEntityX;
+    qreal dy = posY - posEntityY;
+    if(dx < 0){
+        posEntityX -= speed;
+        this->setCurrentDirection(Left);
+    } else if(dx > 0){
+        posEntityX += speed;
+        this->setCurrentDirection(Right);
+    }
+    if(dy < 0){
+        posEntityY -= speed;
+    } else if(dy > 0){
+        posEntityY += speed;
+    }
+
+    if(direction != currentDirection){
+        horizontalFlipped = !horizontalFlipped;
+        this->horizontalFlip();
+    }
+
+    float distance = sqrt(pow(posX - posEntityX, 2) + pow(posY - posEntityY, 2));
+    if(distance >= rangeAttack && !(attacking)){
+        this->setCenterPosition(QPointF(posEntityX, posEntityY));
+    }
+}
 

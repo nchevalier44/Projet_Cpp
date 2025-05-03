@@ -5,7 +5,7 @@
 
 class Bat : public Entity{
 public:
-    Bat(std::string name="Bat", int life=100);
+    Bat(std::string name="Bat", int life=100, GameScene* scene=nullptr, QGraphicsItem* parent=nullptr);
 
     QPainterPath shape() const{
         QPainterPath path;
