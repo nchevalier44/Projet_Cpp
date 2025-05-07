@@ -38,9 +38,6 @@ public:
     void setSpeed(int newSpeed) { speed = newSpeed; }
     void setCurrentDirection(Direction newDirection) { currentDirection = newDirection; }
     void setSpriteSheet(QPixmap* newPixmap) { spriteSheet = newPixmap; }
-    void setCenterPosition(QPointF newPos){ setPos(newPos - boundingRect().center()); };
-    void setCenterX(qreal newX) { setX(newX - boundingRect().center().x()); }
-    void setCenterY(qreal newY) { setY(newY - boundingRect().center().y()); }
     void setHorizontalFlip(bool flip) { horizontalFlipped = flip; }
 
     //Attack Method
@@ -51,7 +48,9 @@ public:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     //Redefining the boundingRect method
     virtual QRectF boundingRect() const override;
-    virtual void moveEntity(qreal x, qreal y);
+    void moveEntity(qreal x, qreal y);
+    //void moveEntityCollision(qreal posX, qreal posY, qreal x, qreal y);
+    void moveEntityCollision(qreal dx, qreal dy);
 
     //Animation method
     void stopAnimation();

@@ -20,11 +20,8 @@ Entity::~Entity() {
 }
 
 QPointF Entity::getCenterPosition() const {
-    QPointF centerOffset(sceneBoundingRect().width() / 2, sceneBoundingRect().height() / 2);
-    return this->pos() + centerOffset;
+    return mapToScene(shape().boundingRect().center());
 }
-
-
 
 void Entity::horizontalFlip(){
     //We flip the pixmap to change the direction of the animation
@@ -96,7 +93,6 @@ void Entity::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
 
     Q_UNUSED(option);
     Q_UNUSED(widget);
-    //Draw the shape
 }
 
 void Entity::attackEntity(Entity* entity) {
@@ -107,6 +103,17 @@ void Entity::attackEntity(Entity* entity) {
 }
 
 void Entity::takeDamage(int d) {
+
+    //Display a red screen to indicate damage
+    QGraphicsColorizeEffect* effect = new QGraphicsColorizeEffect(this);
+    effect->setColor(Qt::darkRed);
+    effect->setStrength(0.6);
+    this->setGraphicsEffect(effect);
+
+    QTimer::singleShot(150, [this]() {
+        this->setGraphicsEffect(nullptr);
+    });
+
     if(hp - d <= 0) {
         hp = 0;
         deathAnimation();
@@ -121,19 +128,22 @@ void Entity::moveEntity(qreal posX, qreal posY){
     Direction direction = this->getCurrentDirection();
     qreal posEntityX = this->getCenterPosition().x();
     qreal posEntityY = this->getCenterPosition().y();
-    qreal dx = posX - posEntityX;
-    qreal dy = posY - posEntityY;
-    if(dx < 0){
-        posEntityX -= speed;
+
+    qreal dx = 0;
+    qreal dy = 0;
+
+    if(posX - posEntityX < 0){
+        dx = -speed;
         this->setCurrentDirection(Left);
-    } else if(dx > 0){
-        posEntityX += speed;
+    } else if(posX - posEntityX > 0){
+        dx = speed;
         this->setCurrentDirection(Right);
     }
-    if(dy < 0){
-        posEntityY -= speed;
-    } else if(dy > 0){
-        posEntityY += speed;
+
+    if(posY - posEntityY < 0){
+        dy = -speed;
+    } else if(posY - posEntityY > 0){
+        dy = speed;
     }
 
     if(direction != currentDirection){
@@ -143,7 +153,37 @@ void Entity::moveEntity(qreal posX, qreal posY){
 
     float distance = sqrt(pow(posX - posEntityX, 2) + pow(posY - posEntityY, 2));
     if(distance >= rangeAttack && !(attacking)){
-        this->setCenterPosition(QPointF(posEntityX, posEntityY));
+        moveEntityCollision(dx, dy);
     }
 }
 
+void Entity::moveEntityCollision(qreal dx, qreal dy){
+
+    QList<QGraphicsItem*> collisions;
+    int numberCollisions;
+    int i;
+
+    //Check if there is horizontal collision with an object
+    this->moveBy(dx, 0);
+    collisions = this->collidingItems();
+    numberCollisions = collisions.count();
+    i = 0;
+    while(i < numberCollisions && collisions[i]->data(0).toString() != "collision"){
+        i++;
+    }
+    if(i != numberCollisions){
+        this->moveBy(-dx, 0);
+    }
+
+    //Check if there is vertical collision with an object
+    this->moveBy(0, dy);
+    collisions = this->collidingItems();
+    numberCollisions = collisions.count();
+    i = 0;
+    while(i < numberCollisions && collisions[i]->data(0).toString() != "collision"){
+        i++;
+    }
+    if(i != numberCollisions){
+        this->moveBy(0, -dy);
+    }
+}

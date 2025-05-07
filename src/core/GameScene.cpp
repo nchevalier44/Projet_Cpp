@@ -262,7 +262,7 @@ void GameScene::checkNPCAttackRange(){
     qreal posY = character->getCenterPosition().y();
 
     for(Entity* entity : listNPC){
-        if(entity){
+        if(entity &&  entity->getHp() > 0){
             float distance = sqrt(pow(posX - entity->getCenterPosition().x(), 2) + pow(posY - entity->getCenterPosition().y(), 2));
             if(distance <= entity->getRangeAttack() + 1 && !(entity->isAttacking())){
                 entity->attackEntity(character);
@@ -274,7 +274,8 @@ void GameScene::checkNPCAttackRange(){
 //Move the player
 void GameScene::movePlayer(){
     qreal* deltaPosition = getDeltaPosition();
-    character->moveEntity(deltaPosition[0], deltaPosition[1]);
+    character->moveEntityCollision(deltaPosition[0], deltaPosition[1]);
+    mainView->centerOn(character);
     delete[] deltaPosition;
 }
 
@@ -292,42 +293,62 @@ void GameScene::moveNPC(){
     }
 }
 
-qreal* GameScene::getDeltaPosition(){
+qreal* GameScene::getDeltaPosition() {
     qreal dx = 0;
     qreal dy = 0;
 
-    int n = activeKeys.length();
+    int speed = character->getSpeed();
 
-    //Check the last key pressed (currently always pressed)
+    if (!activeKeys.isEmpty()) {
+        for (int key : activeKeys) {
+            if (key == Qt::Key_Up || key == Qt::Key_Z){
+                dy -= speed;
+            }
+            else if (key == Qt::Key_Down || key == Qt::Key_S){
+                dy += speed;
+            }
+            else if (key == Qt::Key_Left || key == Qt::Key_Q){
+                dx -= speed;
+            }
+            else if (key == Qt::Key_Right || key == Qt::Key_D){
+                dx += speed;
+            }
+        }
 
-    if(n!=0) {
-        int lastKey = activeKeys[n - 1];
-        if (lastKey == Qt::Key_Up || lastKey == Qt::Key_Z) {
-            if (character->getCurrentDirection() != Up) {
-                character->backWalkAnimation();
-                character->setCurrentDirection(Up);
-            }
-            dy -= character->getSpeed();
-        } else if (lastKey == Qt::Key_Down || lastKey == Qt::Key_S) {
-            if (character->getCurrentDirection() != Down) {
-                character->frontWalkAnimation();
-                character->setCurrentDirection(Down);
-            }
-            dy += character->getSpeed();
-        } else if (lastKey == Qt::Key_Left || lastKey == Qt::Key_Q) {
-            if (character->getCurrentDirection() != Left) {
-                character->leftWalkAnimation();
-                character->setCurrentDirection(Left);
-            }
-            dx -= character->getSpeed();
-        } else if (lastKey == Qt::Key_Right || lastKey == Qt::Key_D) {
-            if (character->getCurrentDirection() != Right) {
+        // Normalisation for the diagonal movement
+        if (dx != 0 && dy != 0) {
+            qreal norm = sqrt(dx * dx + dy * dy);
+            dx = dx / norm * speed;
+            dy = dy / norm * speed;
+        }
+
+        if (fabs(dx) > fabs(dy)) {
+            //Horizontal movement
+            if (dx > 0 && character->getCurrentDirection() != Right) {
+                //Right movement
                 character->rightWalkAnimation();
                 character->setCurrentDirection(Right);
             }
-            dx += character->getSpeed();
+            else if (dx < 0 && character->getCurrentDirection() != Left) {
+                //Left movement
+                character->leftWalkAnimation();
+                character->setCurrentDirection(Left);
+            }
+        } else if (fabs(dy) >= fabs(dx)) {
+            //Vertical movement
+            if (dy > 0 && character->getCurrentDirection() != Down) {
+                //Down movement
+                character->frontWalkAnimation();
+                character->setCurrentDirection(Down);
+            }
+            else if (dy < 0 && character->getCurrentDirection() != Up) {
+                //Up movement
+                character->backWalkAnimation();
+                character->setCurrentDirection(Up);
+            }
         }
     }
+
     qreal* deltaPosition = new qreal[2];
     deltaPosition[0] = dx;
     deltaPosition[1] = dy;
