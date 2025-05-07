@@ -68,6 +68,5 @@ void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
 void PlayerProjectile::startMove() {
     setMiddleAnimation(PATH_PLAYER_PROJECTILE);
     //Starting the moving
-
     gameScene->addProjectile(this);
 }

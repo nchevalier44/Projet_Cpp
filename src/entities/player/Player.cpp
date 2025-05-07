@@ -6,6 +6,7 @@
 #include <QThread>
 #include "../../core/GameScene.h"
 
+
 Player::Player(std::string name, int life, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scene, parent) {
     this->maxHp = life;
     setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
