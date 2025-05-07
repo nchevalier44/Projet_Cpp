@@ -16,8 +16,12 @@ Player::Player(std::string name, int life, GameScene* scene, QGraphicsItem* pare
 }
 
 
-void Player::takeDamage(int damage) {
+void Player::takeDamage(int damage, Entity* attacker) {
     if(isDead) return;
+
+    if(attacker){
+        this->takeKnockback(attacker);
+    }
 
     //Create a red screen to indicate damage
     QWidget* DamageScreen = new QWidget(mainView);

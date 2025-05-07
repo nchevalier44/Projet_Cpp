@@ -98,11 +98,15 @@ void Entity::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
 void Entity::attackEntity(Entity* entity) {
     attacking = true;
     this->attackAnimation();
-    entity->takeDamage(this->getDamage());
+    entity->takeDamage(this->getDamage(), this);
 
 }
 
-void Entity::takeDamage(int d) {
+void Entity::takeDamage(int d, Entity* attacker) {
+    if(attacker){
+        this->takeKnockback(attacker);
+    }
+
 
     //Display a red screen to indicate damage
     QGraphicsColorizeEffect* effect = new QGraphicsColorizeEffect(this);
@@ -122,7 +126,25 @@ void Entity::takeDamage(int d) {
     }
 }
 
-void Entity::moveEntity(qreal posX, qreal posY){
+void Entity::takeKnockback(Entity* originEntity){
+    QTimer* timer = new QTimer();
+    timer->setInterval(30);
+    connect(timer, &QTimer::timeout, [this, originEntity]() {
+        qreal posOriginX = originEntity->getCenterPosition().x();
+        qreal posOriginY = originEntity->getCenterPosition().y();
+        qreal posEntityX = this->getCenterPosition().x();
+        qreal posEntityY = this->getCenterPosition().y();
+        this->moveEntity(posOriginX + posEntityX, posOriginY + posEntityY, true);
+    });
+    timer->start();
+    QTimer::singleShot(150, timer, [timer](){
+        timer->stop();
+        delete timer;
+    });
+}
+
+
+void Entity::moveEntity(qreal posX, qreal posY, bool forceMove){
     if(hp == 0) return; //if dead -> don't move
 
     Direction direction = this->getCurrentDirection();
@@ -152,7 +174,7 @@ void Entity::moveEntity(qreal posX, qreal posY){
     }
 
     float distance = sqrt(pow(posX - posEntityX, 2) + pow(posY - posEntityY, 2));
-    if(distance >= rangeAttack && !(attacking)){
+    if(forceMove || (distance >= rangeAttack && !(attacking))){
         moveEntityCollision(dx, dy);
     }
 }
@@ -168,6 +190,8 @@ void Entity::moveEntityCollision(qreal dx, qreal dy){
     collisions = this->collidingItems();
     numberCollisions = collisions.count();
     i = 0;
+
+    //Skip all collisions which don't interest us
     while(i < numberCollisions && collisions[i]->data(0).toString() != "collision"){
         i++;
     }
@@ -180,6 +204,8 @@ void Entity::moveEntityCollision(qreal dx, qreal dy){
     collisions = this->collidingItems();
     numberCollisions = collisions.count();
     i = 0;
+
+    //Skip all collisions which don't interest us
     while(i < numberCollisions && collisions[i]->data(0).toString() != "collision"){
         i++;
     }

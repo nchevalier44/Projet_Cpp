@@ -42,15 +42,16 @@ public:
 
     //Attack Method
     void attackEntity(Entity* entity);
-    virtual void takeDamage(int damage);
+    virtual void takeDamage(int damage, Entity* attacker);
 
     //Other methods
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     //Redefining the boundingRect method
     virtual QRectF boundingRect() const override;
-    void moveEntity(qreal x, qreal y);
+    void moveEntity(qreal x, qreal y, bool forceMove=false);
     //void moveEntityCollision(qreal posX, qreal posY, qreal x, qreal y);
     void moveEntityCollision(qreal dx, qreal dy);
+    void takeKnockback(Entity* originEntity);
 
     //Animation method
     void stopAnimation();

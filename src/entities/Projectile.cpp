@@ -70,11 +70,11 @@ void Projectile::moveProjectile(){
         if(testEntity){
             if(proprietary){
                 if(testEntity != proprietary){
-                    testEntity->takeDamage(damage);
+                    testEntity->takeDamage(damage, this->proprietary);
                     hasCollided = true;
                 }
             } else{
-                testEntity->takeDamage(damage);
+                testEntity->takeDamage(damage, this->proprietary);
                 hasCollided = true;
             }
         }
