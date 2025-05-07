@@ -275,6 +275,7 @@ void GameScene::checkNPCAttackRange(){
 void GameScene::movePlayer(){
     qreal* deltaPosition = getDeltaPosition();
     character->moveEntityCollision(deltaPosition[0], deltaPosition[1]);
+    qDebug() << character->getCenterPosition();
     mainView->centerOn(character);
     delete[] deltaPosition;
 }
@@ -350,8 +351,8 @@ qreal* GameScene::getDeltaPosition() {
     }
 
     qreal* deltaPosition = new qreal[2];
-    deltaPosition[0] = dx;
-    deltaPosition[1] = dy;
+    deltaPosition[0] = std::ceil(dx);
+    deltaPosition[1] = std::ceil(dy);
     return deltaPosition;
 }
 
