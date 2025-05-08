@@ -77,4 +77,6 @@ enum Direction {None, Up, Down, Left, Right};
 #define PATH_SPELL_BOX "../assets/images/characters/SpellBox.png"
 #define PATH_SPELL_BOX_SELECTED "../assets/images/characters/SpellBoxSelected.png"
 #define PATH_MISSILE_SPELL_ICONE "../assets/images/characters/MissileSpell_icone.png"
+#define PATH_MISSILE_SLASH_ICONE "../assets/images/characters/SlashSpell_icone.png"
+#define PATH_MISSILE_SHIELD_ICONE "../assets/images/characters/Shield_icone.png"
 #endif //PROJET_CPP_CONSTANTS_H
