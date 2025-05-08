@@ -99,7 +99,7 @@ void PlayerSlash::checkCollide() {
         Entity *testEntity = dynamic_cast<Entity *>(collisions[i]);
         if (testEntity) {
             if (testEntity != player) {
-                testEntity->takeDamage(damage);
+                testEntity->takeDamage(damage, this->player);
             }
         }
     }

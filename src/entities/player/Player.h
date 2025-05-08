@@ -50,7 +50,7 @@ public:
         return path;
     }
     // Take damage
-    void takeDamage(int damage) override;
+    void takeDamage(int damage, Entity* attacker) override;
     // Animation methods
 
     void frontIdleAnimation()
