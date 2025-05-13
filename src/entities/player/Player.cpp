@@ -7,7 +7,7 @@
 #include "../../core/GameScene.h"
 
 
-Player::Player(std::string name, int life, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scene, parent) {
+Player::Player(std::string name, int life, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scoreManager, scene, parent) {
     this->maxHp = life;
     setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
     movingSound = new QSoundEffect(this);
@@ -47,6 +47,9 @@ void Player::takeDamage(int damage, Entity* attacker) {
     if(hp <= 0){
         isDead = true;
         QTimer::singleShot(1000, mainView, &MainView::displayDeathScreen);
+        scoreManager->getActualScore()->setTimePlayed(scoreManager->getElapsedTimer()->elapsed() / 1000);
+        scoreManager->getActualScore()->setDate(QDateTime::currentDateTime().toString("dd/MM/yyyy"));
+        scoreManager->addScore(*(scoreManager->getActualScore()));
     }
 }
 

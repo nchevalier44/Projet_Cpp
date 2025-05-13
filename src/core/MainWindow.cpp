@@ -6,9 +6,11 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     audioManager = new AudioManager();
+    scoreManager = new ScoreManager();
+    scoreManager->loadScores();
 
     startMenuScene = new StartMenuScene(this);
-    mainView = new MainView(this);
+    mainView = new MainView(scoreManager, this);
     mainView->setScene(startMenuScene);
 
     connect(startMenuScene, &StartMenuScene::startGameRequested, this, &MainWindow::startGame); //When the player start from the principal menu
@@ -18,13 +20,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setCentralWidget(mainView);
     this->setWindowTitle("C++ Project");
     this->setFixedSize(backgroundRatio * DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_HEIGHT);
-
 }
 
 
 MainWindow::~MainWindow(){
     delete audioManager;
     audioManager = nullptr;
+    delete scoreManager;
+    scoreManager = nullptr;
 }
 
 void MainWindow::restartGame(){
@@ -38,6 +41,8 @@ void MainWindow::goToStartMenu() {
     mainView->setScene(startMenuScene);
     mainView->setFitView(true);
     startMenuScene->getAudioPlayer()->play();
+    scoreManager->loadScores();
+    startMenuScene->createScores(this);
 }
 
 void MainWindow::startGame(){
@@ -45,7 +50,7 @@ void MainWindow::startGame(){
     startMenuScene->getAudioPlayer()->stop();
 
     //Set the scene to the game scene
-    gameScene = new GameScene(mainView, this);
+    gameScene = new GameScene(mainView, scoreManager, this);
     gameScene->setView(mainView);
     mainView->setScene(gameScene);
     mainView->setFitView(false);
@@ -58,6 +63,8 @@ void MainWindow::startGame(){
     hud->raise();
     gameScene->setHUD(hud);
     gameScene->getCharacter()->setHUD(hud);
+
+    scoreManager->getElapsedTimer()->start();
 }
 
 void MainWindow::resetGame(){
@@ -71,6 +78,9 @@ void MainWindow::resetGame(){
         delete hud;
         hud = nullptr;
     }
+    delete scoreManager->getActualScore();
+    scoreManager->setActualScore(new Score());
+
 }
 
 

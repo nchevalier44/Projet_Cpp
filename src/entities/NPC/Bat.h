@@ -5,7 +5,7 @@
 
 class Bat : public Entity{
 public:
-    Bat(std::string name="Bat", int life=100, GameScene* scene=nullptr, QGraphicsItem* parent=nullptr);
+    Bat(std::string name="Bat", int life=100, ScoreManager* scoreManager=nullptr, GameScene* scene=nullptr, QGraphicsItem* parent=nullptr);
 
     QPainterPath shape() const{
         QPainterPath path;
@@ -15,8 +15,6 @@ public:
 
     void deathAnimation() override;
     void attackAnimation() override;
-
-    };
-
+};
 
 #endif //PROJET_CPP_BAT_H

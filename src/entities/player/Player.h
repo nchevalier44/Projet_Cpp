@@ -19,17 +19,15 @@ class Player : public Entity
 private:
     MainView *mainView = nullptr;
     HUD *hud = nullptr;
-    bool isDead = false;
     QSoundEffect *movingSound = nullptr;
 
     PlayerSlash *slash = nullptr;
 
 public:
-    Player(std::string name = "Player", int life = 100, GameScene *scene = nullptr, QGraphicsItem *parent = nullptr);
+    Player(std::string name = "Player", int life = 100, ScoreManager* scoreManager=nullptr, GameScene* scene = nullptr, QGraphicsItem* parent = nullptr);
 
     // Getters
-    MainView *getMainView() const { return mainView; }
-    bool isPlayerDead() const { return isDead; }
+    MainView* getMainView() const { return mainView; }
     Direction getCurrentDirection() const { return currentDirection; }
     PlayerSlash *getPlayerSlash() const { return slash; }
 

@@ -10,7 +10,7 @@
 #include <QFontDatabase>
 
 
-MainView::MainView(QWidget* parent) : QGraphicsView(parent) {
+MainView::MainView(ScoreManager* scoreManager, QWidget* parent) : scoreManager(scoreManager), QGraphicsView(parent) {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
@@ -39,14 +39,15 @@ void MainView::resizeEvent (QResizeEvent* event){
 }
 
 void MainView::displayDeathScreen() {
-    //Width : contentContainer is 65% of the window : 27% buttonBack, 27% button restart, 11% spacing | 65% title
-    //Height : contentContainer is 50% of the window : 19% spacing, 20% title, 7% buttons
 
     //Add font Jersey10 (pixel art)
     QFont buttonFont(FontManager::fontFamily);
     QFont titleFont(FontManager::fontFamily);
+    QFont scoreFont(FontManager::fontFamily);
     buttonFont.setPixelSize(this->window()->height()*0.07); //setPixelSize set the pixel number of the height of a line (letter + margins)
     titleFont.setPixelSize(this->window()->height()*0.2);
+    scoreFont.setPixelSize(this->window()->height()*0.05);
+
 
 
     deathScreen = new QWidget(this);
@@ -67,12 +68,26 @@ void MainView::displayDeathScreen() {
     title->setAlignment(Qt::AlignCenter);
     title->setFont(titleFont);
     title->adjustSize();
+
     QPushButton* buttonRestart = new QPushButton("Restart the game", contentContainer);
     buttonRestart->setFont(buttonFont);
     QObject::connect(buttonRestart, &QPushButton::clicked, this, &MainView::startGameRequested);
     QPushButton* buttonBackToMenu = new QPushButton("Back to the menu", contentContainer);
     buttonBackToMenu->setFont(buttonFont);
     QObject::connect(buttonBackToMenu, &QPushButton::clicked, this, &MainView::goToStartMenuRequested);
+
+    int score = scoreManager->getActualScore()->getScore();
+    int seconds = scoreManager->getActualScore()->getTimePlayed();
+    QString timePlayed = QString::number(seconds / 60) + "m" + QString::number(seconds % 60) + "s";
+
+    QLabel* scoreLabel = new QLabel(contentContainer);
+    scoreLabel->setText(QString::number(score) + " pts - " + timePlayed);
+    scoreLabel->setStyleSheet("color: white;");
+    scoreLabel->setAlignment(Qt::AlignCenter);
+    scoreLabel->setFont(scoreFont);
+    scoreLabel->adjustSize();
+
+
 
     //Creation buttons layout
     QHBoxLayout* buttonsLayout = new QHBoxLayout();
@@ -81,8 +96,9 @@ void MainView::displayDeathScreen() {
 
     //Creation container layout
     QVBoxLayout* containerLayout = new QVBoxLayout(contentContainer);
-    containerLayout->setSpacing(this->window()->height()*0.19);
+    containerLayout->setSpacing(this->window()->height()*0.1);
     containerLayout->addWidget(title, Qt::AlignHCenter);
+    containerLayout->addWidget(scoreLabel, Qt::AlignHCenter);
     containerLayout->addLayout(buttonsLayout, Qt::AlignCenter);
 
     //Creation container widget

@@ -30,6 +30,7 @@ private:
     int backgroundHeight = 0;
     QList<int> activeKeys; // Set to keep track of active keys
     HUD* hud = nullptr;
+    ScoreManager* scoreManager = nullptr;
 
 
 protected:
@@ -58,7 +59,7 @@ public :
     QList<int> getActiveKeys() const { return activeKeys; }
 
     //Constructor and destructor
-    GameScene(MainView* view, QObject* parent = nullptr);
+    GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);
     virtual ~GameScene();
 
     //Functions

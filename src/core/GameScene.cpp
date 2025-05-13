@@ -9,7 +9,7 @@
 
 
 
-GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), mainView(view){
+GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent) : QGraphicsScene(parent), scoreManager(scoreManager), mainView(view){
 
     try{
         loadMap();
@@ -23,7 +23,7 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
 
     //Setting up the player's character
-    this->character = new Player("Character", 3);
+    this->character = new Player("Character", 3, scoreManager);
     this->character->setPos(400, 200);
     this->character->setSpeed(4);
     this->character->setScale(0.1);
@@ -37,17 +37,17 @@ GameScene::GameScene(MainView* view, QObject* parent) : QGraphicsScene(parent), 
     PlayerSlash* slash = new PlayerSlash(this, character);
     this->character->setPlayerSlash(slash);
 
-    Bat* bat = new Bat("Bat", 1, this);
+    Bat* bat = new Bat("Bat", 1, scoreManager, this);
     bat->setPos(200, 200);
     this->addItem(bat);
     listNPC.append(bat);
 
-    Bat* bat1 = new Bat("Bat", 1, this);
+    Bat* bat1 = new Bat("Bat", 1, scoreManager, this);
     bat1->setPos(200, 400);
     this->addItem(bat1);
     listNPC.append(bat1);
 
-    Bat* bat2 = new Bat("Bat", 1, this);
+    Bat* bat2 = new Bat("Bat", 1, scoreManager, this);
     bat2->setPos(100, 200);
     this->addItem(bat2);
     listNPC.append(bat2);
@@ -171,7 +171,7 @@ void GameScene::loadMap(){
 //Mouvement functions
 //Adapt the animation according to the direction
 void GameScene::keyPressEvent(QKeyEvent* event){
-    if(character->isPlayerDead()) return;
+    if(character->isEntityDead()) return;
     if(event->isAutoRepeat()){
         return; //They key stay pressed so the walk animation can continue
     }
@@ -275,7 +275,6 @@ void GameScene::checkNPCAttackRange(){
 void GameScene::movePlayer(){
     qreal* deltaPosition = getDeltaPosition();
     character->moveEntityCollision(deltaPosition[0], deltaPosition[1]);
-    qDebug() << character->getCenterPosition();
     mainView->centerOn(character);
     delete[] deltaPosition;
 }

@@ -26,6 +26,9 @@ protected:
     //Redifined functions
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+
+
     };
 
 #endif //PROJET_CPP_SETTINGSWIDGET_H
