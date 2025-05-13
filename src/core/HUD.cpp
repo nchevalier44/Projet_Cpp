@@ -107,21 +107,36 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
 
         // Ajouter une icône de sort
         QLabel* iconeLabel = new QLabel(spellLabel);
-        QPixmap iconePixmap = QPixmap(PATH_MISSILE_SPELL_ICONE);
+        QPixmap iconePixmap;
+        if(i == 0){
+            iconePixmap = QPixmap(PATH_MISSILE_SPELL_ICONE);
+        }
+        else if(i == 1){
+            iconePixmap = QPixmap(PATH_MISSILE_SLASH_ICONE);
+
+        }
+        else if(i == 2){
+            iconePixmap = QPixmap(PATH_MISSILE_SHIELD_ICONE);
+        }
+
+
         iconeLabel->setFixedSize(spellLabel->width() * 0.8, spellLabel->height() * 0.8);
         iconeLabel->setPixmap(iconePixmap.scaled(iconeLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
         iconeLabel->move(spellLabel->width() / 2 - iconeLabel->width() / 2, spellLabel->height() / 2 - iconeLabel->height() / 2);
 
-        //Ajout du nombre de missile restant
-        missileCountLabel = new QLabel(spellLabel);
-        QFont font(FontManager::fontFamily);
-        font.setPointSize(24); // Taille de la police (ajuste selon ton besoin)
-        missileCountLabel->setFont(font);
-        missileCountLabel->setStyleSheet("color: white; font-size: 20px;");
-        missileCountLabel->move(spellLabel->width() - 40, spellLabel->height() - 25);
-        missileCountLabel->setText(QString::number(currentMissile));
-        missileCountLabel->raise();
-        missileCountLabel->show();
+        if(i == 0){
+            //Ajout du nombre de missile restant
+            missileCountLabel = new QLabel(spellLabel);
+            QFont font(FontManager::fontFamily);
+            font.setPointSize(24); // Taille de la police (ajuste selon ton besoin)
+            missileCountLabel->setFont(font);
+            missileCountLabel->setStyleSheet("color: white; font-size: 20px;");
+            missileCountLabel->move(spellLabel->width() - 40, spellLabel->height() - 25);
+            missileCountLabel->setText(QString::number(currentMissile));
+            missileCountLabel->raise();
+            missileCountLabel->show();
+        }
+
         // Ajouter le widget au layout
         spellLayout->addWidget(spellLabel);
         spell.append(spellLabel);
@@ -138,11 +153,14 @@ void SpellWidget::shootedMissile(){
     missileCountLabel->setText(QString::number(currentMissile));
 
 
+
+
     QLabel* cooldownOverlay = new QLabel(spellLabel);
     cooldownOverlay->setStyleSheet("background-color: rgba(0, 0, 0, 150);");
     cooldownOverlay->setGeometry(0, 0,spellLabelWidth, spellLabelHeight); // Geometry dès le début
     cooldownOverlay->show();
     cooldownOverlay->raise();
+
 
     QPropertyAnimation* animation = new QPropertyAnimation(cooldownOverlay, "geometry", spellLabel);
     animation->setDuration(2000);
