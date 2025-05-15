@@ -72,6 +72,8 @@ enum Direction {None, Up, Down, Left, Right};
 #define PATH_PLAYER_SLASH2 "../assets/images/characters/Slash2.gif"
 #define PATH_PLAYER_SLASH3 "../assets/images/characters/Slash3.gif"
 
+//Slash
+#define PATH_PLAYER_SHIELD "../assets/images/characters/Shield.gif"
 //HUD
 
 #define PATH_SPELL_BOX "../assets/images/characters/SpellBox.png"

@@ -4,6 +4,7 @@
 #include "../Projectile.h"
 #include "../../constants.h"
 
+
 class PlayerProjectile : public Projectile {
 public :
     PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent=nullptr);

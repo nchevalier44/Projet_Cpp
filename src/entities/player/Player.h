@@ -10,6 +10,7 @@
 #include "../Entity.h"
 #include "../../core/MainView.h"
 #include "../../core/HUD.h"
+#include "PlayerShield.h"
 
 #include "PlayerProjectile.h"
 #include "PlayerSlash.h"
