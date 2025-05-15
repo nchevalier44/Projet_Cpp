@@ -6,7 +6,7 @@
 #include "GameScene.h"
 #include "MainWindow.h"
 #include "../entities/player/Player.h"
-
+#include "../entities/NPC/Goblin.h"
 
 
 GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent) : QGraphicsScene(parent), scoreManager(scoreManager), mainView(view){
@@ -24,9 +24,9 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
 
     //Setting up the player's character
     this->character = new Player("Character", 3, scoreManager);
-    this->character->setPos(400, 200);
-    this->character->setSpeed(4);
-    this->character->setScale(0.1);
+    this->character->setPos(1480, 2730);
+    this->character->setSpeed(6);
+    this->character->setScale(0.2);
     this->character->setFocus();
     this->mainView->setFocus(); //Set the focus on the mainView so we can detect the key press
 
@@ -37,21 +37,10 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
     PlayerSlash* slash = new PlayerSlash(this, character);
     this->character->setPlayerSlash(slash);
 
-    Bat* bat = new Bat("Bat", 1, scoreManager, this);
-    bat->setPos(200, 200);
-    this->addItem(bat);
-    listNPC.append(bat);
-
-    Bat* bat1 = new Bat("Bat", 1, scoreManager, this);
-    bat1->setPos(200, 400);
-    this->addItem(bat1);
-    listNPC.append(bat1);
-
-    Bat* bat2 = new Bat("Bat", 1, scoreManager, this);
-    bat2->setPos(100, 200);
-    this->addItem(bat2);
-    listNPC.append(bat2);
-
+    Goblin* goblin = new Goblin("Goblin", 1, scoreManager, this);
+    goblin->setPos(1200, 2350);
+    this->addItem(goblin);
+    listNPC.append(goblin);
 
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer(this);
@@ -63,101 +52,77 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
 void GameScene::loadMap(){
 
     //Load and parse json file
-    QFile file("../assets/maps/testmap.json");
+    QFile file("../assets/maps/map.json");
     file.open(QIODevice::ReadOnly);
 
     QJsonDocument document = QJsonDocument::fromJson(file.readAll());
     QJsonObject mapObject = document.object();
 
-    //listPixmap will contains every tiles
-    QMap<int, QPixmap> listPixmap;
-
-    int tileWidth = mapObject["tilewidth"].toInt();
-    int tileHeight = mapObject["tileheight"].toInt();
-    int numberTileWidth = mapObject["width"].toInt();
-    int numberTileHeight = mapObject["height"].toInt();
-
-    this->backgroundWidth = numberTileWidth*tileWidth;
-    this->backgroundHeight = numberTileHeight*tileHeight;
+    this->backgroundWidth = 3000;
+    this->backgroundHeight = 3000;
 
     QPixmap mapPixmap(backgroundWidth, backgroundHeight);
     QPainter painter(&mapPixmap);
-
-    //First we get every tiles to add it into listPixmap
-    QJsonArray tilesets = mapObject["tilesets"].toArray();
-    for(QJsonValue tilesetValue : tilesets){
-        QJsonObject tileset = tilesetValue.toObject();
-
-        int firstGid = tileset["firstgid"].toInt();
-        QString source = tileset["source"].toString();
-        source = source.replace("tilesets", "texture");
-        source = source.replace(".tsx", ".png");
-        QPixmap tilesetImage(source); //load image
-
-        int numColumns = tilesetImage.width() / tileWidth;
-        int numRows = tilesetImage.height() / tileHeight;
-
-        for (int row = 0; row < numRows; ++row) {
-            for (int column = 0; column < numColumns; ++column) {
-                int tileID = firstGid + (row * numColumns) + column;
-
-                //We add one by one tiles so we 'cut' the image everytime
-                QRect tileRect(column * tileWidth, row * tileHeight, tileWidth, tileHeight);
-                QPixmap tilePixmap = tilesetImage.copy(tileRect);
-                listPixmap[tileID] = tilePixmap;
-            }
-        }
-    }
 
     QJsonArray layers = mapObject["layers"].toArray();
     for(QJsonValue layerValue : layers){
         QJsonObject layer = layerValue.toObject();
 
-        if(layer["type"] == "tilelayer"){
-            int width = layer["width"].toInt();
-            int height = layer["height"].toInt();
-
-            QJsonArray data = layer["data"].toArray();
-            for(int y = 0; y < height; y++){ //line
-                for(int x = 0; x < width; x++){ //column
-                    int tileID = data[width * y + x].toInt();
-                    if(tileID != 0){
-                        painter.setOpacity(layer["opacity"].toDouble());
-                        painter.drawPixmap(x * 32, y * 32, listPixmap[tileID]); //Draw the tile at the right position
-                        painter.setOpacity(1);
-                    }
-                }
+        if(layer["type"] == "imagelayer"){
+            QPixmap image("../assets/maps/" + layer["image"].toString());
+            if(image.isNull()){
+                qDebug() << "Image not found : " << layer["image"].toString();
             }
 
+            painter.setOpacity(layer["opacity"].toDouble());
+            painter.drawPixmap(layer["x"].toInt(), layer["y"].toInt(), image);
+
             //Add collisions objects
-        } else if(layer["type"] == "objectgroup" && layer["name"] == "collisions"){
+        } else if(layer["name"] == "collisions"){
             QJsonArray objects = layer["objects"].toArray();
 
             for(QJsonValue objectValue : objects){
                 QJsonObject object = objectValue.toObject();
 
-                int x = object["x"].toInt();
-                int y = object["y"].toInt();
-                int width = object["width"].toInt();
-                int height = object["height"].toInt();
-                bool isEllipse = object.contains("ellipse") && object["ellipse"].toBool();
+                int x = object["x"].toDouble();
+                int y = object["y"].toDouble();
+                int width = object["width"].toDouble();
+                int height = object["height"].toDouble();
 
-                if (isEllipse) {
-                    QGraphicsEllipseItem* ellipse = new QGraphicsEllipseItem(x, y, width, height, mapItem);
-                    ellipse->setBrush(Qt::red);
-                    ellipse->setPen(Qt::NoPen);
-                    ellipse->setData(0, "collision");
-                    ellipse->setZValue(100);
-                    this->addItem(ellipse);
+
+                if (object.contains("polygon") || object.contains("polyline")) {
+                    QPolygonF polygon;
+
+                    QJsonArray points;
+                    if(object.contains("polygon")){
+                        points = object["polygon"].toArray();
+                    } else{
+                        points = object["polyline"].toArray();
+                    }
+
+                    for (const QJsonValue& pointValue : points) {
+                        QJsonObject point = pointValue.toObject();
+                        qreal px = point["x"].toDouble();
+                        qreal py = point["y"].toDouble();
+                        polygon << QPointF(x + px, y + py); // coordonnées relatives à (x,y)
+                    }
+
+                    QGraphicsPolygonItem* polyItem = new QGraphicsPolygonItem(polygon, mapItem);
+                    //polyItem->setBrush(Qt::red);
+                    polyItem->setPen(Qt::NoPen);
+                    polyItem->setData(0, "collision");
+                    polyItem->setZValue(100);
+                    this->addItem(polyItem);
                 } else {
                     QGraphicsRectItem* rect = new QGraphicsRectItem(x, y, width, height, mapItem);
-                    rect->setBrush(Qt::red);
+                    //rect->setBrush(Qt::green);
                     rect->setPen(Qt::NoPen);
                     rect->setData(0, "collision");
                     rect->setZValue(100);
                     this->addItem(rect);
                 }
             }
+
         }
     }
 
@@ -185,6 +150,9 @@ void GameScene::keyPressEvent(QKeyEvent* event){
         case Qt::Key_W :
             qDebug("Key W pressed");
             hud->getSpellWidget()->changeSelectedSpell(1);
+            break;
+        case Qt::Key_T:
+            qDebug() << character->pos();
             break;
         default:
             break;
@@ -244,15 +212,19 @@ void GameScene::moveProjectiles(){
 }
 
 void GameScene::removeProjectile(Projectile* projectile){
-    listProjectiles.removeAll(projectile);
-    delete projectile;
-    projectile = nullptr;
+    if(projectile){
+        listProjectiles.removeAll(projectile);
+        delete projectile;
+        projectile = nullptr;
+    }
 }
 
 void GameScene::removeEntity(Entity* entity){
-    listNPC.removeAll(entity);
-    delete entity;
-    entity = nullptr;
+    if(entity){
+        listNPC.removeAll(entity);
+        delete entity;
+        entity = nullptr;
+    }
 }
 
 
@@ -260,6 +232,8 @@ void GameScene::removeEntity(Entity* entity){
 void GameScene::checkNPCAttackRange(){
     qreal posX = character->getCenterPosition().x();
     qreal posY = character->getCenterPosition().y();
+
+    if(character->isEntityDead()) return; //Do not attack if player is dead
 
     for(Entity* entity : listNPC){
         if(entity &&  entity->getHp() > 0){
@@ -273,6 +247,7 @@ void GameScene::checkNPCAttackRange(){
 
 //Move the player
 void GameScene::movePlayer(){
+    if(character->isEntityDead()) return; //Do not move the player if he is dead
     qreal* deltaPosition = getDeltaPosition();
     character->moveEntityCollision(deltaPosition[0], deltaPosition[1]);
     mainView->centerOn(character);
@@ -281,6 +256,8 @@ void GameScene::movePlayer(){
 
 //Move all entities
 void GameScene::moveNPC(){
+    if(character->isEntityDead()) return; //Do not move entities if the player is Dead
+
     //Get player position
     qreal posCharacterX = character->getCenterPosition().x();
     qreal posCharacterY = character->getCenterPosition().y();
@@ -377,7 +354,6 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     //Check if the player is on the missile spell
     if (hud->getSpellWidget()->getSelectedSpell()[0]) {
         if (event->button() == Qt::LeftButton) {
-
             if (character->canShoot(clickPos) && hud->getSpellWidget()->getCurrentMissile() != 0) {
                 character->shootProjectile(clickPos, this);
                 this->hud->getSpellWidget()->shootedMissile();
@@ -390,20 +366,20 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
                 QPointF clickPosLow = clickPos;
                 switch (character->getCurrentDirection()) {
                     case Up:
-                        clickPosHigh.setX(clickPos.x() - 25);
-                        clickPosLow.setX(clickPos.x() + 25);
+                        clickPosHigh.setX(clickPos.x() - 50);
+                        clickPosLow.setX(clickPos.x() + 50);
                         break;
                     case Down:
-                        clickPosHigh.setX(clickPos.x() - 25);
-                        clickPosLow.setX(clickPos.x() + 25);
+                        clickPosHigh.setX(clickPos.x() - 50);
+                        clickPosLow.setX(clickPos.x() + 50);
                         break;
                     case Left:
-                        clickPosHigh.setY(clickPos.y() - 25);
-                        clickPosLow.setY(clickPos.y() + 25);
+                        clickPosHigh.setY(clickPos.y() - 50);
+                        clickPosLow.setY(clickPos.y() + 50);
                         break;
                     case Right:
-                        clickPosHigh.setY(clickPos.y() - 25);
-                        clickPosLow.setY(clickPos.y() + 25);
+                        clickPosHigh.setY(clickPos.y() - 50);
+                        clickPosLow.setY(clickPos.y() + 50);
                         break;
                     default:
                         return;

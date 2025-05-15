@@ -1,8 +1,7 @@
-#include <QtGui>
-#include "PlayerProjectile.h"
+#include "GoblinProjectile.h"
 #include "../../core/GameScene.h"
 
-PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent)
+GoblinProjectile::GoblinProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent)
         : Projectile(damage, speed, distanceMax, spriteSheet, pos, direction, scene, proprietary, parent) {
     frameWidth = 32;
     frameHeight = 21;
@@ -13,18 +12,21 @@ PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QStri
 
 }
 
-void PlayerProjectile::throwProjectile() {
-    setStartAnimation(PATH_PLAYER_PROJECTILE_GROW);
-    QTimer::singleShot(6*100, this, &PlayerProjectile::startMove);
+void GoblinProjectile::throwProjectile() {
+    setMiddleAnimation(PATH_GOBLIN_PROJECTILE_MOVE);
+    startMove();
 }
 
-void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
+void GoblinProjectile::setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
     if(movie){
         movie->stop();
         delete movie;
         movie = nullptr;
     }
-    this->movie = new QMovie(PATH_PLAYER_PROJECTILE_FADE);
+    this->movie = new QMovie(PATH_GOBLIN_PROJECTILE_BLOW);
+    if(!movie->isValid()){
+        qDebug() << "Projectile blow not valid";
+    }
 
     timerEndMovie = new QTimer();
     connect(timerEndMovie, &QTimer::timeout, this, [this](){
@@ -45,8 +47,8 @@ void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
     timerEndMovie->start();
 }
 
-void PlayerProjectile::startMove() {
-    setMiddleAnimation(PATH_PLAYER_PROJECTILE);
+void GoblinProjectile::startMove() {
+    setMiddleAnimation(PATH_GOBLIN_PROJECTILE_MOVE);
     //Starting the moving
     gameScene->addProjectile(this);
 }

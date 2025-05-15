@@ -2,6 +2,7 @@
 #define PROJET_CPP_MAINVIEW_H
 
 #include <QGraphicsView>
+#include <QWheelEvent>
 #include "ScoreManager.h"
 
 class MainView : public QGraphicsView {
@@ -16,8 +17,10 @@ class MainView : public QGraphicsView {
         void deleteDeathScreen();
 
     protected:
-        virtual void resizeEvent (QResizeEvent* event);
-    private:
+        void resizeEvent (QResizeEvent* event) override;
+        void wheelEvent(QWheelEvent* event) override { event->ignore(); }
+
+        private:
         bool fitView = true;
         QWidget* deathScreen = nullptr;
         ScoreManager* scoreManager = nullptr;

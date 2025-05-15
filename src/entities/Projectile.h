@@ -30,7 +30,7 @@ protected:
 
 
 public :
-    Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent);
+    Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary=nullptr, QGraphicsObject* parent=nullptr);
     ~Projectile(){}
     virtual QRectF boundingRect() const override;
     virtual QPainterPath shape() const override;
@@ -54,8 +54,8 @@ public :
 
 
     //Animation
-    virtual void setStartAnimation(QString spriteSheet, int frameCount, int animationSpeed){}
-    virtual void setMiddleAnimation(QString spriteSheet, int frameCount, int animationSpeed){}
+    void setStartAnimation(QString spriteSheet);
+    void setMiddleAnimation(QString spriteSheet);
     virtual void setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed){}
 
 public slots:

@@ -44,7 +44,7 @@ public:
     void setHorizontalFlip(bool flip) { horizontalFlipped = flip; }
 
     //Attack Method
-    void attackEntity(Entity* entity);
+    virtual void attackEntity(Entity* entity);
     virtual void takeDamage(int damage, Entity* attacker);
 
     //Other methods
@@ -60,6 +60,7 @@ public:
     void stopAnimation();
     virtual void deathAnimation() {};
     virtual void attackAnimation() {};
+    virtual void moveAnimation() {};
     void horizontalFlip();
 
     //Method to set the animation

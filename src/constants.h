@@ -28,6 +28,24 @@
 #define PATH_BAT_DEATH "../assets/images/bat/Bat-Die.png"
 #define NB_FRAME_BAT_MOVE 9
 #define ANIM_SPEED_BAT_MOVE 90
+#define NB_FRAME_BAT_DEATH 12
+#define ANIM_SPEED_BAT_DEATH 100
+#define NB_FRAME_BAT_ATTACK 8
+#define ANIM_SPEED_BAT_ATTACK 100
+
+
+//Goblin
+#define PATH_GOBLIN_ATTACK "../assets/images/goblin/enemy1_attack.png"
+#define PATH_GOBLIN_MOVE "../assets/images/goblin/enemy1_moving.png"
+#define PATH_GOBLIN_IDLE "../assets/images/goblin/enemy1_idle.png"
+#define PATH_GOBLIN_PROJECTILE_MOVE "../assets/images/goblin/enemy1_missile.gif"
+#define PATH_GOBLIN_PROJECTILE_BLOW "../assets/images/goblin/enemy1_missile_blow.gif"
+#define NB_FRAME_GOBLIN_MOVE 4
+#define ANIM_SPEED_GOBLIN_MOVE 90
+#define NB_FRAME_GOBLIN_IDLE 6
+#define ANIM_SPEED_GOBLIN_IDLE 90
+#define NB_FRAME_GOBLIN_ATTACK 6
+#define ANIM_SPEED_GOBLIN_ATTACK 90
 
 
 #define PATH_MISSILE_SPELL_GROW_ANIMATION "../assets/images/characters/Missile_spellGrow.gif"

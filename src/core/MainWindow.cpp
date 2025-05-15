@@ -54,7 +54,7 @@ void MainWindow::startGame(){
     gameScene->setView(mainView);
     mainView->setScene(gameScene);
     mainView->setFitView(false);
-    mainView->scale(4, 4);
+    mainView->scale(2, 2);
     QPointF windowSize(this->width(), this->height());
 
     //Setting up the HUD
@@ -69,7 +69,7 @@ void MainWindow::startGame(){
 
 void MainWindow::resetGame(){
     mainView->deleteDeathScreen();
-    mainView->scale(0.25, 0.25); // 0.25 to reset the view to 1:1 which was changed by scale(4, 4) in startGame
+    mainView->scale(0.5, 0.5); // 0.25 to reset the view to 1:1 which was changed by scale(4, 4) in startGame
     if(gameScene != nullptr){
         delete gameScene;
         gameScene = nullptr;

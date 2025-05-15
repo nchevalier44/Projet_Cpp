@@ -58,6 +58,11 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
     currentSpriteSheetPath = newSpriteSheet;
     // Load the new sprite sheet
     this->spriteSheet = new QPixmap(newSpriteSheet);
+
+    if(spriteSheet->isNull()) {
+        qDebug() << "Error: Could not load sprite sheet " << newSpriteSheet;
+        return;
+    }
     this->currentFrame = 0;
     this->frameCount = newFrameCount;
     this->frameWidth = this->spriteSheet->width() / frameCount;
@@ -99,7 +104,6 @@ void Entity::attackEntity(Entity* entity) {
     attacking = true;
     this->attackAnimation();
     entity->takeDamage(this->getDamage(), this);
-
 }
 
 void Entity::takeDamage(int d, Entity* attacker) {
@@ -160,18 +164,38 @@ void Entity::moveEntity(qreal posX, qreal posY, bool forceMove){
     qreal dx = 0;
     qreal dy = 0;
 
-    if(posX - posEntityX < 0){
+    int distanceX = posX - posEntityX;
+    int distanceY = posY - posEntityY;
+
+    if(distanceX < 0){
         dx = -speed;
         this->setCurrentDirection(Left);
-    } else if(posX - posEntityX > 0){
+    } else if(distanceX > 0){
         dx = speed;
         this->setCurrentDirection(Right);
     }
 
-    if(posY - posEntityY < 0){
+    if(distanceY < 0){
         dy = -speed;
-    } else if(posY - posEntityY > 0){
+    } else if(distanceY > 0){
         dy = speed;
+    }
+
+    //If the speed is bigger than the distance to travel (in x or y), I set delta to the distance
+    // else the Entity do right and left in continue because the point he want to go is between +speed and -speed
+    if(abs(distanceX) < speed){
+        if(speed < 0){
+            dx = -distanceX;
+        } else{
+            dx = distanceX;
+        }
+    }
+    if(abs(distanceY) < speed){
+        if(speed < 0){
+            dy = -distanceY;
+        } else{
+            dy = distanceY;
+        }
     }
 
     if(direction != currentDirection){
@@ -182,6 +206,7 @@ void Entity::moveEntity(qreal posX, qreal posY, bool forceMove){
     float distance = sqrt(pow(posX - posEntityX, 2) + pow(posY - posEntityY, 2));
     if(forceMove || (distance >= rangeAttack && !(attacking))){
         moveEntityCollision(dx, dy);
+        this->moveAnimation();
     }
 }
 
