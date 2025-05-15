@@ -1,11 +1,12 @@
 #include "Bat.h"
 #include "../../core/GameScene.h"
 
-Bat::Bat(std::string name, int life, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scene, parent) {
+Bat::Bat(std::string name, int life, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scoreManager, scene, parent) {
     setAnimation(PATH_BAT_MOVE, NB_FRAME_BAT_MOVE, ANIM_SPEED_BAT_MOVE);
     maxHp = life;
     speed = 2;
     rangeAttack = 24;
+    score = 10;
 }
 
 void Bat::deathAnimation() {

@@ -9,7 +9,7 @@
 
 #include "../core/GameScene.h"
 
-Entity::Entity(std::string name, int hp, GameScene* scene, QGraphicsItem* parent) : hp(hp), name(name), gameScene(scene), QGraphicsObject(parent) {
+Entity::Entity(std::string name, int hp, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : hp(hp), name(name), scoreManager(scoreManager), gameScene(scene), QGraphicsObject(parent) {
 }
 
 Entity::~Entity() {
@@ -103,10 +103,11 @@ void Entity::attackEntity(Entity* entity) {
 }
 
 void Entity::takeDamage(int d, Entity* attacker) {
+    if(isDead) return;
+
     if(attacker){
         this->takeKnockback(attacker);
     }
-
 
     //Display a red screen to indicate damage
     QGraphicsColorizeEffect* effect = new QGraphicsColorizeEffect(this);
@@ -120,7 +121,12 @@ void Entity::takeDamage(int d, Entity* attacker) {
 
     if(hp - d <= 0) {
         hp = 0;
+        isDead = true;
         deathAnimation();
+        Player* player = dynamic_cast<Player*>(attacker); //return nullptr if attacker is not a player
+        if (player) { //if attacker is a player
+            scoreManager->getActualScore()->setScore(scoreManager->getActualScore()->getScore() + this->getScore());
+        }
     } else {
         hp -= d;
     }

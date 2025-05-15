@@ -2,11 +2,12 @@
 #define PROJET_CPP_MAINVIEW_H
 
 #include <QGraphicsView>
+#include "ScoreManager.h"
 
 class MainView : public QGraphicsView {
     Q_OBJECT
     public:
-        MainView(QWidget* parent = nullptr);
+        MainView(ScoreManager* scoreManager, QWidget* parent = nullptr);
         virtual ~MainView();
 
         //Setters
@@ -19,6 +20,7 @@ class MainView : public QGraphicsView {
     private:
         bool fitView = true;
         QWidget* deathScreen = nullptr;
+        ScoreManager* scoreManager = nullptr;
 
     public slots:
         void displayDeathScreen();

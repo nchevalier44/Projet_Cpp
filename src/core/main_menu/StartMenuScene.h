@@ -34,6 +34,10 @@ class StartMenuScene : public QGraphicsScene{
         //Getters
         QMediaPlayer* getAudioPlayer() const { return audioPlayer; }
 
+        void createSettingsWidget(MainWindow* mainWindow);
+        void createButtons(MainWindow* mainWindow);
+        void createScores(MainWindow* mainWindow);
+
         void drawBackground(QPainter* painter, const QRectF& rect);
 
         StartMenuScene(MainWindow* mainWindow, QObject* parent = nullptr);
@@ -42,11 +46,13 @@ class StartMenuScene : public QGraphicsScene{
     private:
         QPixmap* background = nullptr;
         QWidget* buttonsContainer = nullptr;
+        QWidget* scoresContainer = nullptr;
         QMediaPlayer* audioPlayer = nullptr;
         QSoundEffect* sound = nullptr;
         SettingsWidget* settingsWidget = nullptr;
         QGraphicsProxyWidget* settingsProxyWidget = nullptr;
         QLabel* titleLabel = nullptr;
+
 
     signals:
         void startGameRequested();

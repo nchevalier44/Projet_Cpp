@@ -9,7 +9,6 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     this->settingsBackgroundPixmap = new QPixmap(PATH_MAIN_MENU_SETTINGS_BACKGROUND);
     this->ratioSettingsPixmap = float(this->settingsBackgroundPixmap->width()) / float(this->settingsBackgroundPixmap->height());
     this->setStyleSheet("background: transparent;");
-    this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
 
     //Font
     QFont textFont(FontManager::fontFamily, 23);
@@ -163,6 +162,8 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     volumeMusicSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     volumeSFXSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+    this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+
 }
 
 
@@ -191,4 +192,8 @@ void SettingsWidget::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
     QSize newSize = event->size();
     this->setFixedSize(newSize.width(), newSize.width() / ratioSettingsPixmap);
+}
+
+void SettingsWidget::mousePressEvent(QMouseEvent *event) {
+    event->accept();  //Stop the mouse event in order to not click on the button behind the widget
 }

@@ -2,6 +2,7 @@
 #define PROJET_CPP_ENTITY_H
 
 #include "../constants.h"
+#include "../core/ScoreManager.h"
 
 #include <string>
 #include <QPixmap>
@@ -17,7 +18,7 @@ class GameScene;
 class Entity  : public QGraphicsObject {
     Q_OBJECT
 public:
-    Entity(std::string name="Default Name", int hp=100, GameScene* scene=nullptr, QGraphicsItem* parent=nullptr);
+    Entity(std::string name="Default Name", int hp=100, ScoreManager* scoreManager=nullptr, GameScene* scene=nullptr, QGraphicsItem* parent=nullptr);
     ~Entity();
 
     //Getters
@@ -32,6 +33,8 @@ public:
     int getDamage() const { return damage; }
     bool isAttacking() const { return attacking; }
     bool isHorizontalFlipped() const { return horizontalFlipped; }
+    int getScore(){ return score; }
+    bool isEntityDead() const { return isDead; }
 
     //Setters
     virtual void setHp(int newHp) { hp = newHp; }
@@ -81,9 +84,12 @@ protected:
     Direction currentDirection = None;
     int rangeAttack = 32;
     int damage = 1;
+    int score = 0;
+    bool isDead = false;
     bool attacking = false;
     bool horizontalFlipped = false;
     GameScene* gameScene = nullptr;
+    ScoreManager* scoreManager = nullptr;
 
     //Animation variables
     QPixmap* spriteSheet = nullptr;
