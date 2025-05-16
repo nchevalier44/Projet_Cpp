@@ -16,6 +16,7 @@ class Goblin : public Entity {
     void attackAnimation() override;
     void attackEntity(Entity* entity) override;
     void moveAnimation() override;
+    void idleAnimation() override;
     void deathAnimation() override;
 
 

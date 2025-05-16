@@ -42,6 +42,12 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
     this->addItem(goblin);
     listNPC.append(goblin);
 
+    Bat* bat = new Bat("Bat", 1, scoreManager, this);
+    bat->setPos(1100, 2200);
+    this->addItem(bat);
+    listNPC.append(bat);
+
+
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer(this);
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
@@ -264,8 +270,13 @@ void GameScene::moveNPC(){
 
     //We move each entity in listNPC
     for(Entity* entity : listNPC){
+        float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
         if(entity){
-            entity->moveEntity(posCharacterX, posCharacterY);
+            if(distance < 300){
+                entity->moveEntity(posCharacterX, posCharacterY);
+            } else{
+                entity->idleAnimation();
+            }
         }
     }
 }

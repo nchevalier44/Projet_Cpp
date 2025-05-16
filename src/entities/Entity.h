@@ -61,6 +61,7 @@ public:
     virtual void deathAnimation() {};
     virtual void attackAnimation() {};
     virtual void moveAnimation() {};
+    virtual void idleAnimation(){};
     void horizontalFlip();
 
     //Method to set the animation

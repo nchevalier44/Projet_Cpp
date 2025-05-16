@@ -20,11 +20,9 @@ void Bat::deathAnimation() {
 
 void Bat::attackAnimation() {
     setAnimation(PATH_BAT_ATTACK, NB_FRAME_BAT_ATTACK, ANIM_SPEED_BAT_ATTACK);
-    if(this->isHorizontalFlipped()) this->horizontalFlip();
 
     QTimer::singleShot(NB_FRAME_BAT_ATTACK*ANIM_SPEED_BAT_ATTACK, this, [=]() {
         this->attacking = false;
         setAnimation(PATH_BAT_MOVE, NB_FRAME_BAT_MOVE, ANIM_SPEED_BAT_MOVE);
-        if(this->isHorizontalFlipped()) this->horizontalFlip();
     });
 }

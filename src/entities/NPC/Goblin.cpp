@@ -9,17 +9,16 @@ Goblin::Goblin(std::string name, int life, ScoreManager* scoreManager, GameScene
     speed = 2;
     rangeAttack = 200;
     score = 10;
+    horizontalFlipped = true;
     this->setScale(0.1);
 }
 
 void Goblin::attackAnimation() {
     setAnimation(PATH_GOBLIN_ATTACK, NB_FRAME_GOBLIN_ATTACK, ANIM_SPEED_GOBLIN_ATTACK);
-    if(!this->isHorizontalFlipped()) this->horizontalFlip();
 
     QTimer::singleShot(NB_FRAME_GOBLIN_ATTACK*ANIM_SPEED_GOBLIN_ATTACK, this, [=]() {
         this->attacking = false;
         setAnimation(PATH_GOBLIN_MOVE, NB_FRAME_GOBLIN_MOVE, ANIM_SPEED_GOBLIN_MOVE);
-        if(!this->isHorizontalFlipped()) this->horizontalFlip();
     });
 }
 
@@ -33,6 +32,10 @@ void Goblin::deathAnimation() {
 
 void Goblin::moveAnimation() {
     setAnimation(PATH_GOBLIN_MOVE, NB_FRAME_GOBLIN_MOVE, ANIM_SPEED_GOBLIN_MOVE);
+}
+
+void Goblin::idleAnimation(){
+    setAnimation(PATH_GOBLIN_IDLE, NB_FRAME_GOBLIN_IDLE, ANIM_SPEED_GOBLIN_IDLE);
 }
 
 void Goblin::shootProjectile(QPointF target, GameScene* scene) {
