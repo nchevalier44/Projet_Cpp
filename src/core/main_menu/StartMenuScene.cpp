@@ -51,8 +51,8 @@ StartMenuScene::~StartMenuScene() {
     buttonsContainer = nullptr;
     delete titleLabel;
     titleLabel = nullptr;
-    delete scoresContainer;
-    scoresContainer = nullptr;
+    delete scoreboardWidget;
+    scoreboardWidget = nullptr;
 }
 
 
@@ -80,12 +80,32 @@ void StartMenuScene::createSettingsWidget(MainWindow* mainWindow){
     settingsProxyWidget->setGraphicsEffect(shadowEffect);
 }
 
+void StartMenuScene::createScoreboardWidget(MainWindow* mainWindow){
+    scoreboardWidget = new ScoreboardWidget(mainWindow);
+
+    //Add settings widget to the scene
+    scoreboardProxyWidget = new QGraphicsProxyWidget();
+    scoreboardProxyWidget->setWidget(scoreboardWidget);
+    this->addItem(scoreboardProxyWidget);
+    scoreboardProxyWidget->hide();
+    scoreboardProxyWidget->setZValue(100);
+    scoreboardProxyWidget->setPos(background->width()/2 - scoreboardWidget->width()/2, background->height()/2 - scoreboardWidget->height()/2);
+
+    //Add shadow effect to the settings widget
+    QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(scoreboardWidget);
+    shadowEffect->setOffset(0, 0);
+    shadowEffect->setBlurRadius(50);
+    shadowEffect->setColor(Qt::black);
+    scoreboardProxyWidget->setGraphicsEffect(shadowEffect);
+}
+
 void StartMenuScene::createButtons(MainWindow* mainWindow){
     //Create buttons container and buttons
     buttonsContainer = new QWidget();
     buttonsContainer->setAttribute(Qt::WA_OpaquePaintEvent); //get background of the widget transparent
     MainMenuButton* startButton = new MainMenuButton("Start", buttonsContainer);
     MainMenuButton* settingsButton = new MainMenuButton("Options", buttonsContainer);
+    MainMenuButton* scoreboardButton = new MainMenuButton("Scoreboard", buttonsContainer);
     MainMenuButton* exitButton = new MainMenuButton("Exit", buttonsContainer);
 
     //Create buttons layout
@@ -93,12 +113,14 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
     buttonsLayout->setSpacing(height() * 0.05);
     buttonsLayout->addWidget(startButton);
     buttonsLayout->addWidget(settingsButton);
+    buttonsLayout->addWidget(scoreboardButton);
     buttonsLayout->addWidget(exitButton);
 
     //Set buttons font
     QFont buttonFont(FontManager::fontFamily, 40);
     startButton->setFont(buttonFont);
     settingsButton->setFont(buttonFont);
+    scoreboardButton->setFont(buttonFont);
     exitButton->setFont(buttonFont);
 
     //Add sound to buttons
@@ -109,20 +131,23 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
 
 
     createSettingsWidget(mainWindow);
+    createScoreboardWidget(mainWindow);
 
 
     //Set buttons actions
     QObject::connect(startButton, &QPushButton::clicked, this, &StartMenuScene::startGameRequested);
     QObject::connect(settingsButton, &QPushButton::clicked, settingsWidget, &SettingsWidget::show);
+    QObject::connect(scoreboardButton, &QPushButton::clicked, scoreboardWidget, &ScoreboardWidget::show);
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
 
     QObject::connect(startButton, &QPushButton::clicked, sound, &QSoundEffect::play);
     QObject::connect(settingsButton, &QPushButton::clicked, sound, &QSoundEffect::play);
+    QObject::connect(scoreboardButton, &QPushButton::clicked, sound, &QSoundEffect::play);
     QObject::connect(exitButton, &QPushButton::clicked, sound, &QSoundEffect::play);
 
     //Add buttons container to the scene
     QGraphicsProxyWidget* proxyButtonsContainer = this->addWidget(buttonsContainer);
-    qreal posXButtons = (this->width() - buttonsContainer->width()) / 4;
+    qreal posXButtons = (this->width() - buttonsContainer->width()) / 2;
     qreal posYButtons = (this->height() - buttonsContainer->height()) / 2 + 100;
     proxyButtonsContainer->setPos(posXButtons, posYButtons);
 
@@ -130,50 +155,8 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
 
 void StartMenuScene::createScores(MainWindow* mainWindow) {
     //Font
-    QFont font(FontManager::fontFamily, 35);
+
 
     //Recreate the scores container
-    if(scoresContainer) delete scoresContainer; ///Delete the previous score container
-    scoresContainer = new QWidget();
-    QVBoxLayout* scoresLayout = new QVBoxLayout(scoresContainer);
 
-    //Title
-    QLabel* title = new QLabel("Best Scores", scoresContainer);
-    title->setFont(font);
-    title->setStyleSheet("color: white;");
-    title->setAlignment(Qt::AlignHCenter);
-    scoresLayout->addWidget(title);
-
-    //Get scores
-    mainWindow->getScoreManager()->loadScores();
-    QList<Score> scores = mainWindow->getScoreManager()->getBestScoresList();
-    int n = scores.size();
-
-    if(n == 0){ // if no scores
-        QLabel* label = new QLabel("No previous scores...", scoresContainer);
-        label->setFont(font);
-        label->setStyleSheet("color: white;");
-        scoresLayout->addWidget(label);
-    } else{ //if scores exist display each scores
-        for (int i = n - 1; i >= 0; i--) {
-            QString number = QString::number(n - i);
-            QString score = QString::number(scores[i].getScore());
-            int seconds = scores[i].getTimePlayed();
-            QString timePlayed = QString::number(seconds / 60) + "m" + QString::number(seconds % 60) + "s";
-            QString date = scores[i].getDate();
-
-            QLabel *label = new QLabel(number + " | " + score + " pts - " + timePlayed + " - " + date, scoresContainer);
-            label->setFont(font);
-            label->setStyleSheet("color: white;");
-            scoresLayout->addWidget(label);
-        }
-    }
-    scoresContainer->setLayout(scoresLayout);
-    scoresContainer->setStyleSheet("background-color: transparent;");
-
-    //Place scores
-    QGraphicsProxyWidget* proxyScoresContainer = this->addWidget(scoresContainer);
-    qreal posXScores = 3.5 * (this->width() - scoresContainer->width()) / 4;
-    qreal posYScores = (this->height() - scoresContainer->height()) / 2 + 100;
-    proxyScoresContainer->setPos(posXScores, posYScores);
 }

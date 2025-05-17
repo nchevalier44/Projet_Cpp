@@ -5,7 +5,7 @@ MainMenuButton::MainMenuButton(QString text, QWidget* parent): QPushButton(text,
     //Set color of the text white
     setStyleSheet("color: white;");
 
-    //Setup the background image and hover animation
+    //Set up the background image and hover animation
     backgroundPixmap = new QPixmap(PATH_MAIN_MENU_BUTTON_BACKGROUND);
     hoverMovie = new QMovie(this);
     hoverMovie->setFileName(PATH_MAIN_MENU_BUTTON_ANIMATION);

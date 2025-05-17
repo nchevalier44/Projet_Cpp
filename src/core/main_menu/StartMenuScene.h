@@ -23,6 +23,7 @@
 
 #include "MainMenuButton.h"
 #include "SettingsWidget.h"
+#include "ScoreboardWidget.h"
 #include "../AudioManager.h"
 
 class MainWindow;
@@ -35,6 +36,7 @@ class StartMenuScene : public QGraphicsScene{
         QMediaPlayer* getAudioPlayer() const { return audioPlayer; }
 
         void createSettingsWidget(MainWindow* mainWindow);
+        void createScoreboardWidget(MainWindow* mainWindow);
         void createButtons(MainWindow* mainWindow);
         void createScores(MainWindow* mainWindow);
 
@@ -46,11 +48,13 @@ class StartMenuScene : public QGraphicsScene{
     private:
         QPixmap* background = nullptr;
         QWidget* buttonsContainer = nullptr;
-        QWidget* scoresContainer = nullptr;
+
         QMediaPlayer* audioPlayer = nullptr;
         QSoundEffect* sound = nullptr;
         SettingsWidget* settingsWidget = nullptr;
+        ScoreboardWidget* scoreboardWidget = nullptr;
         QGraphicsProxyWidget* settingsProxyWidget = nullptr;
+        QGraphicsProxyWidget* scoreboardProxyWidget = nullptr;
         QLabel* titleLabel = nullptr;
 
 
