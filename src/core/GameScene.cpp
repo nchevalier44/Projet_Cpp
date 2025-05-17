@@ -164,7 +164,6 @@ void GameScene::keyPressEvent(QKeyEvent* event){
         case Qt::Key_X :
             qDebug("Key X pressed");
             hud->getSpellWidget()->changeSelectedSpell(2);
-            this->character->getPlayerShield()->activeShield();
         case Qt::Key_T:
             qDebug() << character->pos();
             break;
@@ -418,6 +417,11 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
                 character->slashAttack(clickPos, this);
             }
         }
-
+    }
+    else if (hud->getSpellWidget()->getSelectedSpell()[2]){
+        if(!hud->getSpellWidget()->getIsShieldOnCd()){
+            this->character->getPlayerShield()->activeShield();
+            hud->getSpellWidget()->shieldUsed();
+        }
     }
 }

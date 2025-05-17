@@ -32,12 +32,15 @@ private :
     int maxSpell;
     int maxMissile = 3;
     int currentMissile = maxMissile;
+    bool isShieldOnCD = false;
 
 public :
     SpellWidget(int maxSpell,QPointF windowSize, QWidget* parent = nullptr);
     void setCurrentMissile(int newCurrentMissile){currentMissile = newCurrentMissile;};
     int getCurrentMissile() const { return currentMissile; }
+    bool getIsShieldOnCd(){return isShieldOnCD;}
     void shootedMissile();
+    void shieldUsed();
     void changeSelectedSpell(int spellIndex);
     QVector<bool> getSelectedSpell() const { return selectedSpell; }
 };

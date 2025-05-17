@@ -152,9 +152,6 @@ void SpellWidget::shootedMissile(){
     currentMissile--;
     missileCountLabel->setText(QString::number(currentMissile));
 
-
-
-
     QLabel* cooldownOverlay = new QLabel(spellLabel);
     cooldownOverlay->setStyleSheet("background-color: rgba(0, 0, 0, 150);");
     cooldownOverlay->setGeometry(0, 0,spellLabelWidth, spellLabelHeight); // Geometry dès le début
@@ -175,6 +172,33 @@ void SpellWidget::shootedMissile(){
         cooldownOverlay->deleteLater();
         setCurrentMissile(currentMissile + 1);
         missileCountLabel->setText(QString::number(currentMissile));
+    });
+}
+
+void SpellWidget::shieldUsed(){
+    QLabel* spellLabel = spell[2];
+    isShieldOnCD = true;
+    const int spellLabelWidth = spellLabel->pixmap().width();
+    const int spellLabelHeight = spellLabel->pixmap().height();
+    QLabel* cooldownOverlay = new QLabel(spellLabel);
+    cooldownOverlay->setStyleSheet("background-color: rgba(0, 0, 0, 150);");
+    cooldownOverlay->setGeometry(0, 0,spellLabelWidth, spellLabelHeight); // Geometry dès le début
+    cooldownOverlay->show();
+    cooldownOverlay->raise();
+
+
+    QPropertyAnimation* animation = new QPropertyAnimation(cooldownOverlay, "geometry", spellLabel);
+    animation->setDuration(5000);
+    animation->setStartValue(QRect(0, 0,spellLabelWidth, spellLabelHeight));
+    animation->setEndValue(QRect(0, spellLabelHeight, spellLabelWidth, 0));
+    animation->setEasingCurve(QEasingCurve::OutQuad);
+
+    //animation->setEasingCurve(QEasingCurve::OutQuad);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+
+    QTimer::singleShot(5000, [cooldownOverlay, this]() {
+        cooldownOverlay->deleteLater();
+        isShieldOnCD = false;
     });
 }
 
