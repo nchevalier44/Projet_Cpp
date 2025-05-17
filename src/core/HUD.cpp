@@ -146,27 +146,7 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
 }
 
 void SpellWidget::shootedMissile(){
-    QLabel* spellLabel = spell[0];
-    const int spellLabelWidth = spellLabel->pixmap().width();
-    const int spellLabelHeight = spellLabel->pixmap().height();
-    currentMissile--;
-    missileCountLabel->setText(QString::number(currentMissile));
-
-    QLabel* cooldownOverlay = new QLabel(spellLabel);
-    cooldownOverlay->setStyleSheet("background-color: rgba(0, 0, 0, 150);");
-    cooldownOverlay->setGeometry(0, 0,spellLabelWidth, spellLabelHeight); // Geometry dès le début
-    cooldownOverlay->show();
-    cooldownOverlay->raise();
-
-
-    QPropertyAnimation* animation = new QPropertyAnimation(cooldownOverlay, "geometry", spellLabel);
-    animation->setDuration(2000);
-    animation->setStartValue(QRect(0, 0,spellLabelWidth, spellLabelHeight));
-    animation->setEndValue(QRect(0, spellLabelHeight, spellLabelWidth, 0));
-    animation->setEasingCurve(QEasingCurve::OutQuad);
-
-    //animation->setEasingCurve(QEasingCurve::OutQuad);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
+    QLabel* cooldownOverlay = coolDownAnimation(0,2000);
 
     QTimer::singleShot(2000, [cooldownOverlay, this]() {
         cooldownOverlay->deleteLater();
@@ -176,7 +156,16 @@ void SpellWidget::shootedMissile(){
 }
 
 void SpellWidget::shieldUsed(){
-    QLabel* spellLabel = spell[2];
+    QLabel* cooldownOverlay = coolDownAnimation(2,5000);
+
+    QTimer::singleShot(5000, [cooldownOverlay, this]() {
+        cooldownOverlay->deleteLater();
+        isShieldOnCD = false;
+    });
+}
+
+QLabel* SpellWidget::coolDownAnimation(int spellSelected, double duration){
+    QLabel* spellLabel = spell[spellSelected];
     isShieldOnCD = true;
     const int spellLabelWidth = spellLabel->pixmap().width();
     const int spellLabelHeight = spellLabel->pixmap().height();
@@ -188,7 +177,7 @@ void SpellWidget::shieldUsed(){
 
 
     QPropertyAnimation* animation = new QPropertyAnimation(cooldownOverlay, "geometry", spellLabel);
-    animation->setDuration(5000);
+    animation->setDuration(duration);
     animation->setStartValue(QRect(0, 0,spellLabelWidth, spellLabelHeight));
     animation->setEndValue(QRect(0, spellLabelHeight, spellLabelWidth, 0));
     animation->setEasingCurve(QEasingCurve::OutQuad);
@@ -196,10 +185,7 @@ void SpellWidget::shieldUsed(){
     //animation->setEasingCurve(QEasingCurve::OutQuad);
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 
-    QTimer::singleShot(5000, [cooldownOverlay, this]() {
-        cooldownOverlay->deleteLater();
-        isShieldOnCD = false;
-    });
+    return cooldownOverlay;
 }
 
 void SpellWidget::changeSelectedSpell(int spellIndex){

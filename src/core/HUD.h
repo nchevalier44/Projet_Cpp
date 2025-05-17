@@ -41,6 +41,7 @@ public :
     bool getIsShieldOnCd(){return isShieldOnCD;}
     void shootedMissile();
     void shieldUsed();
+    QLabel* coolDownAnimation(int spellSelected, double duration);
     void changeSelectedSpell(int spellIndex);
     QVector<bool> getSelectedSpell() const { return selectedSpell; }
 };
