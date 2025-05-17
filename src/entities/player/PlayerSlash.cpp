@@ -40,7 +40,7 @@ PlayerSlash::PlayerSlash(GameScene *scene, Player* player) : scene(scene), playe
         });
     }
     animationTimer->start();
-    this->setScale(0.1);
+    this->setScale(0.25);
 }
 
 void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection)

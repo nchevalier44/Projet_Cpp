@@ -7,27 +7,22 @@ Bat::Bat(std::string name, int life, ScoreManager* scoreManager, GameScene* scen
     speed = 2;
     rangeAttack = 24;
     score = 10;
+    this->setScale(2);
 }
 
 void Bat::deathAnimation() {
-    int nbFrame = 12;
-    int animSpeed = 100;
-    setAnimation(PATH_BAT_DEATH, nbFrame, animSpeed);
-    QTimer::singleShot(nbFrame*animSpeed, this, [this]() {
+    setAnimation(PATH_BAT_DEATH, NB_FRAME_BAT_DEATH, ANIM_SPEED_BAT_DEATH);
+    QTimer::singleShot(NB_FRAME_BAT_DEATH*ANIM_SPEED_BAT_DEATH, this, [this]() {
         stopAnimation();
         this->gameScene->removeEntity(this);
     });
 }
 
 void Bat::attackAnimation() {
-    int nbFrame = 8;
-    int animSpeed = 100;
-    setAnimation(PATH_BAT_ATTACK, nbFrame, animSpeed);
-    if(this->isHorizontalFlipped()) this->horizontalFlip();
+    setAnimation(PATH_BAT_ATTACK, NB_FRAME_BAT_ATTACK, ANIM_SPEED_BAT_ATTACK);
 
-    QTimer::singleShot(8*100, this, [=]() {
+    QTimer::singleShot(NB_FRAME_BAT_ATTACK*ANIM_SPEED_BAT_ATTACK, this, [=]() {
         this->attacking = false;
         setAnimation(PATH_BAT_MOVE, NB_FRAME_BAT_MOVE, ANIM_SPEED_BAT_MOVE);
-        if(this->isHorizontalFlipped()) this->horizontalFlip();
     });
 }

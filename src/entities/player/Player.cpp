@@ -53,8 +53,7 @@ void Player::takeDamage(int damage, Entity* attacker) {
     }
 }
 
-//void Player::shootProjectile(QPointF target, QGraphicsScene* scene) {
-Projectile* Player::shootProjectile(QPointF target, GameScene* scene) {
+void Player::shootProjectile(QPointF target, GameScene* scene) {
     //Ajust the position of the projectile
     QPointF posInit = this->pos();
     posInit.setX(posInit.x() + frameWidth/20);
@@ -70,14 +69,12 @@ Projectile* Player::shootProjectile(QPointF target, GameScene* scene) {
         case Right : posInit.setX(posInit.x() + 15); break;
         default: break;
     }
-    PlayerProjectile* projectile = new PlayerProjectile(1,3, 200, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);
+    PlayerProjectile* projectile = new PlayerProjectile(1,5, 400, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);
 
     projectile->setZValue(10);
     projectile->setScale(0.5);
     scene->addItem(projectile);
 
-    //TODO : undo this line
-    return projectile;
 }
 
 bool Player::canShoot(QPointF clickPos){

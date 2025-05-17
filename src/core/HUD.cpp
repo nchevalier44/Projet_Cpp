@@ -128,10 +128,10 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
             //Ajout du nombre de missile restant
             missileCountLabel = new QLabel(spellLabel);
             QFont font(FontManager::fontFamily);
-            font.setPointSize(24); // Taille de la police (ajuste selon ton besoin)
+            font.setPointSize(0.035 * this->height()); // Taille de la police (ajuste selon ton besoin)
             missileCountLabel->setFont(font);
-            missileCountLabel->setStyleSheet("color: white; font-size: 20px;");
-            missileCountLabel->move(spellLabel->width() - 40, spellLabel->height() - 25);
+            missileCountLabel->setStyleSheet("color: white;");
+            missileCountLabel->move(spellLabel->width() * 0.59, spellLabel->height() * 0.63);
             missileCountLabel->setText(QString::number(currentMissile));
             missileCountLabel->raise();
             missileCountLabel->show();

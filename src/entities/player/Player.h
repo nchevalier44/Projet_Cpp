@@ -108,7 +108,7 @@ public:
     // Attack
     bool canShoot(QPointF clickPos);
     void slashAttack(QPointF target, QGraphicsScene *scene);
-    Projectile *shootProjectile(QPointF target, GameScene *scene);
+    void shootProjectile(QPointF target, GameScene *scene);
 };
 
 #endif // PROJET_CPP_PLAYER_H

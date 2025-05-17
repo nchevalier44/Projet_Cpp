@@ -9,10 +9,12 @@
 #include <QPushButton>
 #include <QFontDatabase>
 
+#include <QResizeEvent>
 
 MainView::MainView(ScoreManager* scoreManager, QWidget* parent) : scoreManager(scoreManager), QGraphicsView(parent) {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 }
 
 MainView::~MainView() {}
@@ -27,15 +29,16 @@ void MainView::deleteDeathScreen(){
 void MainView::resizeEvent (QResizeEvent* event){
     QGraphicsView::resizeEvent(event);
 
+    qDebug() << "resize view";
+
     //We want to have the dimension of the view equal to the scene only in the menu but no in game
-    if(fitView) {
+    if(fitView && event->oldSize() != event->size()) {
         this->fitInView(sceneRect(), Qt::KeepAspectRatio);
     }
 
     if(deathScreen != nullptr){
         deathScreen->setGeometry(this->rect());
     }
-
 }
 
 void MainView::displayDeathScreen() {

@@ -3,7 +3,7 @@
 
 
 
-Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary=nullptr, QGraphicsObject* parent=nullptr)
+Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent)
         : proprietary(proprietary), gameScene(scene), speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
     this->setPos(pos);
     this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
@@ -24,7 +24,7 @@ QRectF Projectile::boundingRect() const {
 QPainterPath Projectile::shape() const {
     QPainterPath path;
     // Hitbox circulaire plus petite que l'image
-    path.addEllipse(boundingRect().center(), 8, 8);  // rayon 8px
+    path.addEllipse(boundingRect().center(), 9, 9);  // rayon 8px
     return path;
 }
 
@@ -48,9 +48,6 @@ void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     painter->drawPath(shape());
 
 }
-
-
-
 
 void Projectile::moveProjectile(){
     if(isBeenDeleting) return;
@@ -90,4 +87,27 @@ void Projectile::moveProjectile(){
         setEndAnimation("",0,0);
         isBeenDeleting = true;
     }
+}
+
+void Projectile::setStartAnimation(QString spriteSheet) {
+    if(movie){
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+    this->movie = new QMovie(spriteSheet);
+    this->movie->start();
+}
+
+void Projectile::setMiddleAnimation(QString spriteSheet) {
+    if(movie){
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+    this->movie = new QMovie(spriteSheet);
+    if(!movie->isValid()){
+        qDebug() << "Projectile middle animation not valid";
+    }
+    this->movie->start();
 }
