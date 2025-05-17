@@ -4,7 +4,7 @@
 //Definition of all constants we use in the project
 
 //Main menu images
-#define PATH_MAIN_MENU_BACKGROUND "../assets/images/menu/background.png"
+#define PATH_MAIN_MENU_BACKGROUND "../assets/images/menu/Main_bg.png"
 
 //Start menu
 #define PATH_MAIN_MENU_BUTTON_BACKGROUND "../assets/images/menu/button_background.png"
