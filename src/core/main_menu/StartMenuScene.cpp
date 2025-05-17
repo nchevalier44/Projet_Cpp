@@ -110,18 +110,21 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
 
     //Create buttons layout
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsContainer);
-    buttonsLayout->setSpacing(height() * 0.05);
+    buttonsLayout->setSpacing(height() * 0.035);
     buttonsLayout->addWidget(startButton);
     buttonsLayout->addWidget(settingsButton);
     buttonsLayout->addWidget(scoreboardButton);
     buttonsLayout->addWidget(exitButton);
 
     //Set buttons font
-    QFont buttonFont(FontManager::fontFamily, 40);
+    QFont buttonFont(FontManager::fontFamily, 33);
     startButton->setFont(buttonFont);
     settingsButton->setFont(buttonFont);
     scoreboardButton->setFont(buttonFont);
     exitButton->setFont(buttonFont);
+
+    //Resize the scoreboard button, else it's too large and all buttons have the same width so it's ugly
+    scoreboardButton->setFixedWidth(scoreboardButton->sizeHint().width()*0.8);
 
     //Add sound to buttons
     sound = new QSoundEffect(buttonsContainer);
