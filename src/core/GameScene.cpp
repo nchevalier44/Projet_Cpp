@@ -37,6 +37,10 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
     PlayerSlash* slash = new PlayerSlash(this, character);
     this->character->setPlayerSlash(slash);
 
+    //Load the shield animation
+    PlayerShield* shield = new PlayerShield(this, character);
+    this->character->setPLayerShield(shield);
+
     Goblin* goblin = new Goblin("Goblin", 1, scoreManager, this);
     goblin->setPos(1200, 2350);
     this->addItem(goblin);
@@ -157,6 +161,10 @@ void GameScene::keyPressEvent(QKeyEvent* event){
             qDebug("Key W pressed");
             hud->getSpellWidget()->changeSelectedSpell(1);
             break;
+        case Qt::Key_X :
+            qDebug("Key X pressed");
+            hud->getSpellWidget()->changeSelectedSpell(2);
+            this->character->getPlayerShield()->activeShield();
         case Qt::Key_T:
             qDebug() << character->pos();
             break;

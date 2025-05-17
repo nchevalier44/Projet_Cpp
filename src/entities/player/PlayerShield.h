@@ -8,23 +8,32 @@
 #ifndef PROJET_CPP_PLAYERSHIELD_H
 #define PROJET_CPP_PLAYERSHIELD_H
 
-class Shield : public QGraphicsObject {
+class Player;
+class GameScene;
+
+
+class PlayerShield : public QGraphicsObject {
 Q_OBJECT
 
 private :
-    bool isActivated;
+    bool isActivated = false;
+    QGraphicsScene* scene = nullptr;
     QMovie* movie;
-    QElapsedTimer timer;
+    QElapsedTimer time;
     QPixmap currentPixmap;
-
-
-
+    int HP = 3;
+    const int durability = 2000;
+    Player* player;
 
 public :
-    Shield();
-    ~Shield(){}
+    PlayerShield(GameScene* scene, Player* player);
+    ~PlayerShield(){}
 
-    void activeShield(){}
+    void activeShield();
+    void desactiveShield();
+    void updatePosition();
+    void decreaseHP(){HP--;if(HP == 0){desactiveShield();}}
+
 
     QRectF boundingRect() const override;
     QPainterPath shape() const override;

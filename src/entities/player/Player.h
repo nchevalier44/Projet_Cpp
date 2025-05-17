@@ -14,6 +14,7 @@
 
 #include "PlayerProjectile.h"
 #include "PlayerSlash.h"
+#include "PlayerShield.h"
 
 class Player : public Entity
 {
@@ -23,18 +24,21 @@ private:
     QSoundEffect *movingSound = nullptr;
 
     PlayerSlash *slash = nullptr;
+    PlayerShield* shield = nullptr;
 
 public:
     Player(std::string name = "Player", int life = 100, ScoreManager* scoreManager=nullptr, GameScene* scene = nullptr, QGraphicsItem* parent = nullptr);
-
+    ~Player(){}
     // Getters
     MainView* getMainView() const { return mainView; }
     Direction getCurrentDirection() const { return currentDirection; }
     PlayerSlash *getPlayerSlash() const { return slash; }
+    PlayerShield *getPlayerShield() const { return shield; }
 
     // Setters
     void setMainView(MainView *new_main_view) { mainView = new_main_view; }
     void setPlayerSlash(PlayerSlash *new_slash) { slash = new_slash; }
+    void setPLayerShield(PlayerShield* new_shield) {shield = new_shield;}
     void setHUD(HUD *newHud) { hud = newHud; }
 
     // Override bounding rect to reduce hitbox
