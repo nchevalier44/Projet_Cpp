@@ -113,6 +113,7 @@ public:
     bool canShoot(QPointF clickPos);
     void slashAttack(QPointF target, QGraphicsScene *scene);
     void shootProjectile(QPointF target, GameScene *scene);
+    void useShield(){shield->activeShield();}
 };
 
 #endif // PROJET_CPP_PLAYER_H

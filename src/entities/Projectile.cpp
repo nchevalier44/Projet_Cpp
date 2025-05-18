@@ -64,6 +64,7 @@ void Projectile::moveProjectile(){
     while(!hasCollided && i < n){
         //dynamic_cast<Entity*> return an Entity if it's an entity else nullptr
         Entity* testEntity = dynamic_cast<Entity*>(collisions[i]);
+        Player* player = dynamic_cast<Player*>(collisions[i]);
         if(testEntity){
             if(proprietary){
                 if(testEntity != proprietary){
@@ -78,6 +79,11 @@ void Projectile::moveProjectile(){
         PlayerShield* testShield = dynamic_cast<PlayerShield*>(collisions[i]);
         if(testShield){
             if(testEntity != proprietary){
+                if (dynamic_cast<Player*>(proprietary)) {
+                    // Le joueur a tiré -> on ignore le bouclier
+                    ++i;
+                    continue;
+                }
                 hasCollided = true;
                 testShield->decreaseHP();
             }

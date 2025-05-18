@@ -420,7 +420,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     }
     else if (hud->getSpellWidget()->getSelectedSpell()[2]){
         if(!hud->getSpellWidget()->getIsShieldOnCd()){
-            this->character->getPlayerShield()->activeShield();
+            this->character->useShield();
             hud->getSpellWidget()->shieldUsed();
         }
     }

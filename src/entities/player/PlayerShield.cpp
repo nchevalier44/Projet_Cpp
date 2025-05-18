@@ -63,6 +63,7 @@ void PlayerShield::activeShield() {
 void PlayerShield::desactiveShield() {
     isActivated = false;
     this->hide();
+    HP = maxHP;
 }
 
 

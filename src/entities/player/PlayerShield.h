@@ -22,6 +22,7 @@ private :
     QElapsedTimer time;
     QPixmap currentPixmap;
     int HP = 3;
+    int maxHP = 3;
     const int durability = 2000;
     Player* player;
 
