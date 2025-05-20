@@ -9,9 +9,11 @@
 #include <QPointF>
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
+#include <QMediaPlayer>
 #include "MainView.h"
 #include "../entities/NPC/Bat.h"
 #include "../entities/player/Player.h"
+
 
 class MainWindow;
 
@@ -20,6 +22,7 @@ class GameScene : public QGraphicsScene {
 
 private:
 
+    QMediaPlayer* audioPlayer = nullptr;
     QGraphicsPixmapItem* mapItem = nullptr;
     QTimer* timer = nullptr;
     Player* character = nullptr;
@@ -31,6 +34,8 @@ private:
     QList<int> activeKeys; // Set to keep track of active keys
     HUD* hud = nullptr;
     ScoreManager* scoreManager = nullptr;
+    QGraphicsTextItem* tooltiptxt = nullptr;
+    QGraphicsRectItem* tooltiprect = nullptr;
 
 
 protected:
@@ -59,7 +64,7 @@ public :
     QList<int> getActiveKeys() const { return activeKeys; }
 
     //Constructor and destructor
-    GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);
+    GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);
     virtual ~GameScene();
 
     //Functions
@@ -69,6 +74,8 @@ public :
     void movePlayer();
     void checkNPCAttackRange();
     void moveProjectiles();
+    void checkInteractionZone();
+    void showTooltip(QPointF pos, QString text);
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

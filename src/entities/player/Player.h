@@ -23,6 +23,10 @@ private:
     HUD *hud = nullptr;
     QSoundEffect *movingSound = nullptr;
 
+    bool hasSlash = false;
+    bool hasMissile = false;
+    bool hasShield = false;
+
     PlayerSlash *slash = nullptr;
     PlayerShield* shield = nullptr;
 
@@ -34,19 +38,25 @@ public:
     Direction getCurrentDirection() const { return currentDirection; }
     PlayerSlash *getPlayerSlash() const { return slash; }
     PlayerShield *getPlayerShield() const { return shield; }
+    bool getHasSlash(){return hasSlash;}
+    bool getHasMissile(){return hasMissile;}
+    bool getHasShield(){return hasShield;}
 
     // Setters
     void setMainView(MainView *new_main_view) { mainView = new_main_view; }
     void setPlayerSlash(PlayerSlash *new_slash) { slash = new_slash; }
     void setPLayerShield(PlayerShield* new_shield) {shield = new_shield;}
     void setHUD(HUD *newHud) { hud = newHud; }
+    void setHasShield(bool b){hasShield = b;}
+    void setHasSlash(bool b){hasSlash = b;}
+    void setHasMissile(bool b){hasMissile = b;}
 
     // Override bounding rect to reduce hitbox
-    QRectF boundingRect() const
+    QRectF boundingRect() const override
     {
         return QRectF(0, 0, frameWidth, frameHeight);
     }
-    QPainterPath shape() const
+    QPainterPath shape() const override
     {
         QPainterPath path;
         path.addRect(frameWidth * 0.25, frameHeight * 0.25, frameWidth * 0.5, frameHeight * 0.75);
@@ -104,7 +114,7 @@ public:
         if (!movingSound->isPlaying())
             movingSound->play();
     }
-    void hpAnimation()
+    void hpAnimation() override
     {
         setAnimation(PATH_HP_DEAD, 8, 150);
     }

@@ -139,6 +139,7 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
 
         // Ajouter le widget au layout
         spellLayout->addWidget(spellLabel);
+        spellLabel->hide();
         spell.append(spellLabel);
     }
     this->setLayout(spellLayout);

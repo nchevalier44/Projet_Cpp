@@ -39,6 +39,7 @@ public :
     void setCurrentMissile(int newCurrentMissile){currentMissile = newCurrentMissile;};
     int getCurrentMissile() const { return currentMissile; }
     bool getIsShieldOnCd(){return isShieldOnCD;}
+    QVector<QLabel*> getSpell() const { return spell; }
     void shootedMissile();
     void shieldUsed();
     QLabel* coolDownAnimation(int spellSelected, double duration);

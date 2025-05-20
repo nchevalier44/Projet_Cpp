@@ -15,9 +15,14 @@
 #define PATH_MAIN_MENU_SLIDER_BAR "../assets/images/menu/slider_bar.png"
 #define PATH_MAIN_MENU_SLIDER_HANDLE "../assets/images/menu/slider_handle.png"
 
+
+/////////////MUSIC & SOUND EFFECT/////////////////
 //Main menu music
-#define PATH_MAIN_MENU_MUSIC "../assets/musics/start_menu_theme.wav"
+#define PATH_MAIN_MENU_MUSIC "../assets/musics/MainMenuSound_V4.mp3"
 #define PATH_MAIN_MENU_BUTTON_SOUND "../assets/sounds_effects/button.wav"
+
+//Game music
+#define PATH_GAME_MUSIC "../assets/musics/game_music.mp3"
 
 //Font
 #define PATH_JERSEY10_FONT "../assets/fonts/Jersey10-Regular.ttf"
