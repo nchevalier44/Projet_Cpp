@@ -10,6 +10,7 @@
 #include "../core/GameScene.h"
 
 Entity::Entity(std::string name, int hp, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : hp(hp), name(name), scoreManager(scoreManager), gameScene(scene), QGraphicsObject(parent) {
+    this->setZValue(40);
 }
 
 Entity::~Entity() {

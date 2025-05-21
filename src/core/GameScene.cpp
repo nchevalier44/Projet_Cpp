@@ -37,6 +37,7 @@ GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* score
     this->character->setSpeed(6);
     this->character->setScale(0.2);
     this->character->setFocus();
+    this->character->setZValue(40);
     this->mainView->setFocus(); //Set the focus on the mainView so we can detect the key press
 
     this->addItem(character);
@@ -88,15 +89,27 @@ void GameScene::loadMap(){
         QJsonObject layer = layerValue.toObject();
 
         if (layer["type"] == "imagelayer") {
-            QPixmap image("../assets/maps/" + layer["image"].toString());
+            QString imageName = layer["image"].toString();
+            QPixmap image("../assets/maps/" + imageName);
+
             if (image.isNull()) {
-                qDebug() << "Image not found : " << layer["image"].toString();
+                qDebug() << "Image not found:" << imageName;
+                continue;
+            }
+
+            if (imageName == "layers/treePassage.png" || imageName == "layers/bigTreeTop.png") {
+                auto* item = new QGraphicsPixmapItem(image);
+                item->setZValue(50);
+                item->setOpacity(layer["opacity"].toDouble());
+                item->setPos(layer["x"].toDouble(), layer["y"].toDouble());
+                this->addItem(item);
+                continue;  // passe au prochain layer sans dessiner ici
             }
 
             painter.setOpacity(layer["opacity"].toDouble());
             painter.drawPixmap(layer["x"].toInt(), layer["y"].toInt(), image);
 
-            //Add collisions objects
+        //Add collisions objects
         } else if (layer["name"] == "collisions") {
             QJsonArray objects = layer["objects"].toArray();
 
@@ -320,6 +333,51 @@ void GameScene::loadMap(){
                 }
             }
         }
+        else if (layer["name"] == "DonjonEntryZone") {
+            QJsonArray objects = layer["objects"].toArray();
+
+            for (QJsonValue objectValue: objects) {
+                QJsonObject object = objectValue.toObject();
+
+                int x = object["x"].toDouble();
+                int y = object["y"].toDouble();
+                int width = object["width"].toDouble();
+                int height = object["height"].toDouble();
+
+
+                if (object.contains("polygon") || object.contains("polyline")) {
+                    QPolygonF polygon;
+
+                    QJsonArray points;
+                    if (object.contains("polygon")) {
+                        points = object["polygon"].toArray();
+                    } else {
+                        points = object["polyline"].toArray();
+                    }
+
+                    for (const QJsonValue &pointValue: points) {
+                        QJsonObject point = pointValue.toObject();
+                        qreal px = point["x"].toDouble();
+                        qreal py = point["y"].toDouble();
+                        polygon << QPointF(x + px, y + py); // coordonnées relatives à (x,y)
+                    }
+
+                    QGraphicsPolygonItem *polyItem = new QGraphicsPolygonItem(polygon, mapItem);
+                    //polyItem->setBrush(Qt::red);
+                    polyItem->setPen(Qt::NoPen);
+                    polyItem->setData(0, "DonjonEntryZone");
+                    polyItem->setZValue(100);
+                    this->addItem(polyItem);
+                } else {
+                    QGraphicsRectItem *rect = new QGraphicsRectItem(x, y, width, height, mapItem);
+                    //rect->setBrush(Qt::green);
+                    rect->setPen(Qt::NoPen);
+                    rect->setData(0, "DonjonEntryZone");
+                    rect->setZValue(100);
+                    this->addItem(rect);
+                }
+            }
+        }
     }
     painter.end();
     mapItem = new QGraphicsPixmapItem(mapPixmap);
@@ -467,10 +525,16 @@ void GameScene::checkInteractionZone(){
                 }
                 for(int key : activeKeys){
                     if(key == Qt::Key_F){
+                        removeTooltip();
                         character->setHasMissile(true);
-                        tooltiptxt->hide();
-                        tooltiprect->hide();
                         hud->getSpellWidget()->getSpell()[0]->show();
+                        if(!tooltiptxt && !tooltiprect){
+                            showTooltip(character->pos(), "Press A to select the spell");
+                        }
+                        //add a single shot delete
+                        QTimer::singleShot(2000, [this](){
+                            removeTooltip();
+                        });
                         break;
                     }
                 }
@@ -484,10 +548,16 @@ void GameScene::checkInteractionZone(){
                 }
                 for(int key : activeKeys){
                     if(key == Qt::Key_F){
+                        removeTooltip();
                         character->setHasShield(true);
-                        tooltiptxt->hide();
-                        tooltiprect->hide();
                         hud->getSpellWidget()->getSpell()[2]->show();
+                        if(!tooltiptxt && !tooltiprect){
+                            showTooltip(character->pos(), "Press X to select the spell");
+                        }
+                        //add a single shot delete
+                        QTimer::singleShot(2000, [this](){
+                            removeTooltip();
+                        });
                         break;
                     }
                 }
@@ -503,10 +573,17 @@ void GameScene::checkInteractionZone(){
                 }
                 for(int key : activeKeys){
                     if(key == Qt::Key_F){
+                        removeTooltip();
                         character->setHasSlash(true);
-                        tooltiptxt->hide();
-                        tooltiprect->hide();
                         hud->getSpellWidget()->getSpell()[1]->show();
+                        if(!tooltiptxt && !tooltiprect){
+                            showTooltip(character->pos(), "Press W to select the spell");
+                        }
+
+                        //add a single shot delete
+                        QTimer::singleShot(2000, [this](){
+                            removeTooltip();
+                        });
                         break;
                     }
                 }
@@ -518,21 +595,22 @@ void GameScene::checkInteractionZone(){
             if(!character->getHasSlash() && !tooltiptxt){
                 showTooltip(character->pos(), "Press F to interact");
             }
-
+        }
+        if(interactionZoneName == "DonjonEntryZone") {
+            inValidZone = true;
+            if(!tooltiptxt){
+                showTooltip(character->pos(), "Press F to enter");
+            }
+            for(int key : activeKeys){
+                if(key == Qt::Key_F){
+                    removeTooltip();
+                    break;
+                }
+            }
         }
     }
-
     if(!inValidZone){
-        if(tooltiptxt){
-            this->removeItem(tooltiptxt);
-            delete tooltiptxt;
-            tooltiptxt = nullptr;
-        }
-        if(tooltiprect){
-            this->removeItem(tooltiprect);
-            delete tooltiprect;
-            tooltiprect = nullptr;
-        }
+        removeTooltip();
     }
 }
 
@@ -544,7 +622,7 @@ void GameScene::showTooltip(QPointF pos, QString text){
     QFont font("Cinzel Decorative", 12);
     tooltiptxt->setFont(font);
     tooltiptxt->setDefaultTextColor(QColor("#d6c7ff"));
-    tooltiptxt->setZValue(20);
+    tooltiptxt->setZValue(100);
 
     // Taille du texte
     QFontMetrics metrics(font);
@@ -555,7 +633,7 @@ void GameScene::showTooltip(QPointF pos, QString text){
     tooltiprect = new QGraphicsRectItem(textRect.adjusted(-padding, -padding, padding, padding));
     tooltiprect->setBrush(QColor(40, 30, 60, 180));
     tooltiprect->setPen(QPen(QColor(120, 100, 180), 2));
-    tooltiprect->setZValue(10);  // derrière le texte
+    tooltiprect->setZValue(90);  // derrière le texte
 
     //Pos
     tooltiptxt->setPos(pos.x() -1, pos.y()  - 50);
@@ -571,6 +649,19 @@ void GameScene::showTooltip(QPointF pos, QString text){
 
     this->addItem(tooltiptxt);
     this->addItem(tooltiprect);
+}
+
+void GameScene::removeTooltip(){
+    if(tooltiptxt){
+        this->removeItem(tooltiptxt);
+        delete tooltiptxt;
+        tooltiptxt = nullptr;
+    }
+    if(tooltiprect){
+        this->removeItem(tooltiprect);
+        delete tooltiprect;
+        tooltiprect = nullptr;
+    }
 }
 
 //Move all entities

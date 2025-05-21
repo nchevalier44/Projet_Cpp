@@ -76,6 +76,7 @@ public :
     void moveProjectiles();
     void checkInteractionZone();
     void showTooltip(QPointF pos, QString text);
+    void removeTooltip();
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

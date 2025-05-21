@@ -25,20 +25,6 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
 
     //Create scores
     createScores(mainWindow);
-/*
-    //Create title label
-    QFont titleFont(FontManager::fontFamily, 65);
-    titleLabel = new QLabel("Title of the game");
-    titleLabel->setFont(titleFont);
-    titleLabel->setStyleSheet("color: white;");
-    titleLabel->setAttribute(Qt::WA_OpaquePaintEvent);
-
-    //Add title to the scene
-    QGraphicsProxyWidget* proxyTitleContainer = this->addWidget(titleLabel);
-    qreal posXTitle = (this->width() - titleLabel->width()) / 2;
-    qreal posYTitle = (this->width() - titleLabel->height()) / 2 - 0.33 * height() - titleLabel->height();
-    proxyTitleContainer->setPos(posXTitle, posYTitle);
-    */
 
 }
 
