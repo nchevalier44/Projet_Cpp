@@ -28,6 +28,7 @@ private:
     Player* character = nullptr;
     QList<Entity*> listNPC;
     QList<Projectile*> listProjectiles;
+    QList<QGraphicsPixmapItem*> listBackground;
     MainView* mainView = nullptr;
     int backgroundWidth = 0;
     int backgroundHeight = 0;
@@ -68,7 +69,7 @@ public :
     virtual ~GameScene();
 
     //Functions
-    void loadMap();
+    void loadMap(QString mapPath, int mapWidth, int mapHeight);
     qreal* getDeltaPosition();
     void moveNPC();
     void movePlayer();

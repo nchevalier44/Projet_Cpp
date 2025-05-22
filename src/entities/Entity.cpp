@@ -73,7 +73,7 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
 
     connect(this->timer, &QTimer::timeout, this, &Entity::updateAnimation);
     this->timer->start(animationSpeed);
-    if(this->isHorizontalFlipped()) this->horizontalFlip();
+    if(this->isHorizontalFlipped() && newSpriteSheet != PATH_PLAYER_DEATH) this->horizontalFlip();
 }
 
 QRectF Entity::boundingRect() const {

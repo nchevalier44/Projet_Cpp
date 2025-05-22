@@ -119,6 +119,14 @@ public:
         setAnimation(PATH_HP_DEAD, 8, 150);
     }
 
+    void deathAnimation() override{
+        setAnimation(PATH_PLAYER_DEATH, NB_FRAME_PLAYER_DIE, ANIM_SPEED_PLAYER_IDLE);
+        QTimer::singleShot(NB_FRAME_PLAYER_DIE*ANIM_SPEED_PLAYER_IDLE, this, [this]() {
+            stopAnimation();
+        });
+
+    }
+
     // Attack
     bool canShoot(QPointF clickPos);
     void slashAttack(QPointF target, QGraphicsScene *scene);

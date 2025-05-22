@@ -66,6 +66,9 @@
 #define PATH_PLAYER_RIGHT_WALK "../assets/images/characters/Right_walk.png"
 #define PATH_PLAYER_BACK_IDLE "../assets/images/characters/Back_idle.png"
 #define PATH_PLAYER_BACK_WALK "../assets/images/characters/Back_walk.png"
+#define PATH_PLAYER_DEATH "../assets/images/characters/die.png"
+#define ANIM_SPEED_PLAYER_IDLE 100
+#define NB_FRAME_PLAYER_DIE 8
 
 //HUD
 #define PATH_HP_ANIMATION "../assets/images/characters/Fire_head.gif"

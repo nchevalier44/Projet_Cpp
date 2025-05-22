@@ -21,12 +21,24 @@ GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* score
     mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
 
     try{
-        loadMap();
+        loadMap("../assets/maps/map.json", 3000,3000);
     } catch(QException e){
         qCritical() << "Error when loading the map : " << e.what();
     } catch(std::exception e){
         qCritical() << "Error when loading the map : " << e.what();
     }
+
+    /*
+    QTimer::singleShot(2000, [this](){
+        try{
+            loadMap("../assets/maps/mapDonjon.json",1000,1000);
+        } catch(QException e){
+            qCritical() << "Error when loading the map : " << e.what();
+        } catch(std::exception e){
+            qCritical() << "Error when loading the map : " << e.what();
+        }
+    });
+     */
 
 
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
@@ -69,17 +81,30 @@ GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* score
 
 }
 
-void GameScene::loadMap(){
+void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
+    if(mapItem != nullptr){
+        delete mapItem;
+        mapItem = nullptr;
+        for(QGraphicsPixmapItem* item : listBackground) {
+            qDebug() << "Deleting item:" << item;
+            delete item;
+        }
+        for(Entity * entity : listNPC) {
+            qDebug() << "Deleting entity:" << entity;
+            delete entity;
+        }
+
+    }
 
     //Load and parse json file
-    QFile file("../assets/maps/map.json");
+    QFile file(mapPath);
     file.open(QIODevice::ReadOnly);
 
     QJsonDocument document = QJsonDocument::fromJson(file.readAll());
     QJsonObject mapObject = document.object();
 
-    this->backgroundWidth = 3000;
-    this->backgroundHeight = 3000;
+    this->backgroundWidth = mapWidth;
+    this->backgroundHeight = mapHeight;
 
     QPixmap mapPixmap(backgroundWidth, backgroundHeight);
     QPainter painter(&mapPixmap);
@@ -98,7 +123,8 @@ void GameScene::loadMap(){
             }
 
             if (imageName == "layers/treePassage.png" || imageName == "layers/bigTreeTop.png") {
-                auto* item = new QGraphicsPixmapItem(image);
+                QGraphicsPixmapItem* item = new QGraphicsPixmapItem(image);
+                listBackground.append(item);
                 item->setZValue(50);
                 item->setOpacity(layer["opacity"].toDouble());
                 item->setPos(layer["x"].toDouble(), layer["y"].toDouble());
