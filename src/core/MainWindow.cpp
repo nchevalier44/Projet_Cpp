@@ -23,6 +23,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setFixedSize(backgroundRatio * DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_HEIGHT);
     startMenuScene->getSettingsWidget()->getWindowSizeComboBox()->setCurrentText(QString::number(backgroundRatio * DEFAULT_WINDOW_HEIGHT) + "x" + QString::number(DEFAULT_WINDOW_HEIGHT));
 
+    QTimer* windowSizeTimer = new QTimer(this);
+    windowSizeTimer->start(500);
+    connect(windowSizeTimer, &QTimer::timeout, this, [=](){
+        this->checkRatio(this->size(), true);
+        qDebug() << "check";
+    });
 }
 
 
@@ -48,7 +54,6 @@ void MainWindow::goToStartMenu() {
     mainView->setScene(startMenuScene);
     mainView->setFitView(true);
     mainView->fitInView(mainView->sceneRect(), Qt::KeepAspectRatio);
-    qDebug() << "oui";
 }
 
 void MainWindow::startGame(){
@@ -95,21 +100,36 @@ void MainWindow::resetGame(){
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
         QMainWindow::resizeEvent(event);
-
         QSize newSize = event->size();
 
-        if(newSize == event->oldSize()) return;
+        if (newSize == event->oldSize()) return;
+        newSize = checkRatio(newSize);
+        if (newSize == event->oldSize()) return;
 
-        int newWidth = newSize.width();
-        int newHeight = newWidth / backgroundRatio;
+        QResizeEvent eventResize(newSize, QSize(this->width(), this->height()));
+        this->resize(newSize);
+        mainView->resizeEvent(&eventResize);
+}
 
-        if (newHeight != newSize.height()) {
-            newHeight = newSize.height();
-            newWidth = newHeight * backgroundRatio;
+QSize MainWindow::checkRatio(QSize size, bool check){
+    int newWidth = size.width();
+    int newHeight = newWidth / backgroundRatio;
+
+    if (newHeight != size.height()) {
+        newHeight = size.height();
+        newWidth = newHeight * backgroundRatio;
+    }
+
+    if(check){
+        if(size != QSize(newWidth, newHeight) || mainView->size() != this->size()){
+            qDebug() << "Size not good" << size << QSize(newWidth, newHeight) << mainView->size();
+            this->resize(QSize(newWidth, newHeight));
+            mainView->setFixedSize(QSize(newWidth, newHeight));
         }
 
-        QResizeEvent re(QSize(newWidth, newHeight), QSize(this->width(), this->height()));
-        this->setFixedSize(newWidth, newHeight);
-        mainView->resizeEvent(&re);
+    }
+    return QSize(newWidth, newHeight);
+
 
 }
+

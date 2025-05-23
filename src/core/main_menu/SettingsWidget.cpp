@@ -110,6 +110,7 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
                 QResizeEvent re(QSize(newWidth, h), QSize(mainWindow->width(), mainWindow->height()));
                 mainWindow->setFixedSize(newWidth, h);
                 mainWindow->getMainView()->resizeEvent(&re);
+                mainWindow->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             } else if(text == "Custom"){
                 mainWindow->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 mainWindow->setMinimumSize(QSize(0, 0));

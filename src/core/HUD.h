@@ -22,6 +22,8 @@ public :
     QVector<QLabel*>& getLifeList(){ return life; }
     void setLife(int life);
 
+    int getMaxLife() const { return maxLife; }
+
 };
 
 class SpellWidget : public QWidget {
@@ -55,6 +57,8 @@ public :
     HUD(int maxHP, QPointF windowSize, QWidget* parent = nullptr);
     HPWidget* getHPWidget() const { return hpWidget; };
     SpellWidget* getSpellWidget() const { return spellWidget; };
+
+    void updateHUD(int actualHP, int newMaxHP, QPointF newWindowSize);
 private:
     HPWidget* hpWidget;
     SpellWidget* spellWidget;

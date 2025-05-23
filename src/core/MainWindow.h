@@ -29,12 +29,14 @@ private:
 
 public:
     void resizeEvent(QResizeEvent* event);
+    QSize checkRatio(QSize size, bool check=false);
 
     AudioManager* getAudioManager() const { return audioManager; }
     float getBackgroundRatio() const { return backgroundRatio; }
     ScoreManager* getScoreManager() const { return scoreManager; }
     GameScene* getGameSene() { return gameScene; }
     MainView* getMainView() { return mainView; }
+    HUD* getHUD() { return hud; }
 
     void setBackgroundRatio(float newRatio) { backgroundRatio = newRatio; }
 

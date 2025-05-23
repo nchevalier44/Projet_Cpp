@@ -64,6 +64,12 @@ void MainView::resizeEvent (QResizeEvent* event){
             if(pauseScreen){
                 updatePauseScreenSize(event->size());
             }
+
+            HUD* hud = mainWindow->getHUD();
+            if(hud){
+                QPointF windowSize(this->width(), this->height());
+                hud->updateHUD(mainWindow->getGameSene()->getCharacter()->getHp(), hud->getHPWidget()->getMaxLife(), windowSize);
+            }
         }
         lastSize = event->size();
     }
