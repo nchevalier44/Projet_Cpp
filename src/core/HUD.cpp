@@ -29,48 +29,65 @@ HUD::HUD(int maxHP, QPointF windowSize, QWidget* parent): QWidget(parent) {
 ///HEART HUD
 
 HPWidget::HPWidget(int maxLife, QPointF windowSize, QWidget *parent) : QWidget(parent), maxLife(maxLife) {
-    QHBoxLayout* lifeLayout = new QHBoxLayout(this);
-    const int heartWidth = windowSize.x() * 0.05;   //Change this to adjust the size of the heart
-    const int heartHeight = windowSize.y() * 0.12; //Always twice the width
+    lifeLayout = new QHBoxLayout(this);
+    heartWidth = windowSize.x() * 0.05;   //Change this to adjust the size of the heart
+    heartHeight = windowSize.y() * 0.12; //Always twice the width
     const int spacing = windowSize.x() * 0.01;
 
     //Keep the ration according to the size of the window
     this->setFixedSize(maxLife * (heartWidth + spacing), heartHeight);
     for(int i = 0 ; i < maxLife ; i++){
-        if(i < maxLife){
-            QMovie* heart = new QMovie(this);
-            heart->setFileName(PATH_HP_ANIMATION);
-            QLabel* label = new QLabel(this);
+        QMovie* heart = new QMovie(this);
+        heart->setFileName(PATH_HP_ANIMATION);
+        QLabel* label = new QLabel(this);
 
-            label->setFixedSize(heartWidth, heartHeight);
-            heart->setScaledSize(label->size());
-            label->setMovie(heart);
-            heart->start();
-            label->setScaledContents(true);
-            life.append(label);
-            lifeLayout->addWidget(label,0, Qt::AlignCenter);
+        label->setFixedSize(heartWidth, heartHeight);
+        heart->setScaledSize(label->size());
+        label->setMovie(heart);
+        heart->start();
+        label->setScaledContents(true);
+        life.append(label);
+        lifeLayout->addWidget(label,0, Qt::AlignCenter);
+        if(i > maxLife){
+            label->hide();
         }
     }
-    setLife(maxLife);
     this->setLayout(lifeLayout);
 }
 
 void HPWidget::setLife(int hp) {
-    QMovie* lifeMovie = new QMovie(this);
-    QMovie* emptyLifeMovie = new QMovie(this);
-    lifeMovie->setFileName(PATH_HP_ANIMATION);
-    emptyLifeMovie->setFileName(PATH_HP_DEAD_ANIMATION);
-
-    for(int i = maxLife-1 ; i >= 0 ; i--){
+    for(int i = 0 ; i < maxLife ; i++) {
+        QMovie* movie;
         if(i < hp){
-            life[i]->setMovie(lifeMovie);
-            lifeMovie->start();
+            movie = new QMovie(PATH_HP_ANIMATION, QByteArray(), this);
+        } else {
+            movie = new QMovie(PATH_HP_DEAD_ANIMATION, QByteArray(), this);
         }
-        else{
-            life[i]->setMovie(emptyLifeMovie);
-            emptyLifeMovie->start();
-        }
+        movie->setScaledSize(life[i]->size());
+        life[i]->setMovie(movie);
+        movie->start();
     }
+    qDebug() << "Life : " << hp;
+}
+
+void HPWidget::addHP() {
+    ++maxLife;
+
+    QLabel* label = new QLabel(this);
+    label->setFixedSize(heartWidth, heartHeight);
+
+    QMovie* emptyLife = new QMovie(PATH_HP_DEAD_ANIMATION, QByteArray(), this);
+    emptyLife->setScaledSize(label->size());
+    label->setMovie(emptyLife);
+    label->setScaledContents(true);
+    emptyLife->start();
+    life.append(label);
+
+    if (lifeLayout) {
+        lifeLayout->addWidget(label, 0, Qt::AlignCenter);
+    }
+    // Redimensionner le widget principal
+    this->setFixedWidth(maxLife * (heartWidth + (heartWidth * 0.2)));
 }
 
 

@@ -18,11 +18,29 @@
 
 /////////////MUSIC & SOUND EFFECT/////////////////
 //Main menu music
-#define PATH_MAIN_MENU_MUSIC "../assets/musics/MainMenuSound_V4.mp3"
+#define PATH_MAIN_MENU_MUSIC "../assets/musics/menu_music.mp3"
 #define PATH_MAIN_MENU_BUTTON_SOUND "../assets/sounds_effects/button.wav"
 
 //Game music
 #define PATH_GAME_MUSIC "../assets/musics/game_music.mp3"
+#define PATH_GAME_MUSIC2 "../assets/musics/game_music2.mp3"
+
+//Game sounds effects
+
+//Player
+#define PATH_PLAYER_SLASH1_SOUND "../assets/sounds_effects/firstAttack.wav"
+#define PATH_PLAYER_SLASH3_SOUND "../assets/sounds_effects/thirdAttack.wav"
+#define PATH_PLAYER_DIE_SOUND "../assets/sounds_effects/playerDie.wav"
+#define PATH_PLAYER_MISSILE_SOUND "../assets/sounds_effects/playerMissile.wav"
+
+//NPCs
+#define PATH_BAT_DIE_SOUND "../assets/sounds_effects/batDie.wav"
+#define PATH_GOBLIN_DIE_SOUND "../assets/sounds_effects/minionDie.wav"
+#define PATH_GOBLIN_ATTACK_SOUND "../assets/sounds_effects/minionMissile.wav"
+#define PATH_HIT1_SOUND "../assets/sounds_effects/hit1.wav"
+#define PATH_HIT2_SOUND "../assets/sounds_effects/hit2.wav"
+#define PATH_HIT3_SOUND "../assets/sounds_effects/hit3.wav"
+
 
 //Font
 #define PATH_JERSEY10_FONT "../assets/fonts/Jersey10-Regular.ttf"
@@ -51,6 +69,24 @@
 #define ANIM_SPEED_GOBLIN_IDLE 350
 #define NB_FRAME_GOBLIN_ATTACK 6
 #define ANIM_SPEED_GOBLIN_ATTACK 110
+
+//Crystal Knight
+#define PATH_CK_IDLE "../assets/images/crystalKnight/boss_idle.png"
+#define NB_FRAME_CK_IDLE 4
+#define ANIM_SPEED_CK_IDLE 100
+#define PATH_CK_MOVE "../assets/images/crystalKnight/boss_teleport.png"
+#define NB_FRAME_CK_MOVE 16
+#define ANIM_SPEED_CK_MOVE 150
+#define PATH_CK_ATTACK_LEFT "../assets/images/crystalKnight/boss_attackLeft.png"
+#define PATH_CK_ATTACK_RIGHT "../assets/images/crystalKnight/boss_attackRight.png"
+#define NB_FRAME_CK_ATTACK_LR 4
+#define ANIM_SPEED_CK_ATTACK_LR 150
+#define PATH_CK_THUNDER "../assets/images/crystalKnight/boss_thunder.png"
+#define NB_FRAME_CK_THUNDER 8
+#define ANIM_SPEED_CK_THUNDER 100
+#define PATH_CK_DEATH "../assets/images/crystalKnight/boss_die.png"
+#define NB_FRAME_CK_DEATH 10
+#define ANIM_SPEED_CK_DEATH 150
 
 
 #define PATH_MISSILE_SPELL_GROW_ANIMATION "../assets/images/characters/Missile_spellGrow.gif"

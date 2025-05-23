@@ -38,12 +38,15 @@ public:
     Direction getCurrentDirection() const { return currentDirection; }
     PlayerSlash *getPlayerSlash() const { return slash; }
     PlayerShield *getPlayerShield() const { return shield; }
+    int getMaxHP() const { return maxHp; }
+    int getCurrentHP() const { return hp; }
     bool getHasSlash(){return hasSlash;}
     bool getHasMissile(){return hasMissile;}
     bool getHasShield(){return hasShield;}
 
     // Setters
     void setMainView(MainView *new_main_view) { mainView = new_main_view; }
+    void setMaxHP(int newMaxHP) { maxHp = newMaxHP; }
     void setPlayerSlash(PlayerSlash *new_slash) { slash = new_slash; }
     void setPLayerShield(PlayerShield* new_shield) {shield = new_shield;}
     void setHUD(HUD *newHud) { hud = newHud; }
@@ -120,11 +123,11 @@ public:
     }
 
     void deathAnimation() override{
+
         setAnimation(PATH_PLAYER_DEATH, NB_FRAME_PLAYER_DIE, ANIM_SPEED_PLAYER_IDLE);
         QTimer::singleShot(NB_FRAME_PLAYER_DIE*ANIM_SPEED_PLAYER_IDLE, this, [this]() {
             stopAnimation();
         });
-
     }
 
     // Attack
