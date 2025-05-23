@@ -64,6 +64,12 @@ void MainView::resizeEvent (QResizeEvent* event){
             if(pauseScreen){
                 updatePauseScreenSize(event->size());
             }
+
+            HUD* hud = mainWindow->getHUD();
+            if(hud){
+                QPointF windowSize(this->width(), this->height());
+                hud->updateHUD(mainWindow->getGameSene()->getCharacter()->getHp(), hud->getHPWidget()->getMaxLife(), windowSize);
+            }
         }
         lastSize = event->size();
     }
@@ -193,7 +199,6 @@ void MainView::displayPauseMenu(){
             if(text == windowSize){
                 this->setFixedSize(width(), height());
             } else if(text == "Custom"){
-                mainWindow->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 mainWindow->setMinimumSize(QSize(0, 0));
                 mainWindow->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
             }

@@ -19,9 +19,25 @@ HUD::HUD(int maxHP, QPointF windowSize, QWidget* parent): QWidget(parent) {
 
     //Spell Widget
     spellWidget = new SpellWidget(3,windowSize, this);
-    spellWidget->move(windowSize.x() - windowSize.x() * 0.2 - windowSize.x() * 0.02, windowSize.y() * 0.02);
+    spellWidget->move(windowSize.x() * 0.78, windowSize.y() * 0.02);
 
     show();
+}
+
+void HUD::updateHUD(int actualHP, int newMaxHP, QPointF newWindowSize){
+    this->setGeometry(0, 0, newWindowSize.x(), newWindowSize.y());
+    delete hpWidget;
+    hpWidget = new HPWidget(newMaxHP, newWindowSize, this);
+    hpWidget->move(newWindowSize.x() * 0.01, newWindowSize.y() * 0.01);
+    hpWidget->setLife(actualHP);
+    hpWidget->show();
+    delete spellWidget;
+    spellWidget = new SpellWidget(3, newWindowSize, this);
+    spellWidget->move(newWindowSize.x() * 0.78, newWindowSize.y() * 0.02);
+    spellWidget->show();
+    spellWidget->getSpell()[0]->show();
+    spellWidget->getSpell()[1]->show();
+    spellWidget->getSpell()[2]->show();
 }
 
 
