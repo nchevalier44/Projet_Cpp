@@ -19,12 +19,13 @@ private:
 
 public :
     HPWidget(int maxLife, QPointF windowSize, QWidget* parent = nullptr);
+    QVector<QLabel*>& getLifeList(){ return life; }
     void setLife(int life);
 
 };
 
 class SpellWidget : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 private :
     QVector<QLabel*> spell;
     QVector<bool> selectedSpell;
@@ -48,7 +49,7 @@ public :
 };
 
 class HUD : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public :
     HUD(int maxHP, QPointF windowSize, QWidget* parent = nullptr);

@@ -66,7 +66,8 @@ void MainWindow::startGame(){
     mainView->scale(s, s);
 
     //Setting up the HUD
-    hud = new HUD(gameScene->getCharacter()->getMaxHp(),this, this->mainView);
+    QPointF windowSize(this->width(), this->height());
+    hud = new HUD(gameScene->getCharacter()->getMaxHp(),windowSize, this->mainView);
     hud->move(0, 0);
     hud->raise();
     gameScene->setHUD(hud);

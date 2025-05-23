@@ -22,20 +22,6 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
 
     //Create buttons
     createButtons(mainWindow);
-
-    //Create title label
-    /*QFont titleFont(FontManager::fontFamily, 65);
-    titleLabel = new QLabel("Title of the game");
-    titleLabel->setFont(titleFont);
-    titleLabel->setStyleSheet("color: white;");
-    titleLabel->setAttribute(Qt::WA_OpaquePaintEvent);
-
-    //Add title to the scene
-    QGraphicsProxyWidget* proxyTitleContainer = this->addWidget(titleLabel);
-    qreal posXTitle = (this->width() - titleLabel->width()) / 2;
-    qreal posYTitle = (this->width() - titleLabel->height()) / 2 - 0.33 * height() - titleLabel->height();
-    proxyTitleContainer->setPos(posXTitle, posYTitle);
-    */
 }
 
 //Destructor
@@ -63,7 +49,7 @@ void StartMenuScene::createSettingsWidget(MainWindow* mainWindow){
         if (settingsProxyWidget->scene() == this) {
             this->removeItem(settingsProxyWidget);
         }
-        settingsProxyWidget->setWidget(nullptr); // <-- évite que le proxy le delete
+        settingsProxyWidget->setWidget(nullptr);
         delete settingsProxyWidget;
         settingsProxyWidget = nullptr;
     }
@@ -97,7 +83,7 @@ void StartMenuScene::createScoreboardWidget(MainWindow* mainWindow){
         if (scoreboardProxyWidget->scene() == this) {
             this->removeItem(scoreboardProxyWidget);
         }
-        scoreboardProxyWidget->setWidget(nullptr); // <-- évite que le proxy le delete
+        scoreboardProxyWidget->setWidget(nullptr);
         delete scoreboardProxyWidget;
         scoreboardProxyWidget = nullptr;
     }
@@ -141,7 +127,7 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
 
     //Create buttons layout
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsContainer);
-    buttonsLayout->setSpacing(height() * 0.01); // 0.035
+    buttonsLayout->setSpacing(height() * 0.01);
     buttonsLayout->addWidget(startButton);
     buttonsLayout->addWidget(settingsButton);
     buttonsLayout->addWidget(scoreboardButton);

@@ -4,7 +4,8 @@
 #include "MainWindow.h"
 #include "FontManager.h"
 
-HUD::HUD(int maxHP, MainWindow* mainWindow, QWidget* parent): mainWindow(mainWindow), QWidget(parent) {
+
+HUD::HUD(int maxHP, QPointF windowSize, QWidget* parent): QWidget(parent) {
     //Base attribute of HUD
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -13,31 +14,25 @@ HUD::HUD(int maxHP, MainWindow* mainWindow, QWidget* parent): mainWindow(mainWin
     setStyleSheet("background: transparent;");
 
     //HP Widget
-    hpWidget = new HPWidget(maxHP,mainWindow, this);
-    hpWidget->move(mainWindow->width() * 0.01, mainWindow->height() * 0.01);
+    hpWidget = new HPWidget(maxHP,windowSize, this);
+    hpWidget->move(windowSize.x() * 0.01, windowSize.y() * 0.01);
 
     //Spell Widget
-    spellWidget = new SpellWidget(3,mainWindow, this);
-    spellWidget->move(mainWindow->width() * 0.78, mainWindow->height() * 0.02);
+    spellWidget = new SpellWidget(3,windowSize, this);
+    spellWidget->move(windowSize.x() - windowSize.x() * 0.2 - windowSize.x() * 0.02, windowSize.y() * 0.02);
 
     show();
-}
-
-void HUD::updateItemsSize(){
-    hpWidget->move(mainWindow->width() * 0.01, mainWindow->height() * 0.01);
-    spellWidget->move(mainWindow->width() * 0.78, mainWindow->height() * 0.02);
-
 }
 
 
 
 ///HEART HUD
 
-HPWidget::HPWidget(int maxLife, MainWindow* mainWindow, QWidget *parent) : mainWindow(mainWindow), QWidget(parent), maxLife(maxLife) {
+HPWidget::HPWidget(int maxLife, QPointF windowSize, QWidget *parent) : QWidget(parent), maxLife(maxLife) {
     QHBoxLayout* lifeLayout = new QHBoxLayout(this);
-    const int heartWidth = mainWindow->width() * 0.05;   //Change this to adjust the size of the heart
-    const int heartHeight = mainWindow->height() * 0.12; //Always twice the width
-    const int spacing = mainWindow->width() * 0.01;
+    const int heartWidth = windowSize.x() * 0.05;   //Change this to adjust the size of the heart
+    const int heartHeight = windowSize.y() * 0.12; //Always twice the width
+    const int spacing = windowSize.x() * 0.01;
 
     //Keep the ration according to the size of the window
     this->setFixedSize(maxLife * (heartWidth + spacing), heartHeight);
@@ -81,7 +76,7 @@ void HPWidget::setLife(int hp) {
 
 ///SPELL HUD
 
-SpellWidget::SpellWidget(int maxSpell, MainWindow* mainWindow, QWidget *parent) : mainWindow(mainWindow), QWidget(parent), maxSpell(maxSpell){
+SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QWidget(parent), maxSpell(maxSpell){
     //Base attribute of the widget
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -93,7 +88,7 @@ SpellWidget::SpellWidget(int maxSpell, MainWindow* mainWindow, QWidget *parent) 
     spellLayout->setAlignment(Qt::AlignRight | Qt::AlignTop);
 
     //set the size of the widget according to the size of the window
-    this->setFixedSize(mainWindow->width() * 0.2, mainWindow->height() * 0.2 * maxSpell + 50);
+    this->setFixedSize(windowSize.x() * 0.2, windowSize.y() * 0.2 * maxSpell + 50);
     for (int i = 0; i < maxSpell; ++i) {
         // Créer une boîte pour chaque sort
         QLabel* spellLabel = new QLabel(this);
@@ -107,7 +102,7 @@ SpellWidget::SpellWidget(int maxSpell, MainWindow* mainWindow, QWidget *parent) 
             spellPixmap = QPixmap(PATH_SPELL_BOX);
         }
 
-        spellLabel->setFixedSize(mainWindow->width() * 0.1, mainWindow->height() * 0.1);
+        spellLabel->setFixedSize(windowSize.x() * 0.1, windowSize.y() * 0.1);
         spellLabel->setPixmap(spellPixmap.scaled(spellLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
         // Ajouter une icône de sort
@@ -214,4 +209,3 @@ void SpellWidget::changeSelectedSpell(int spellIndex){
         }
     }
 }
-
