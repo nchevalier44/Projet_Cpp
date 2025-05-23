@@ -199,7 +199,6 @@ void MainView::displayPauseMenu(){
             if(text == windowSize){
                 this->setFixedSize(width(), height());
             } else if(text == "Custom"){
-                mainWindow->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 mainWindow->setMinimumSize(QSize(0, 0));
                 mainWindow->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
             }
