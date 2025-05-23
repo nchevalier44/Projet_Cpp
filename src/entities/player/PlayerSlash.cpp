@@ -12,6 +12,7 @@ PlayerSlash::PlayerSlash(GameScene *scene, Player* player) : scene(scene), playe
 
 
     animationTimer = new QTimer(this);
+    scene->getTimerList().append(animationTimer);
 
     attackAnimation.push_back(slash1);
     attackAnimation.push_back(slash2);
@@ -40,6 +41,9 @@ PlayerSlash::PlayerSlash(GameScene *scene, Player* player) : scene(scene), playe
         });
     }
     animationTimer->start();
+    if(scene->isGamePaused()){
+        animationTimer->stop();
+    }
     this->setScale(0.25);
 }
 

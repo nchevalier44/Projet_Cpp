@@ -78,12 +78,11 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
     int margin = width() * 0.1;
     this->setContentsMargins(width() * 0.12, margin, margin, margin);
 
-
-
-    closeButton->setFixedWidth(width() * 0.2);
-
+    closeButton->setFixedSize(closeButton->size() * 3);
 
     this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+
+
 
 }
 

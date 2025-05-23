@@ -23,7 +23,7 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
 
     //Setting up the player's character
-    this->character = new Player("Character", 3, scoreManager);
+    this->character = new Player("Character", 3, scoreManager, this);
     this->character->setPos(1480, 2730);
     this->character->setSpeed(6);
     this->character->setScale(0.2);
@@ -49,9 +49,10 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
 
 
     //Starting the timer to update the animation and mouvement
-    this->timer = new QTimer(this);
+    this->timer = new QTimer();
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
     this->timer->start(30); //every 30 milliseconds
+    timerList.append(timer);
 
 }
 
@@ -142,7 +143,7 @@ void GameScene::loadMap(){
 //Mouvement functions
 //Adapt the animation according to the direction
 void GameScene::keyPressEvent(QKeyEvent* event){
-    if(character->isEntityDead()) return;
+    if(character->isEntityDead() || isPaused) return;
     if(event->isAutoRepeat()){
         return; //They key stay pressed so the walk animation can continue
     }
@@ -160,11 +161,45 @@ void GameScene::keyPressEvent(QKeyEvent* event){
         case Qt::Key_T:
             qDebug() << character->pos();
             break;
-        default:
+        case Qt::Key_Escape:
+            putGamePaused();
             break;
     }
 }
 
+void GameScene::putGamePaused(){
+    isPaused = true;
+    //Pause the timers
+    for(QTimer* t : timerList){
+        if(t) t->stop();
+    }
+    //Pause the movies
+    for(QMovie* m : movieList){
+        if(m) m->setPaused(true);
+    }
+    //Pause the HUD animations
+    for(QLabel* anim : hud->getHPWidget()->getLifeList()){
+        anim->movie()->setPaused(true);
+    }
+    mainView->displayPauseMenu();
+}
+
+void GameScene::reverseGamePaused(){
+    isPaused = false;
+    //Pause the timers
+    for(QTimer* t : timerList){
+        if(t) t->start();
+    }
+    //Pause the movies
+    for(QMovie* m : movieList){
+        if(m) m->setPaused(false);
+    }
+    //Pause the HUD animations
+    for(QLabel* anim : hud->getHPWidget()->getLifeList()){
+        anim->movie()->setPaused(false);
+    }
+    this->mainView->setFocus(); //Set the focus on the mainView so we can detect the key press
+}
 
 //Set the idle animation according to the last key pressed
 void GameScene::keyReleaseEvent(QKeyEvent *event) {
@@ -348,6 +383,8 @@ GameScene::~GameScene(){
     mapItem = nullptr;
     delete character;
     character = nullptr;
+    delete timer;
+    timer = nullptr;
     for(Entity* entity : listNPC){
         delete entity;
         entity = nullptr;
@@ -359,8 +396,8 @@ GameScene::~GameScene(){
 //Detection des clics
 
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    if(character->isEntityDead() || isPaused) return;
     QPointF clickPos = event->scenePos();
-    QPointF playerPos = character->pos();
 
     //Check if the player is on the missile spell
     if (hud->getSpellWidget()->getSelectedSpell()[0]) {

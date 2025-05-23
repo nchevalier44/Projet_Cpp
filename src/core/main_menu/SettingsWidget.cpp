@@ -11,16 +11,15 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     this->setStyleSheet("background: transparent;");
 
     //Font
-    QFont textFont(FontManager::fontFamily, 23);
-    QFont titleFont(FontManager::fontFamily, 40);
-
+    textFont.setFamily(FontManager::fontFamily);
+    titleFont.setFamily(FontManager::fontFamily);
+    QString percentageText;
     
     //Title
-    QLabel* title = new QLabel("Settings", this);
+    title = new QLabel("Settings", this);
     title->setStyleSheet("color: white;");
     title->setAlignment(Qt::AlignCenter);
-    title->setFont(titleFont);
-    
+
 
 
     //Volume slider music widget
@@ -29,17 +28,15 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     volumeMusicSlider->setValue(mainWindow->getAudioManager()->getMusicVolumePercentage());
 
     //Volume music labels
-    QLabel* volumeMusicLabel = new QLabel("Music Volume", volumeMusicWidget);
+    volumeMusicLabel = new QLabel("Music Volume", volumeMusicWidget);
     volumeMusicLabel->setStyleSheet("color: white;");
-    volumeMusicLabel->setFont(textFont);
     volumeMusicLabel->setAlignment(Qt::AlignCenter);
-    QLabel* volumeMusicValueLabel = new QLabel("100 %", volumeMusicWidget);
+    percentageText = QString::number(mainWindow->getAudioManager()->getMusicVolumePercentage()) + " %";
+    volumeMusicValueLabel = new QLabel(percentageText, volumeMusicWidget);
     volumeMusicValueLabel->setStyleSheet("color: white;");
-    volumeMusicValueLabel->setFont(textFont);
 
     //Volume music layout
-    QHBoxLayout* volumeMusicLayout = new QHBoxLayout(volumeMusicWidget);
-    volumeMusicLayout->setSpacing(0.05 * width());
+    volumeMusicLayout = new QHBoxLayout(volumeMusicWidget);
     volumeMusicLayout->addWidget(volumeMusicLabel);
     volumeMusicLayout->addWidget(volumeMusicSlider);
     volumeMusicLayout->addWidget(volumeMusicValueLabel);
@@ -52,18 +49,17 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     volumeSFXSlider->setValue(mainWindow->getAudioManager()->getSFXVolumePercentage());
 
     //Volume SFX labels
-    QLabel* volumeSFXLabel = new QLabel("Sounds effects\nvolume", volumeSFXWidget);
+    volumeSFXLabel = new QLabel("Sounds effects\nvolume", volumeSFXWidget);
     volumeSFXLabel->setStyleSheet("color: white;");
     volumeSFXLabel->setAlignment(Qt::AlignCenter);
-    volumeSFXLabel->setFont(textFont);
-    QLabel* volumeSFXValueLabel = new QLabel("100 %", volumeSFXWidget);
+
+    percentageText = QString::number(mainWindow->getAudioManager()->getSFXVolumePercentage()) + " %";
+    volumeSFXValueLabel = new QLabel(percentageText, volumeSFXWidget);
     volumeSFXValueLabel->setStyleSheet("color: white;");
-    volumeSFXValueLabel->setFont(textFont);
 
 
     //Volume SFX layout
-    QHBoxLayout* volumeSFXLayout = new QHBoxLayout(volumeSFXWidget);
-    volumeSFXLayout->setSpacing(0.05 * width());
+    volumeSFXLayout = new QHBoxLayout(volumeSFXWidget);
     volumeSFXLayout->addWidget(volumeSFXLabel);
     volumeSFXLayout->addWidget(volumeSFXSlider);
     volumeSFXLayout->addWidget(volumeSFXValueLabel);
@@ -90,18 +86,16 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     for (int h : LIST_WINDOW_HEIGHT ){
         windowSizeComboBox->addItem(QString::number(mainWindowBackgroundRatio * h) + "x" + QString::number(h));
     }
-    windowSizeComboBox->setCurrentText(QString::number(mainWindowBackgroundRatio * DEFAULT_WINDOW_HEIGHT) + "x" + QString::number(DEFAULT_WINDOW_HEIGHT));
+    windowSizeComboBox->setCurrentText(QString::number(mainWindowBackgroundRatio * mainWindow->height()) + "x" + QString::number(mainWindow->height()));
     windowSizeComboBox->addItem("Custom");
 
     //Window size Label
-    QLabel* windowSizeLabel = new QLabel("Window size", windowSizeWidget);
+    windowSizeLabel = new QLabel("Window size", windowSizeWidget);
     windowSizeLabel->setStyleSheet("color: white;");
-    windowSizeLabel->setFont(textFont);
     windowSizeLabel->setAlignment(Qt::AlignCenter);
 
     //Window size layout
-    QHBoxLayout* windowSizeLayout = new QHBoxLayout(windowSizeWidget);
-    windowSizeLayout->setSpacing(0.2 * width());
+    windowSizeLayout = new QHBoxLayout(windowSizeWidget);
     windowSizeLayout->setAlignment(Qt::AlignCenter);
     windowSizeLayout->addWidget(windowSizeLabel);
     windowSizeLayout->addWidget(windowSizeComboBox);
@@ -113,7 +107,9 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
             QString windowSize = QString::number(newWidth) + "x" + QString::number(h);
             
             if(text == windowSize){
+                QResizeEvent re(QSize(newWidth, h), QSize(mainWindow->width(), mainWindow->height()));
                 mainWindow->setFixedSize(newWidth, h);
+                mainWindow->getMainView()->resizeEvent(&re);
             } else if(text == "Custom"){
                 mainWindow->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
                 mainWindow->setMinimumSize(QSize(0, 0));
@@ -123,47 +119,29 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     });
 
 
-
     //Close button
-    MainMenuButton* closeButton = new MainMenuButton("Close", this);
-    closeButton->setFont(textFont);
+    closeButton = new MainMenuButton("Close", this);
     QHBoxLayout* closeButtonLayout = new QHBoxLayout();
     closeButtonLayout->addWidget(closeButton);
     QObject::connect(closeButton, &QPushButton::clicked, this, &SettingsWidget::hide);
 
 
-
-
     //Container layout (of SettingsWidget)
-    QVBoxLayout* containerLayout = new QVBoxLayout(this);
+    containerLayout = new QVBoxLayout(this);
     containerLayout->setAlignment(Qt::AlignCenter);
-    containerLayout->setSpacing(0.1 * height());
     containerLayout->addWidget(title);
     containerLayout->addWidget(volumeMusicWidget);
     containerLayout->addWidget(volumeSFXWidget);
     containerLayout->addWidget(windowSizeWidget);
     containerLayout->addLayout(closeButtonLayout);
 
-
-
-
-    //Set margin
-    int margin = width() * 0.1;
-    this->setContentsMargins(width() * 0.12, margin, margin, margin);
-
-    //Set the size of each widget (they will have the ratio of their image with resizeEvent redifined for each of them)
-    volumeSFXLabel->adjustSize(); //Force the size to be updated before setting the fixed width
-    volumeMusicLabel->setFixedWidth(volumeSFXLabel->width());
-
-    closeButton->setFixedWidth(width() * 0.2);
-    windowSizeComboBox->setFixedWidth(width() * 0.45);
-    volumeMusicSlider->setFixedWidth(width() * 0.45);
-    volumeSFXSlider->setFixedWidth(width() * 0.45);
+    resizeItems(width(), height());
     volumeMusicSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     volumeSFXSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    volumeSFXLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    volumeMusicLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-
 }
 
 
@@ -185,6 +163,7 @@ void SettingsWidget::paintEvent(QPaintEvent* event) {
         painter.fillPath(path, settingsBackgroundPixmap->scaled(width(), width() / ratioSettingsPixmap));
         painter.drawPath(path);
     }
+
 }
 
 //Redefinition of the resizeEvent function to resize the widget with the right ratio
@@ -192,6 +171,37 @@ void SettingsWidget::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
     QSize newSize = event->size();
     this->setFixedSize(newSize.width(), newSize.width() / ratioSettingsPixmap);
+    resizeItems(newSize.width(), newSize.width() / ratioSettingsPixmap); //Resize other items in the widget
+}
+
+void SettingsWidget::resizeItems(int width, int height){
+    windowSizeComboBox->setFixedWidth(width * 0.40);
+    volumeMusicSlider->setFixedWidth(width * 0.425);
+    volumeSFXSlider->setFixedWidth(width * 0.425);
+    closeButton->setFixedSize(QSize(width * 0.35, height * 0.09));
+
+    textFont.setPixelSize(height * 0.04);
+    titleFont.setPixelSize(height * 0.08);
+    title->setFont(titleFont);
+    volumeMusicLabel->setFont(textFont);
+    volumeMusicValueLabel->setFont(textFont);
+    volumeSFXLabel->setFont(textFont);
+    volumeSFXValueLabel->setFont(textFont);
+    windowSizeLabel->setFont(textFont);
+    closeButton->setFont(textFont);
+
+    volumeSFXLabel->adjustSize(); //Force the size to be updated before setting the fixed width
+    volumeMusicLabel->setFixedWidth(volumeSFXLabel->width());
+
+
+    volumeMusicLayout->setSpacing(0.015 * width);
+    volumeSFXLayout->setSpacing(0.015 * width);
+    windowSizeLayout->setSpacing(0.12 * width);
+    containerLayout->setSpacing(0.05 * height);
+    windowSizeLayout->activate();
+    volumeMusicLayout->activate();
+    volumeSFXLayout->activate();
+    containerLayout->activate();
 }
 
 void SettingsWidget::mousePressEvent(QMouseEvent *event) {

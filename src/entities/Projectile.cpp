@@ -11,6 +11,7 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
     this->dy = std::sin(rotationAngle * M_PI / 180);
     this->movie = new QMovie(this);
     movie->setFileName(path);
+    gameScene->getMovieList().append(movie);
 }
 
 void Projectile::startMove(){
@@ -92,22 +93,29 @@ void Projectile::moveProjectile(){
 void Projectile::setStartAnimation(QString spriteSheet) {
     if(movie){
         movie->stop();
+        gameScene->getMovieList().removeAll(movie);
         delete movie;
         movie = nullptr;
     }
     this->movie = new QMovie(spriteSheet);
+    gameScene->getMovieList().append(movie);
     this->movie->start();
+    if(gameScene->isGamePaused()){
+        movie->setPaused(true);
+    }
 }
 
 void Projectile::setMiddleAnimation(QString spriteSheet) {
     if(movie){
         movie->stop();
+        gameScene->getMovieList().removeAll(movie);
         delete movie;
         movie = nullptr;
     }
     this->movie = new QMovie(spriteSheet);
-    if(!movie->isValid()){
-        qDebug() << "Projectile middle animation not valid";
-    }
+    gameScene->getMovieList().append(movie);
     this->movie->start();
+    if(gameScene->isGamePaused()){
+        movie->setPaused(true);
+    }
 }

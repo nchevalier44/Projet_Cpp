@@ -19,7 +19,7 @@ class GameScene : public QGraphicsScene {
     Q_OBJECT
 
 private:
-
+    bool isPaused = false;
     QGraphicsPixmapItem* mapItem = nullptr;
     QTimer* timer = nullptr;
     Player* character = nullptr;
@@ -31,6 +31,8 @@ private:
     QList<int> activeKeys; // Set to keep track of active keys
     HUD* hud = nullptr;
     ScoreManager* scoreManager = nullptr;
+    QList<QTimer*> timerList;
+    QList<QMovie*> movieList;
 
 
 protected:
@@ -39,6 +41,9 @@ protected:
     void keyReleaseEvent(QKeyEvent* event) override;
 
 public :
+
+    void putGamePaused();
+    void reverseGamePaused();
 
     //Setters
     void setCharacter(Player* new_character) { character = new_character; }
@@ -57,6 +62,9 @@ public :
     Player* getCharacter() const { return character; }
     QTimer* getTimer() const { return timer; }
     QList<int> getActiveKeys() const { return activeKeys; }
+    QList<QTimer*>& getTimerList() { return timerList; }
+    QList<QMovie*>& getMovieList() { return movieList; }
+    bool isGamePaused() const { return isPaused; }
 
     //Constructor and destructor
     GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);

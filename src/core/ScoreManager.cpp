@@ -2,7 +2,7 @@
 
 ScoreManager::ScoreManager() {
     QString homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    dirPath = homePath + "/Game_Project";
+    dirPath = homePath + "/Kurai";
     filePath = dirPath + "/scores.json";
     createFile(); //Create the game folder if it doesn't exist (else do nothing)
     actualScore = new Score();

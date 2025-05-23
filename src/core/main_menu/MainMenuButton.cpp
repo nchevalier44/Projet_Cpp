@@ -69,10 +69,3 @@ void MainMenuButton::paintEvent(QPaintEvent* event) {
     option.text = this->text();
     style()->drawControl(QStyle::CE_PushButtonLabel, &option, &painter, this); //Draw just the text
 }
-
-//Redefinition of the resizeEvent function to resize the button with different scale
-void MainMenuButton::resizeEvent(QResizeEvent* event) {
-    QPushButton::resizeEvent(event);
-    QSize newSize = event->size();
-    this->setFixedSize(newSize.width() * 2.5, newSize.height() * 2);
-}

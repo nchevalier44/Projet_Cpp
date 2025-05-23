@@ -33,6 +33,8 @@ public:
     AudioManager* getAudioManager() const { return audioManager; }
     float getBackgroundRatio() const { return backgroundRatio; }
     ScoreManager* getScoreManager() const { return scoreManager; }
+    GameScene* getGameSene() { return gameScene; }
+    MainView* getMainView() { return mainView; }
 
     void setBackgroundRatio(float newRatio) { backgroundRatio = newRatio; }
 

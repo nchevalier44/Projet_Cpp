@@ -16,6 +16,8 @@ Entity::~Entity() {
     if (spriteSheet) {
         delete spriteSheet;
         spriteSheet = nullptr;
+        delete timer;
+        timer = nullptr;
     }
 }
 
@@ -37,9 +39,11 @@ void Entity::horizontalFlip(){
 void Entity::stopAnimation(){
     if (timer) {
         timer->stop();
+        gameScene->getTimerList().removeAll(timer);
+        delete timer;
+        timer = nullptr;
     }
-    delete timer;
-    timer = nullptr;
+
 }
 
 void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnimationSpeed){
@@ -69,10 +73,14 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
     this->frameHeight = this->spriteSheet->height();
     this->animationSpeed = newAnimationSpeed;
     this->timer = new QTimer(this);
+    gameScene->getTimerList().append(timer);
 
     connect(this->timer, &QTimer::timeout, this, &Entity::updateAnimation);
-    this->timer->start(animationSpeed);
+    timer->start(animationSpeed);
     if(this->isHorizontalFlipped()) this->horizontalFlip();
+    if(gameScene->isGamePaused()){
+        timer->stop();
+    }
 }
 
 QRectF Entity::boundingRect() const {
@@ -138,19 +146,20 @@ void Entity::takeDamage(int d, Entity* attacker) {
 }
 
 void Entity::takeKnockback(Entity* originEntity){
-    QTimer* timer = new QTimer();
-    timer->setInterval(30);
-    connect(timer, &QTimer::timeout, [this, originEntity]() {
+    QTimer* knockbackTimer = new QTimer();
+    knockbackTimer->setInterval(30);
+
+    connect(knockbackTimer, &QTimer::timeout, [this, originEntity]() {
         qreal posOriginX = originEntity->getCenterPosition().x();
         qreal posOriginY = originEntity->getCenterPosition().y();
         qreal posEntityX = this->getCenterPosition().x();
         qreal posEntityY = this->getCenterPosition().y();
         this->moveEntity(posOriginX + posEntityX, posOriginY + posEntityY, true);
     });
-    timer->start();
-    QTimer::singleShot(150, timer, [timer](){
-        timer->stop();
-        delete timer;
+    knockbackTimer->start();
+    QTimer::singleShot(150, knockbackTimer, [knockbackTimer](){
+        knockbackTimer->stop();
+        delete knockbackTimer;
     });
 }
 

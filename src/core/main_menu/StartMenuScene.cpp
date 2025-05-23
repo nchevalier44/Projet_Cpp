@@ -23,9 +23,6 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     //Create buttons
     createButtons(mainWindow);
 
-    //Create scores
-    createScores(mainWindow);
-
     //Create title label
     QFont titleFont(FontManager::fontFamily, 65);
     titleLabel = new QLabel("Title of the game");
@@ -62,7 +59,22 @@ void StartMenuScene::drawBackground(QPainter* painter, const QRectF& rect) {
 }
 
 void StartMenuScene::createSettingsWidget(MainWindow* mainWindow){
+    if (settingsProxyWidget) {
+        if (settingsProxyWidget->scene() == this) {
+            this->removeItem(settingsProxyWidget);
+        }
+        settingsProxyWidget->setWidget(nullptr); // <-- évite que le proxy le delete
+        delete settingsProxyWidget;
+        settingsProxyWidget = nullptr;
+    }
+
+    if (settingsWidget) {
+        delete settingsWidget;
+        settingsWidget = nullptr;
+    }
+
     settingsWidget = new SettingsWidget(mainWindow);
+    settingsWidget->setFixedSize(settingsWidget->size() * 1.25);
 
     //Add settings widget to the scene
     settingsProxyWidget = new QGraphicsProxyWidget();
@@ -81,6 +93,21 @@ void StartMenuScene::createSettingsWidget(MainWindow* mainWindow){
 }
 
 void StartMenuScene::createScoreboardWidget(MainWindow* mainWindow){
+    if (scoreboardProxyWidget) {
+        if (scoreboardProxyWidget->scene() == this) {
+            this->removeItem(scoreboardProxyWidget);
+        }
+        scoreboardProxyWidget->setWidget(nullptr); // <-- évite que le proxy le delete
+        delete scoreboardProxyWidget;
+        scoreboardProxyWidget = nullptr;
+    }
+
+    if (scoreboardWidget) {
+        delete scoreboardWidget;
+        scoreboardWidget = nullptr;
+    }
+
+
     scoreboardWidget = new ScoreboardWidget(mainWindow);
 
     //Add settings widget to the scene
@@ -101,6 +128,10 @@ void StartMenuScene::createScoreboardWidget(MainWindow* mainWindow){
 
 void StartMenuScene::createButtons(MainWindow* mainWindow){
     //Create buttons container and buttons
+    if(buttonsContainer){
+        delete buttonsContainer;
+        buttonsContainer = nullptr;
+    }
     buttonsContainer = new QWidget();
     buttonsContainer->setAttribute(Qt::WA_OpaquePaintEvent); //get background of the widget transparent
     MainMenuButton* startButton = new MainMenuButton("Start", buttonsContainer);
@@ -123,8 +154,11 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
     scoreboardButton->setFont(buttonFont);
     exitButton->setFont(buttonFont);
 
-    //Resize the scoreboard button, else it's too large and all buttons have the same width so it's ugly
-    scoreboardButton->setFixedWidth(scoreboardButton->sizeHint().width()*0.8);
+    startButton->setFixedSize(startButton->size() * 4);
+    settingsButton->setFixedSize(settingsButton->size() * 4);
+    scoreboardButton->setFixedSize(scoreboardButton->size() * 4);
+    exitButton->setFixedSize(exitButton->size() * 4);
+
 
     //Add sound to buttons
     sound = new QSoundEffect(buttonsContainer);
@@ -153,13 +187,5 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
     qreal posXButtons = (this->width() - buttonsContainer->width()) / 2;
     qreal posYButtons = (this->height() - buttonsContainer->height()) / 2 + 100;
     proxyButtonsContainer->setPos(posXButtons, posYButtons);
-
-}
-
-void StartMenuScene::createScores(MainWindow* mainWindow) {
-    //Font
-
-
-    //Recreate the scores container
 
 }

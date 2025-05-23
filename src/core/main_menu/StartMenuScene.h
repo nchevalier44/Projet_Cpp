@@ -33,12 +33,11 @@ class StartMenuScene : public QGraphicsScene{
 
     public:
         //Getters
-        QMediaPlayer* getAudioPlayer() const { return audioPlayer; }
-
+        QMediaPlayer* getAudioPlayer() { return audioPlayer; }
+        SettingsWidget* getSettingsWidget() { return settingsWidget; }
         void createSettingsWidget(MainWindow* mainWindow);
         void createScoreboardWidget(MainWindow* mainWindow);
         void createButtons(MainWindow* mainWindow);
-        void createScores(MainWindow* mainWindow);
 
         void drawBackground(QPainter* painter, const QRectF& rect);
 

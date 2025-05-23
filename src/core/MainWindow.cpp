@@ -9,8 +9,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     scoreManager = new ScoreManager();
     scoreManager->loadScores();
 
+
     startMenuScene = new StartMenuScene(this);
-    mainView = new MainView(scoreManager, this);
+    mainView = new MainView(this, scoreManager, this);
     mainView->setScene(startMenuScene);
 
     connect(startMenuScene, &StartMenuScene::startGameRequested, this, &MainWindow::startGame); //When the player start from the principal menu
@@ -20,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setCentralWidget(mainView);
     this->setWindowTitle("C++ Project");
     this->setFixedSize(backgroundRatio * DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_HEIGHT);
+    startMenuScene->getSettingsWidget()->getWindowSizeComboBox()->setCurrentText(QString::number(backgroundRatio * DEFAULT_WINDOW_HEIGHT) + "x" + QString::number(DEFAULT_WINDOW_HEIGHT));
+
 }
 
 
@@ -38,11 +41,14 @@ void MainWindow::restartGame(){
 
 void MainWindow::goToStartMenu() {
     resetGame();
+
+    scoreManager->loadScores();
+
+    startMenuScene->getAudioPlayer()->play();
     mainView->setScene(startMenuScene);
     mainView->setFitView(true);
-    startMenuScene->getAudioPlayer()->play();
-    scoreManager->loadScores();
-    startMenuScene->createScores(this);
+    mainView->fitInView(mainView->sceneRect(), Qt::KeepAspectRatio);
+    qDebug() << "oui";
 }
 
 void MainWindow::startGame(){
@@ -54,11 +60,13 @@ void MainWindow::startGame(){
     gameScene->setView(mainView);
     mainView->setScene(gameScene);
     mainView->setFitView(false);
-    mainView->scale(2, 2);
-    QPointF windowSize(this->width(), this->height());
+
+    mainView->resetTransform();
+    float s = 1.35 * float(this->height()) / DEFAULT_WINDOW_HEIGHT;
+    mainView->scale(s, s);
 
     //Setting up the HUD
-    hud = new HUD(gameScene->getCharacter()->getMaxHp(),windowSize, this->mainView);
+    hud = new HUD(gameScene->getCharacter()->getMaxHp(),this, this->mainView);
     hud->move(0, 0);
     hud->raise();
     gameScene->setHUD(hud);
@@ -69,7 +77,7 @@ void MainWindow::startGame(){
 
 void MainWindow::resetGame(){
     mainView->deleteDeathScreen();
-    mainView->scale(0.5, 0.5); // 0.25 to reset the view to 1:1 which was changed by scale(4, 4) in startGame
+    mainView->resetTransform();
     if(gameScene != nullptr){
         delete gameScene;
         gameScene = nullptr;
@@ -85,18 +93,22 @@ void MainWindow::resetGame(){
 
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
-    QMainWindow::resizeEvent(event);
+        QMainWindow::resizeEvent(event);
 
-    QSize newSize = event->size();
+        QSize newSize = event->size();
 
-    int newWidth = newSize.width();
-    int newHeight = newWidth / backgroundRatio;
+        if(newSize == event->oldSize()) return;
 
-    if (newHeight != newSize.height()) {
-        newHeight = newSize.height();
-        newWidth = newHeight * backgroundRatio;
-    }
+        int newWidth = newSize.width();
+        int newHeight = newWidth / backgroundRatio;
 
-    this->resize(newWidth, newHeight);
+        if (newHeight != newSize.height()) {
+            newHeight = newSize.height();
+            newWidth = newHeight * backgroundRatio;
+        }
+
+        QResizeEvent re(QSize(newWidth, newHeight), QSize(this->width(), this->height()));
+        this->setFixedSize(newWidth, newHeight);
+        mainView->resizeEvent(&re);
 
 }

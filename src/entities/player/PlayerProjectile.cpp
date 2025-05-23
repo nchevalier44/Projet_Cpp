@@ -21,17 +21,22 @@ void PlayerProjectile::throwProjectile() {
 void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
     if(movie){
         movie->stop();
+        gameScene->getMovieList().removeAll(movie);
         delete movie;
         movie = nullptr;
     }
     this->movie = new QMovie(PATH_PLAYER_PROJECTILE_FADE);
+    gameScene->getMovieList().append(movie);
 
     timerEndMovie = new QTimer();
+    gameScene->getTimerList().append(timerEndMovie);
     connect(timerEndMovie, &QTimer::timeout, this, [this](){
         if(this->movie->currentFrameNumber() == this->movie->frameCount() - 1){
             this->movie->stop();
             this->gameScene->removeProjectile(this);
             timerEndMovie->stop();
+            gameScene->getMovieList().removeAll(movie);
+            gameScene->getTimerList().removeAll(timerEndMovie);
             delete timerEndMovie;
             delete movie;
             movie = nullptr;
@@ -43,6 +48,9 @@ void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
         }
     });
     timerEndMovie->start();
+    if(gameScene->isGamePaused()){
+        timerEndMovie->stop();
+    }
 }
 
 void PlayerProjectile::startMove() {
