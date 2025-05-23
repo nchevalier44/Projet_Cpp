@@ -46,6 +46,7 @@ void Player::takeDamage(int damage, Entity* attacker) {
     if(hud != nullptr) hud->getHPWidget()->setLife(hp);
     if(hp <= 0){
         isDead = true;
+        deathAnimation();
         QTimer::singleShot(1000, mainView, &MainView::displayDeathScreen);
         scoreManager->getActualScore()->setTimePlayed(scoreManager->getElapsedTimer()->elapsed() / 1000);
         scoreManager->getActualScore()->setDate(QDateTime::currentDateTime().toString("dd/MM/yyyy"));

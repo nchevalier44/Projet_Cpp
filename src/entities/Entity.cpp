@@ -10,6 +10,7 @@
 #include "../core/GameScene.h"
 
 Entity::Entity(std::string name, int hp, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : hp(hp), name(name), scoreManager(scoreManager), gameScene(scene), QGraphicsObject(parent) {
+    this->setZValue(40);
 }
 
 Entity::~Entity() {
@@ -76,8 +77,8 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
     gameScene->getTimerList().append(timer);
 
     connect(this->timer, &QTimer::timeout, this, &Entity::updateAnimation);
-    timer->start(animationSpeed);
-    if(this->isHorizontalFlipped()) this->horizontalFlip();
+    this->timer->start(animationSpeed);
+    if(this->isHorizontalFlipped() && newSpriteSheet != PATH_PLAYER_DEATH) this->horizontalFlip();
     if(gameScene->isGamePaused()){
         timer->stop();
     }

@@ -24,7 +24,7 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     createButtons(mainWindow);
 
     //Create title label
-    QFont titleFont(FontManager::fontFamily, 65);
+    /*QFont titleFont(FontManager::fontFamily, 65);
     titleLabel = new QLabel("Title of the game");
     titleLabel->setFont(titleFont);
     titleLabel->setStyleSheet("color: white;");
@@ -35,7 +35,7 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     qreal posXTitle = (this->width() - titleLabel->width()) / 2;
     qreal posYTitle = (this->width() - titleLabel->height()) / 2 - 0.33 * height() - titleLabel->height();
     proxyTitleContainer->setPos(posXTitle, posYTitle);
-
+    */
 }
 
 //Destructor
@@ -141,7 +141,7 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
 
     //Create buttons layout
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsContainer);
-    buttonsLayout->setSpacing(height() * 0.035);
+    buttonsLayout->setSpacing(height() * 0.01); // 0.035
     buttonsLayout->addWidget(startButton);
     buttonsLayout->addWidget(settingsButton);
     buttonsLayout->addWidget(scoreboardButton);
@@ -185,7 +185,7 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
     //Add buttons container to the scene
     QGraphicsProxyWidget* proxyButtonsContainer = this->addWidget(buttonsContainer);
     qreal posXButtons = (this->width() - buttonsContainer->width()) / 2;
-    qreal posYButtons = (this->height() - buttonsContainer->height()) / 2 + 100;
+    qreal posYButtons = (this->height() - buttonsContainer->height()) / 2 + 250;
     proxyButtonsContainer->setPos(posXButtons, posYButtons);
 
 }

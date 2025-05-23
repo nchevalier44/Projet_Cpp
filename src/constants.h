@@ -4,7 +4,7 @@
 //Definition of all constants we use in the project
 
 //Main menu images
-#define PATH_MAIN_MENU_BACKGROUND "../assets/images/menu/background.png"
+#define PATH_MAIN_MENU_BACKGROUND "../assets/images/menu/Main_bg.png"
 
 //Start menu
 #define PATH_MAIN_MENU_BUTTON_BACKGROUND "../assets/images/menu/button_background.png"
@@ -15,9 +15,14 @@
 #define PATH_MAIN_MENU_SLIDER_BAR "../assets/images/menu/slider_bar.png"
 #define PATH_MAIN_MENU_SLIDER_HANDLE "../assets/images/menu/slider_handle.png"
 
+
+/////////////MUSIC & SOUND EFFECT/////////////////
 //Main menu music
-#define PATH_MAIN_MENU_MUSIC "../assets/musics/start_menu_theme.wav"
+#define PATH_MAIN_MENU_MUSIC "../assets/musics/MainMenuSound_V4.mp3"
 #define PATH_MAIN_MENU_BUTTON_SOUND "../assets/sounds_effects/button.wav"
+
+//Game music
+#define PATH_GAME_MUSIC "../assets/musics/game_music.mp3"
 
 //Font
 #define PATH_JERSEY10_FONT "../assets/fonts/Jersey10-Regular.ttf"
@@ -61,6 +66,9 @@
 #define PATH_PLAYER_RIGHT_WALK "../assets/images/characters/Right_walk.png"
 #define PATH_PLAYER_BACK_IDLE "../assets/images/characters/Back_idle.png"
 #define PATH_PLAYER_BACK_WALK "../assets/images/characters/Back_walk.png"
+#define PATH_PLAYER_DEATH "../assets/images/characters/die.png"
+#define ANIM_SPEED_PLAYER_IDLE 100
+#define NB_FRAME_PLAYER_DIE 8
 
 //HUD
 #define PATH_HP_ANIMATION "../assets/images/characters/Fire_head.gif"

@@ -144,22 +144,36 @@ SpellWidget::SpellWidget(int maxSpell, MainWindow* mainWindow, QWidget *parent) 
 
         // Ajouter le widget au layout
         spellLayout->addWidget(spellLabel);
+        spellLabel->hide();
         spell.append(spellLabel);
-
     }
     this->setLayout(spellLayout);
 }
 
 void SpellWidget::shootedMissile(){
-    QLabel* spellLabel = spell[0];
-    const int spellLabelWidth = spellLabel->pixmap().width();
-    const int spellLabelHeight = spellLabel->pixmap().height();
+    QLabel* cooldownOverlay = coolDownAnimation(0,2000);
     currentMissile--;
     missileCountLabel->setText(QString::number(currentMissile));
+    QTimer::singleShot(2000, [cooldownOverlay, this]() {
+        delete cooldownOverlay;
+        setCurrentMissile(currentMissile + 1);
+        missileCountLabel->setText(QString::number(currentMissile));
+    });
+}
 
+void SpellWidget::shieldUsed(){
+    QLabel* cooldownOverlay = coolDownAnimation(2,5000);
+    isShieldOnCD = true;
+    QTimer::singleShot(5000, [cooldownOverlay, this]() {
+        delete cooldownOverlay;
+        isShieldOnCD = false;
+    });
+}
 
-
-
+QLabel* SpellWidget::coolDownAnimation(int spellSelected, double duration){
+    QLabel* spellLabel = spell[spellSelected];
+    const int spellLabelWidth = spellLabel->pixmap().width();
+    const int spellLabelHeight = spellLabel->pixmap().height();
     QLabel* cooldownOverlay = new QLabel(spellLabel);
     cooldownOverlay->setStyleSheet("background-color: rgba(0, 0, 0, 150);");
     cooldownOverlay->setGeometry(0, 0,spellLabelWidth, spellLabelHeight); // Geometry dès le début
@@ -168,19 +182,14 @@ void SpellWidget::shootedMissile(){
 
 
     QPropertyAnimation* animation = new QPropertyAnimation(cooldownOverlay, "geometry", spellLabel);
-    animation->setDuration(2000);
+    animation->setDuration(duration);
     animation->setStartValue(QRect(0, 0,spellLabelWidth, spellLabelHeight));
     animation->setEndValue(QRect(0, spellLabelHeight, spellLabelWidth, 0));
     animation->setEasingCurve(QEasingCurve::OutQuad);
 
-    //animation->setEasingCurve(QEasingCurve::OutQuad);
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 
-    QTimer::singleShot(2000, [cooldownOverlay, this]() {
-        cooldownOverlay->deleteLater();
-        setCurrentMissile(currentMissile + 1);
-        missileCountLabel->setText(QString::number(currentMissile));
-    });
+    return cooldownOverlay;
 }
 
 void SpellWidget::changeSelectedSpell(int spellIndex){

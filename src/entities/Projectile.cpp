@@ -1,6 +1,6 @@
 #include "Projectile.h"
 #include "../core/GameScene.h"
-
+#include "player/PlayerShield.h"
 
 
 Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent)
@@ -65,6 +65,7 @@ void Projectile::moveProjectile(){
     while(!hasCollided && i < n){
         //dynamic_cast<Entity*> return an Entity if it's an entity else nullptr
         Entity* testEntity = dynamic_cast<Entity*>(collisions[i]);
+        Player* player = dynamic_cast<Player*>(collisions[i]);
         if(testEntity){
             if(proprietary){
                 if(testEntity != proprietary){
@@ -74,6 +75,18 @@ void Projectile::moveProjectile(){
             } else{
                 testEntity->takeDamage(damage, this->proprietary);
                 hasCollided = true;
+            }
+        }
+        PlayerShield* testShield = dynamic_cast<PlayerShield*>(collisions[i]);
+        if(testShield){
+            if(testEntity != proprietary){
+                if (dynamic_cast<Player*>(proprietary)) {
+                    // Le joueur a tiré -> on ignore le bouclier
+                    ++i;
+                    continue;
+                }
+                hasCollided = true;
+                testShield->decreaseHP();
             }
         }
         if(collisions[i]->data(0) == "collision"){

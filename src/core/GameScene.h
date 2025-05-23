@@ -9,9 +9,11 @@
 #include <QPointF>
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
+#include <QMediaPlayer>
 #include "MainView.h"
 #include "../entities/NPC/Bat.h"
 #include "../entities/player/Player.h"
+
 
 class MainWindow;
 
@@ -20,11 +22,14 @@ class GameScene : public QGraphicsScene {
 
 private:
     bool isPaused = false;
+
+    QMediaPlayer* audioPlayer = nullptr;
     QGraphicsPixmapItem* mapItem = nullptr;
     QTimer* timer = nullptr;
     Player* character = nullptr;
     QList<Entity*> listNPC;
     QList<Projectile*> listProjectiles;
+    QList<QGraphicsPixmapItem*> listBackground;
     MainView* mainView = nullptr;
     int backgroundWidth = 0;
     int backgroundHeight = 0;
@@ -33,6 +38,8 @@ private:
     ScoreManager* scoreManager = nullptr;
     QList<QTimer*> timerList;
     QList<QMovie*> movieList;
+    QGraphicsTextItem* tooltiptxt = nullptr;
+    QGraphicsRectItem* tooltiprect = nullptr;
 
 
 protected:
@@ -67,16 +74,19 @@ public :
     bool isGamePaused() const { return isPaused; }
 
     //Constructor and destructor
-    GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);
+    GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);
     virtual ~GameScene();
 
     //Functions
-    void loadMap();
+    void loadMap(QString mapPath, int mapWidth, int mapHeight);
     qreal* getDeltaPosition();
     void moveNPC();
     void movePlayer();
     void checkNPCAttackRange();
     void moveProjectiles();
+    void checkInteractionZone();
+    void showTooltip(QPointF pos, QString text);
+    void removeTooltip();
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

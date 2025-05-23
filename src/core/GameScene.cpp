@@ -9,15 +9,36 @@
 #include "../entities/NPC/Goblin.h"
 
 
-GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent) : QGraphicsScene(parent), scoreManager(scoreManager), mainView(view){
+GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* scoreManager, QObject* parent) : QGraphicsScene(parent), scoreManager(scoreManager), mainView(view){
+    //Add background music
+    audioPlayer = new QMediaPlayer(this);
+    QAudioOutput* audioOutput = new QAudioOutput(this);
+    audioOutput->setVolume(50);
+    audioPlayer->setAudioOutput(audioOutput);
+    audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC));
+    audioPlayer->setLoops(QMediaPlayer::Infinite);
+    audioPlayer->play();
+    mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
 
     try{
-        loadMap();
+        loadMap("../assets/maps/map.json", 3000,3000);
     } catch(QException e){
         qCritical() << "Error when loading the map : " << e.what();
     } catch(std::exception e){
         qCritical() << "Error when loading the map : " << e.what();
     }
+
+    /*
+    QTimer::singleShot(2000, [this](){
+        try{
+            loadMap("../assets/maps/mapDonjon.json",1000,1000);
+        } catch(QException e){
+            qCritical() << "Error when loading the map : " << e.what();
+        } catch(std::exception e){
+            qCritical() << "Error when loading the map : " << e.what();
+        }
+    });
+     */
 
 
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
@@ -28,6 +49,7 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
     this->character->setSpeed(6);
     this->character->setScale(0.2);
     this->character->setFocus();
+    this->character->setZValue(40);
     this->mainView->setFocus(); //Set the focus on the mainView so we can detect the key press
 
     this->addItem(character);
@@ -36,6 +58,10 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
     //Load slash animation
     PlayerSlash* slash = new PlayerSlash(this, character);
     this->character->setPlayerSlash(slash);
+
+    //Load the shield animation
+    PlayerShield* shield = new PlayerShield(this, character);
+    this->character->setPLayerShield(shield);
 
     Goblin* goblin = new Goblin("Goblin", 1, scoreManager, this);
     goblin->setPos(1200, 2350);
@@ -56,39 +82,65 @@ GameScene::GameScene(MainView* view, ScoreManager* scoreManager, QObject* parent
 
 }
 
-void GameScene::loadMap(){
+void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
+    if(mapItem != nullptr){
+        delete mapItem;
+        mapItem = nullptr;
+        for(QGraphicsPixmapItem* item : listBackground) {
+            qDebug() << "Deleting item:" << item;
+            delete item;
+        }
+        for(Entity * entity : listNPC) {
+            qDebug() << "Deleting entity:" << entity;
+            delete entity;
+        }
+
+    }
 
     //Load and parse json file
-    QFile file("../assets/maps/map.json");
+    QFile file(mapPath);
     file.open(QIODevice::ReadOnly);
 
     QJsonDocument document = QJsonDocument::fromJson(file.readAll());
     QJsonObject mapObject = document.object();
 
-    this->backgroundWidth = 3000;
-    this->backgroundHeight = 3000;
+    this->backgroundWidth = mapWidth;
+    this->backgroundHeight = mapHeight;
 
     QPixmap mapPixmap(backgroundWidth, backgroundHeight);
     QPainter painter(&mapPixmap);
 
     QJsonArray layers = mapObject["layers"].toArray();
-    for(QJsonValue layerValue : layers){
+    for(QJsonValue layerValue : layers) {
         QJsonObject layer = layerValue.toObject();
 
-        if(layer["type"] == "imagelayer"){
-            QPixmap image("../assets/maps/" + layer["image"].toString());
-            if(image.isNull()){
-                qDebug() << "Image not found : " << layer["image"].toString();
+        if (layer["type"] == "imagelayer") {
+            QString imageName = layer["image"].toString();
+            QPixmap image("../assets/maps/" + imageName);
+
+            if (image.isNull()) {
+                qDebug() << "Image not found:" << imageName;
+                continue;
+            }
+
+            if (imageName == "layers/treePassage.png" || imageName == "layers/bigTreeTop.png") {
+                QGraphicsPixmapItem* item = new QGraphicsPixmapItem(image);
+                listBackground.append(item);
+                item->setZValue(50);
+                item->setOpacity(layer["opacity"].toDouble());
+                item->setPos(layer["x"].toDouble(), layer["y"].toDouble());
+                this->addItem(item);
+                continue;  // passe au prochain layer sans dessiner ici
             }
 
             painter.setOpacity(layer["opacity"].toDouble());
             painter.drawPixmap(layer["x"].toInt(), layer["y"].toInt(), image);
 
-            //Add collisions objects
-        } else if(layer["name"] == "collisions"){
+        //Add collisions objects
+        } else if (layer["name"] == "collisions") {
             QJsonArray objects = layer["objects"].toArray();
 
-            for(QJsonValue objectValue : objects){
+            for (QJsonValue objectValue: objects) {
                 QJsonObject object = objectValue.toObject();
 
                 int x = object["x"].toDouble();
@@ -101,27 +153,27 @@ void GameScene::loadMap(){
                     QPolygonF polygon;
 
                     QJsonArray points;
-                    if(object.contains("polygon")){
+                    if (object.contains("polygon")) {
                         points = object["polygon"].toArray();
-                    } else{
+                    } else {
                         points = object["polyline"].toArray();
                     }
 
-                    for (const QJsonValue& pointValue : points) {
+                    for (const QJsonValue &pointValue: points) {
                         QJsonObject point = pointValue.toObject();
                         qreal px = point["x"].toDouble();
                         qreal py = point["y"].toDouble();
                         polygon << QPointF(x + px, y + py); // coordonnées relatives à (x,y)
                     }
 
-                    QGraphicsPolygonItem* polyItem = new QGraphicsPolygonItem(polygon, mapItem);
+                    QGraphicsPolygonItem *polyItem = new QGraphicsPolygonItem(polygon, mapItem);
                     //polyItem->setBrush(Qt::red);
                     polyItem->setPen(Qt::NoPen);
                     polyItem->setData(0, "collision");
                     polyItem->setZValue(100);
                     this->addItem(polyItem);
                 } else {
-                    QGraphicsRectItem* rect = new QGraphicsRectItem(x, y, width, height, mapItem);
+                    QGraphicsRectItem *rect = new QGraphicsRectItem(x, y, width, height, mapItem);
                     //rect->setBrush(Qt::green);
                     rect->setPen(Qt::NoPen);
                     rect->setData(0, "collision");
@@ -130,9 +182,230 @@ void GameScene::loadMap(){
                 }
             }
 
+        } else if (layer["name"] == "missileSpellZone") {
+            QJsonArray objects = layer["objects"].toArray();
+
+            for (QJsonValue objectValue: objects) {
+                QJsonObject object = objectValue.toObject();
+
+                int x = object["x"].toDouble();
+                int y = object["y"].toDouble();
+                int width = object["width"].toDouble();
+                int height = object["height"].toDouble();
+
+
+                if (object.contains("polygon") || object.contains("polyline")) {
+                    QPolygonF polygon;
+
+                    QJsonArray points;
+                    if (object.contains("polygon")) {
+                        points = object["polygon"].toArray();
+                    } else {
+                        points = object["polyline"].toArray();
+                    }
+
+                    for (const QJsonValue &pointValue: points) {
+                        QJsonObject point = pointValue.toObject();
+                        qreal px = point["x"].toDouble();
+                        qreal py = point["y"].toDouble();
+                        polygon << QPointF(x + px, y + py); // coordonnées relatives à (x,y)
+                    }
+
+                    QGraphicsPolygonItem *polyItem = new QGraphicsPolygonItem(polygon, mapItem);
+                    //polyItem->setBrush(Qt::red);
+                    polyItem->setPen(Qt::NoPen);
+                    polyItem->setData(0, "missileSpellZone");
+                    polyItem->setZValue(100);
+                    this->addItem(polyItem);
+                } else {
+                    QGraphicsRectItem *rect = new QGraphicsRectItem(x, y, width, height, mapItem);
+                    //rect->setBrush(Qt::green);
+                    rect->setPen(Qt::NoPen);
+                    rect->setData(0, "missileSpellZone");
+                    rect->setZValue(100);
+                    this->addItem(rect);
+                }
+            }
+
+        } else if (layer["name"] == "shieldSpellZone") {
+            QJsonArray objects = layer["objects"].toArray();
+
+            for (QJsonValue objectValue: objects) {
+                QJsonObject object = objectValue.toObject();
+
+                int x = object["x"].toDouble();
+                int y = object["y"].toDouble();
+                int width = object["width"].toDouble();
+                int height = object["height"].toDouble();
+
+
+                if (object.contains("polygon") || object.contains("polyline")) {
+                    QPolygonF polygon;
+
+                    QJsonArray points;
+                    if (object.contains("polygon")) {
+                        points = object["polygon"].toArray();
+                    } else {
+                        points = object["polyline"].toArray();
+                    }
+
+                    for (const QJsonValue &pointValue: points) {
+                        QJsonObject point = pointValue.toObject();
+                        qreal px = point["x"].toDouble();
+                        qreal py = point["y"].toDouble();
+                        polygon << QPointF(x + px, y + py); // coordonnées relatives à (x,y)
+                    }
+
+                    QGraphicsPolygonItem *polyItem = new QGraphicsPolygonItem(polygon, mapItem);
+                    //polyItem->setBrush(Qt::red);
+                    polyItem->setPen(Qt::NoPen);
+                    polyItem->setData(0, "shieldSpellZone");
+                    polyItem->setZValue(100);
+                    this->addItem(polyItem);
+                } else {
+                    QGraphicsRectItem *rect = new QGraphicsRectItem(x, y, width, height, mapItem);
+                    //rect->setBrush(Qt::green);
+                    rect->setPen(Qt::NoPen);
+                    rect->setData(0, "shieldSpellZone");
+                    rect->setZValue(100);
+                    this->addItem(rect);
+                }
+            }
+        } else if (layer["name"] == "slashSpellZone") {
+            QJsonArray objects = layer["objects"].toArray();
+
+            for (QJsonValue objectValue: objects) {
+                QJsonObject object = objectValue.toObject();
+
+                int x = object["x"].toDouble();
+                int y = object["y"].toDouble();
+                int width = object["width"].toDouble();
+                int height = object["height"].toDouble();
+
+
+                if (object.contains("polygon") || object.contains("polyline")) {
+                    QPolygonF polygon;
+
+                    QJsonArray points;
+                    if (object.contains("polygon")) {
+                        points = object["polygon"].toArray();
+                    } else {
+                        points = object["polyline"].toArray();
+                    }
+
+                    for (const QJsonValue &pointValue: points) {
+                        QJsonObject point = pointValue.toObject();
+                        qreal px = point["x"].toDouble();
+                        qreal py = point["y"].toDouble();
+                        polygon << QPointF(x + px, y + py); // coordonnées relatives à (x,y)
+                    }
+
+                    QGraphicsPolygonItem *polyItem = new QGraphicsPolygonItem(polygon, mapItem);
+                    //polyItem->setBrush(Qt::red);
+                    polyItem->setPen(Qt::NoPen);
+                    polyItem->setData(0, "slashSpellZone");
+                    polyItem->setZValue(100);
+                    this->addItem(polyItem);
+                } else {
+                    QGraphicsRectItem *rect = new QGraphicsRectItem(x, y, width, height, mapItem);
+                    //rect->setBrush(Qt::green);
+                    rect->setPen(Qt::NoPen);
+                    rect->setData(0, "slashSpellZone");
+                    rect->setZValue(100);
+                    this->addItem(rect);
+                }
+            }
+        } else if (layer["name"] == "chest") {
+            QJsonArray objects = layer["objects"].toArray();
+
+            for (QJsonValue objectValue: objects) {
+                QJsonObject object = objectValue.toObject();
+
+                int x = object["x"].toDouble();
+                int y = object["y"].toDouble();
+                int width = object["width"].toDouble();
+                int height = object["height"].toDouble();
+
+
+                if (object.contains("polygon") || object.contains("polyline")) {
+                    QPolygonF polygon;
+
+                    QJsonArray points;
+                    if (object.contains("polygon")) {
+                        points = object["polygon"].toArray();
+                    } else {
+                        points = object["polyline"].toArray();
+                    }
+
+                    for (const QJsonValue &pointValue: points) {
+                        QJsonObject point = pointValue.toObject();
+                        qreal px = point["x"].toDouble();
+                        qreal py = point["y"].toDouble();
+                        polygon << QPointF(x + px, y + py); // coordonnées relatives à (x,y)
+                    }
+
+                    QGraphicsPolygonItem *polyItem = new QGraphicsPolygonItem(polygon, mapItem);
+                    //polyItem->setBrush(Qt::red);
+                    polyItem->setPen(Qt::NoPen);
+                    polyItem->setData(0, "chest");
+                    polyItem->setZValue(100);
+                    this->addItem(polyItem);
+                } else {
+                    QGraphicsRectItem *rect = new QGraphicsRectItem(x, y, width, height, mapItem);
+                    //rect->setBrush(Qt::green);
+                    rect->setPen(Qt::NoPen);
+                    rect->setData(0, "chest");
+                    rect->setZValue(100);
+                    this->addItem(rect);
+                }
+            }
+        }
+        else if (layer["name"] == "DonjonEntryZone") {
+            QJsonArray objects = layer["objects"].toArray();
+
+            for (QJsonValue objectValue: objects) {
+                QJsonObject object = objectValue.toObject();
+
+                int x = object["x"].toDouble();
+                int y = object["y"].toDouble();
+                int width = object["width"].toDouble();
+                int height = object["height"].toDouble();
+
+
+                if (object.contains("polygon") || object.contains("polyline")) {
+                    QPolygonF polygon;
+
+                    QJsonArray points;
+                    if (object.contains("polygon")) {
+                        points = object["polygon"].toArray();
+                    } else {
+                        points = object["polyline"].toArray();
+                    }
+
+                    for (const QJsonValue &pointValue: points) {
+                        QJsonObject point = pointValue.toObject();
+                        qreal px = point["x"].toDouble();
+                        qreal py = point["y"].toDouble();
+                        polygon << QPointF(x + px, y + py); // coordonnées relatives à (x,y)
+                    }
+
+                    QGraphicsPolygonItem *polyItem = new QGraphicsPolygonItem(polygon, mapItem);
+                    //polyItem->setBrush(Qt::red);
+                    polyItem->setPen(Qt::NoPen);
+                    polyItem->setData(0, "DonjonEntryZone");
+                    polyItem->setZValue(100);
+                    this->addItem(polyItem);
+                } else {
+                    QGraphicsRectItem *rect = new QGraphicsRectItem(x, y, width, height, mapItem);
+                    //rect->setBrush(Qt::green);
+                    rect->setPen(Qt::NoPen);
+                    rect->setData(0, "DonjonEntryZone");
+                    rect->setZValue(100);
+                    this->addItem(rect);
+                }
+            }
         }
     }
-
     painter.end();
     mapItem = new QGraphicsPixmapItem(mapPixmap);
     this->addItem(mapItem); //Add the map
@@ -158,6 +431,9 @@ void GameScene::keyPressEvent(QKeyEvent* event){
             qDebug("Key W pressed");
             hud->getSpellWidget()->changeSelectedSpell(1);
             break;
+        case Qt::Key_X :
+            qDebug("Key X pressed");
+            hud->getSpellWidget()->changeSelectedSpell(2);
         case Qt::Key_T:
             qDebug() << character->pos();
             break;
@@ -292,7 +568,161 @@ void GameScene::movePlayer(){
     qreal* deltaPosition = getDeltaPosition();
     character->moveEntityCollision(deltaPosition[0], deltaPosition[1]);
     mainView->centerOn(character);
+    checkInteractionZone();
     delete[] deltaPosition;
+}
+
+void GameScene::checkInteractionZone(){
+    bool inValidZone = false;
+
+    QList<QGraphicsItem*> collisions = this->collidingItems(character);
+    for(int i = 0; i < collisions.size(); i++){
+        QString interactionZoneName = collisions[i]->data(0).toString();
+        if(interactionZoneName == "missileSpellZone") {
+            inValidZone = true;
+            if(!character->getHasMissile()){
+                if(!tooltiptxt){
+                    showTooltip(character->pos(), "Press F to interact");
+                }
+                for(int key : activeKeys){
+                    if(key == Qt::Key_F){
+                        removeTooltip();
+                        character->setHasMissile(true);
+                        hud->getSpellWidget()->getSpell()[0]->show();
+                        if(!tooltiptxt && !tooltiprect){
+                            showTooltip(character->pos(), "Press A to select the spell");
+                        }
+                        //add a single shot delete
+                        QTimer::singleShot(2000, [this](){
+                            removeTooltip();
+                        });
+                        break;
+                    }
+                }
+            }
+        }
+        else if(interactionZoneName == "shieldSpellZone"){
+            inValidZone = true;
+            if(!character->getHasShield()){
+                if(!tooltiptxt){
+                    showTooltip(character->pos(), "Press F to interact");
+                }
+                for(int key : activeKeys){
+                    if(key == Qt::Key_F){
+                        removeTooltip();
+                        character->setHasShield(true);
+                        hud->getSpellWidget()->getSpell()[2]->show();
+                        if(!tooltiptxt && !tooltiprect){
+                            showTooltip(character->pos(), "Press X to select the spell");
+                        }
+                        //add a single shot delete
+                        QTimer::singleShot(2000, [this](){
+                            removeTooltip();
+                        });
+                        break;
+                    }
+                }
+            }
+
+        }
+        else if(interactionZoneName == "slashSpellZone"){
+            inValidZone = true;
+
+            if(!character->getHasSlash()){
+                if(!tooltiptxt){
+                    showTooltip(character->pos(), "Press F to interact");
+                }
+                for(int key : activeKeys){
+                    if(key == Qt::Key_F){
+                        removeTooltip();
+                        character->setHasSlash(true);
+                        hud->getSpellWidget()->getSpell()[1]->show();
+                        if(!tooltiptxt && !tooltiprect){
+                            showTooltip(character->pos(), "Press W to select the spell");
+                        }
+
+                        //add a single shot delete
+                        QTimer::singleShot(2000, [this](){
+                            removeTooltip();
+                        });
+                        break;
+                    }
+                }
+            }
+
+        }
+        else if(interactionZoneName == "chest"){
+            inValidZone = true;
+            if(!character->getHasSlash() && !tooltiptxt){
+                showTooltip(character->pos(), "Press F to interact");
+            }
+        }
+        if(interactionZoneName == "DonjonEntryZone") {
+            inValidZone = true;
+            if(!tooltiptxt){
+                showTooltip(character->pos(), "Press F to enter");
+            }
+            for(int key : activeKeys){
+                if(key == Qt::Key_F){
+                    removeTooltip();
+                    break;
+                }
+            }
+        }
+    }
+    if(!inValidZone){
+        removeTooltip();
+    }
+}
+
+void GameScene::showTooltip(QPointF pos, QString text){
+    if (tooltiptxt || tooltiprect) return;
+
+    // Texte
+    tooltiptxt = new QGraphicsTextItem(text);
+    QFont font("Cinzel Decorative", 12);
+    tooltiptxt->setFont(font);
+    tooltiptxt->setDefaultTextColor(QColor("#d6c7ff"));
+    tooltiptxt->setZValue(100);
+
+    // Taille du texte
+    QFontMetrics metrics(font);
+    QRect textRect = metrics.boundingRect(text);
+    int padding = 5;
+
+    // Fond
+    tooltiprect = new QGraphicsRectItem(textRect.adjusted(-padding, -padding, padding, padding));
+    tooltiprect->setBrush(QColor(40, 30, 60, 180));
+    tooltiprect->setPen(QPen(QColor(120, 100, 180), 2));
+    tooltiprect->setZValue(90);  // derrière le texte
+
+    //Pos
+    tooltiptxt->setPos(pos.x() -1, pos.y()  - 50);
+    tooltiprect->setPos(pos.x() , pos.y() + textRect.height() - 50);
+
+    // Glow effect
+    QGraphicsDropShadowEffect* glow = new QGraphicsDropShadowEffect();
+    glow->setColor(QColor(140, 115, 210));
+    glow->setBlurRadius(15);
+    glow->setOffset(0, 0);
+    tooltiprect->setGraphicsEffect(glow);
+    tooltiptxt->setGraphicsEffect(glow);
+
+    this->addItem(tooltiptxt);
+    this->addItem(tooltiprect);
+}
+
+void GameScene::removeTooltip(){
+    if(tooltiptxt){
+        this->removeItem(tooltiptxt);
+        delete tooltiptxt;
+        tooltiptxt = nullptr;
+    }
+    if(tooltiprect){
+        this->removeItem(tooltiprect);
+        delete tooltiprect;
+        tooltiprect = nullptr;
+    }
 }
 
 //Move all entities
@@ -400,7 +830,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QPointF clickPos = event->scenePos();
 
     //Check if the player is on the missile spell
-    if (hud->getSpellWidget()->getSelectedSpell()[0]) {
+    if (hud->getSpellWidget()->getSelectedSpell()[0] && character->getHasMissile()) {
         if (event->button() == Qt::LeftButton) {
             if (character->canShoot(clickPos) && hud->getSpellWidget()->getCurrentMissile() != 0) {
                 character->shootProjectile(clickPos, this);
@@ -441,12 +871,17 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             }
         }
     }
-    else if (hud->getSpellWidget()->getSelectedSpell()[1]) {
+    else if (hud->getSpellWidget()->getSelectedSpell()[1] && character->getHasSlash()) {
         if (event->button() == Qt::LeftButton) {
             if (character->canShoot(clickPos)) {
                 character->slashAttack(clickPos, this);
             }
         }
-
+    }
+    else if (hud->getSpellWidget()->getSelectedSpell()[2] && character->getHasShield()) {
+        if(!hud->getSpellWidget()->getIsShieldOnCd()){
+            this->character->useShield();
+            hud->getSpellWidget()->shieldUsed();
+        }
     }
 }

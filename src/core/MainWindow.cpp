@@ -56,7 +56,7 @@ void MainWindow::startGame(){
     startMenuScene->getAudioPlayer()->stop();
 
     //Set the scene to the game scene
-    gameScene = new GameScene(mainView, scoreManager, this);
+    gameScene = new GameScene(this,mainView, scoreManager, this);
     gameScene->setView(mainView);
     mainView->setScene(gameScene);
     mainView->setFitView(false);
