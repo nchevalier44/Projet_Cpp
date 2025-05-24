@@ -64,23 +64,25 @@ void Player::takeDamage(int damage, Entity* attacker) {
 
 void Player::shootProjectile(QPointF target, GameScene* scene) {
     //Ajust the position of the projectile
-    QPointF posInit = this->pos();
-    posInit.setX(posInit.x() + frameWidth/20);
-    posInit.setY(posInit.y() + frameHeight/20);
-    QPointF direction = target - posInit;
+    QPointF posInit = this->getCenterPosition();
 
     //Adjusting the position of the projectile to make it appear in front of the player
-
+    qreal w = this->sceneBoundingRect().width();
+    qreal h = this->sceneBoundingRect().height();
     switch (currentDirection) {
-        case Up : posInit.setY(posInit.y() - 12); posInit.setX(posInit.x() + 7); break;
-        case Down : posInit.setY(posInit.y() + 7); posInit.setX(posInit.x() + 7); break;
-        case Left : posInit.setX(posInit.x() - 2); break;
-        case Right : posInit.setX(posInit.x() + 15); break;
+        case Up : posInit.setY(posInit.y() - h * 0.5); break;
+        case Down : posInit.setY(posInit.y() + h * 0.25); break;
+        case Left : posInit.setX(posInit.x() - w * 0.4); posInit.setY(posInit.y() - h * 0.25); break;
+        case Right : posInit.setX(posInit.x() + w * 0.35); posInit.setY(posInit.y() - h * 0.25); break;
         default: break;
     }
+
+    QPointF direction = target - posInit - QPointF(32/2, 21/2);
+
+
     PlayerProjectile* projectile = new PlayerProjectile(3,5, 400, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);
 
-    projectile->setZValue(10);
+    projectile->setZValue(41);
     projectile->setScale(0.5);
     scene->addItem(projectile);
 
