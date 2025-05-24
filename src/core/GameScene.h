@@ -13,6 +13,8 @@
 #include "MainView.h"
 #include "../entities/NPC/Bat.h"
 #include "../entities/player/Player.h"
+#include "../entities/NPC/Goblin.h"
+#include "../entities/NPC/CrystalKnight.h"
 
 
 class MainWindow;
@@ -31,6 +33,7 @@ private:
     QList<Projectile*> listProjectiles;
     QList<QGraphicsPixmapItem*> listBackground;
     MainView* mainView = nullptr;
+    MainWindow* mainWindow = nullptr;
     int backgroundWidth = 0;
     int backgroundHeight = 0;
     QList<int> activeKeys; // Set to keep track of active keys
@@ -81,6 +84,10 @@ public :
 
     //Functions
     void loadMap(QString mapPath, int mapWidth, int mapHeight);
+    void loadOverworld();
+    void loadDungeon();
+    void addInteractionZone(QString name, QJsonObject layer);
+    void clearInteractionZones(const QStringList& tags);
     qreal* getDeltaPosition();
     void moveNPC();
     void movePlayer();

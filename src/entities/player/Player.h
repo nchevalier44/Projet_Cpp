@@ -40,9 +40,12 @@ public:
     bool getHasSlash() { return hasSlash; }
     bool getHasMissile() { return hasMissile; }
     bool getHasShield() { return hasShield; }
+    int getMaxHP() const { return maxHp; }
+    int getCurrentHP() const { return hp; }
 
     // Setters
     void setMainView(MainView *new_main_view) { mainView = new_main_view; }
+    void setMaxHP(int newMaxHP) { maxHp = newMaxHP; }
     void setPlayerSlash(PlayerSlash *new_slash) { slash = new_slash; }
     void setPLayerShield(PlayerShield* new_shield) {shield = new_shield; }
     void setHUD(HUD *newHud) { hud = newHud; }

@@ -16,11 +16,15 @@ Q_OBJECT
 private:
     QVector<QLabel*> life;
     int maxLife;
+    QHBoxLayout* lifeLayout;
+    int heartWidth;
+    int heartHeight;
 
 public :
     HPWidget(int maxLife, QPointF windowSize, QWidget* parent = nullptr);
     QVector<QLabel*>& getLifeList(){ return life; }
     void setLife(int life);
+    void addHP();
 
     int getMaxLife() const { return maxLife; }
 

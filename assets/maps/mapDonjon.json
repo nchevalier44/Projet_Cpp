@@ -1,12 +1,12 @@
 { "compressionlevel":-1,
- "height":31,
+ "height":62,
  "infinite":false,
  "layers":[
         {
          "id":4,
          "image":"layers\/bgDonjon.png",
-         "imageheight":1000,
-         "imagewidth":1000,
+         "imageheight":2000,
+         "imagewidth":2000,
          "name":"bg",
          "opacity":1,
          "type":"imagelayer",
@@ -17,8 +17,8 @@
         {
          "id":5,
          "image":"layers\/floorDonjon.png",
-         "imageheight":1000,
-         "imagewidth":1000,
+         "imageheight":2000,
+         "imagewidth":2000,
          "name":"floorDonjon",
          "opacity":1,
          "type":"imagelayer",
@@ -29,8 +29,8 @@
         {
          "id":6,
          "image":"layers\/wallsDonjon.png",
-         "imageheight":1000,
-         "imagewidth":1000,
+         "imageheight":2000,
+         "imagewidth":2000,
          "name":"wallsDonjon",
          "opacity":1,
          "type":"imagelayer",
@@ -51,8 +51,8 @@
                  "type":"",
                  "visible":true,
                  "width":19,
-                 "x":399,
-                 "y":657
+                 "x":892.939393939394,
+                 "y":1160.0303030303
                 }, 
                 {
                  "height":338,
@@ -62,8 +62,8 @@
                  "type":"",
                  "visible":true,
                  "width":15,
-                 "x":623,
-                 "y":664
+                 "x":1125.66666666667,
+                 "y":1161.33333333333
                 }, 
                 {
                  "height":35.5,
@@ -73,19 +73,19 @@
                  "type":"",
                  "visible":true,
                  "width":228,
-                 "x":623,
-                 "y":661
+                 "x":1123,
+                 "y":1165
                 }, 
                 {
-                 "height":589.333333333333,
+                 "height":589.333,
                  "id":5,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":20,
-                 "x":829.333333333333,
-                 "y":100
+                 "x":1335.99966666667,
+                 "y":605.333333333333
                 }, 
                 {
                  "height":40,
@@ -95,19 +95,19 @@
                  "type":"",
                  "visible":true,
                  "width":640,
-                 "x":190.666666666667,
-                 "y":100
+                 "x":707.333333333333,
+                 "y":596
                 }, 
                 {
-                 "height":586.666666666667,
+                 "height":586.667,
                  "id":7,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":10.6666666666667,
-                 "x":190.666666666667,
-                 "y":101.333333333333
+                 "width":10.6667,
+                 "x":687.636696969697,
+                 "y":604.363303030303
                 }, 
                 {
                  "height":28,
@@ -116,9 +116,20 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":209.333333333333,
-                 "x":192,
-                 "y":657.333333333333
+                 "width":209.333,
+                 "x":697.818181818182,
+                 "y":1159.15118181818
+                }, 
+                {
+                 "height":28,
+                 "id":9,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":209.333,
+                 "x":919.152,
+                 "y":1471.14666666667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -127,13 +138,40 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":9,
+ "nextobjectid":10,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
  "tileheight":32,
+ "tilesets":[
+        {
+         "columns":32,
+         "firstgid":1,
+         "image":"..\/..\/..\/..\/Downloads\/ChatGPT Image 22 mai 2025, 13_10_45.png",
+         "imageheight":1024,
+         "imagewidth":1024,
+         "margin":0,
+         "name":"ChatGPT Image 22 mai 2025, 13_10_45",
+         "spacing":0,
+         "tilecount":1024,
+         "tileheight":32,
+         "tilewidth":32
+        }, 
+        {
+         "columns":32,
+         "firstgid":1025,
+         "image":"..\/..\/..\/..\/Downloads\/ChatGPT Image 22 mai 2025, 13_10_45.png",
+         "imageheight":1024,
+         "imagewidth":1024,
+         "margin":0,
+         "name":"ChatGPT Image 22 mai 2025, 13_10_45",
+         "spacing":0,
+         "tilecount":1024,
+         "tileheight":32,
+         "tilewidth":32
+        }],
  "tilewidth":32,
  "type":"map",
  "version":"1.10",
- "width":31
+ "width":62
 }
