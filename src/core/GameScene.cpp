@@ -15,7 +15,7 @@ GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* score
 
     //Setting up the player's character
     this->character = new Player("Character", 3, scoreManager, this);
-    this->character->setPos(1480, 2730);
+    this->character->setPos(200, 2600); //ex 1480,2730
     this->character->setSpeed(6);
     this->character->setScale(0.2);
     this->character->setFocus();
@@ -42,13 +42,6 @@ GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* score
     bat->setPos(1100, 2200);
     this->addItem(bat);
     listNPC.append(bat);
-
-    /*
-    CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 1, scoreManager, this);
-    crystalKnight->setPos(1000, 2000);
-    this->addItem(crystalKnight);
-    listNPC.append(crystalKnight);
-     */
 
 
     //Starting the timer to update the animation and mouvement
@@ -224,6 +217,23 @@ void GameScene::loadDungeon() {
     audioPlayer->play();
     mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
      */
+
+    try{
+        loadMap("../assets/maps/mapDonjon.json", 2000,2000);
+    } catch(QException e){
+        qCritical() << "Error when loading the map : " << e.what();
+    } catch(std::exception e){
+        qCritical() << "Error when loading the map : " << e.what();
+    }
+    character->setPos(990,1400);
+
+    if(!character->getHasTreeHearth()){
+        CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 1,character, scoreManager, this);
+        crystalKnight->setPos(1000, 880);
+        this->addItem(crystalKnight);
+        listNPC.append(crystalKnight);
+    }
+
 
 
 }
@@ -486,16 +496,7 @@ void GameScene::checkInteractionZone(){
             }
             for(int key : activeKeys){
                 if(key == Qt::Key_F){
-                    try{
-                        loadMap("../assets/maps/mapDonjon.json", 2000,2000);
-                        qDebug() << "Dungeon loaded";
-                    } catch(QException e){
-                        qCritical() << "Error when loading the map : " << e.what();
-                    } catch(std::exception e){
-                        qCritical() << "Error when loading the map : " << e.what();
-                    }
-                    character->setPos(990,1400);
-                    qDebug() << "Player position set to (990,1400)";
+                    loadDungeon();
                     removeTooltip();
                     break;
                 }
@@ -567,6 +568,7 @@ void GameScene::moveNPC(){
 
     //We move each entity in listNPC
     for(Entity* entity : listNPC){
+        if(dynamic_cast<CrystalKnight*>(entity)) return; //Do not move the CrystalKnight, he teleports
         float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
         if(entity){
             if(distance < 300){
