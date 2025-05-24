@@ -21,6 +21,7 @@ class MainView : public QGraphicsView {
         void createContentPauseContainer();
 
         void deleteDeathScreen();
+        void deleteWinScreen();
         void resizeEvent (QResizeEvent* event) override;
 
 
@@ -30,6 +31,7 @@ protected:
     private:
         bool fitView = true;
         QWidget* deathScreen = nullptr;
+        QWidget* winScreen = nullptr;
         QWidget* pauseScreen = nullptr;
         ScoreManager* scoreManager = nullptr;
         MainWindow* mainWindow = nullptr;
@@ -41,6 +43,7 @@ protected:
         QSize lastSize;
     public slots:
         void displayDeathScreen();
+        void displayWinScreen();
         void displayPauseMenu();
         void stopGamePaused();
         void backToMenu();

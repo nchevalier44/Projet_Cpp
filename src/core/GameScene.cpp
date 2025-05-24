@@ -34,6 +34,8 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->character->setScale(0.2);
     this->character->setZValue(40);
 
+    this->character->setHasTreeHeart(true);
+
     this->addItem(character);
     this->character->setMainView(mainView);
 
@@ -84,7 +86,7 @@ void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
         for(Entity * entity : listNPC) {
             this->removeEntity(entity);
         }
-        QStringList tags = {"collision", "missileSpellZone", "shieldSpellZone", "slashSpellZone", "chest", "DonjonEntryZone","exitDonjon"};
+        QStringList tags = {"collision", "missileSpellZone", "shieldSpellZone", "slashSpellZone", "chest", "DonjonEntryZone","exitDonjon","TreeHeart"};
         clearInteractionZones(tags);
 
     }
@@ -141,6 +143,8 @@ void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
             addInteractionZone("DonjonEntryZone", layer);
         }else if(layer["name"] == "exitDonjon"){
             addInteractionZone("exitDonjon", layer);
+        }else if(layer["name"] == "TreeHeart"){
+            addInteractionZone("TreeHeart", layer);
         }
     }
     painter.end();
@@ -238,7 +242,7 @@ void GameScene::loadDungeon() {
     }
     character->setPos(990,1350);
 
-    if(!character->getHasTreeHearth()){
+    if(!character->getHasTreeHeart()){
         CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 100,character, scoreManager, this);
         crystalKnight->setPos(1000, 880);
         this->addItem(crystalKnight);
@@ -548,7 +552,19 @@ void GameScene::checkInteractionZone(){
                 }
             }
         }
-
+        else if(interactionZoneName == "TreeHeart"){
+            inValidZone = true;
+            if(character->getHasTreeHeart()){
+                if(!tooltiptxt){
+                    showTooltip(character->pos(), "Press F to replace the Tree Heart");
+                }
+                for(int key : activeKeys) {
+                    if (key == Qt::Key_F) {
+                        mainView->displayWinScreen();
+                    }
+                }
+            }
+        }
     }
     if(!inValidZone){
         removeTooltip();

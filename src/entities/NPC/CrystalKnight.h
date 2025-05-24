@@ -23,7 +23,7 @@ private :
     bool isClawAttacking = false;
     bool clawAttackTouched = false;
     int lightningCount = 0;
-    int maxLightningCount = 10;
+    int maxLightningCount = 15;
     QTimer* lightningTimer = nullptr;
     Player* player = nullptr;
     QTimer* clawTimer = nullptr;
@@ -47,6 +47,12 @@ public:
     }
     void attackAnimation() override{}
     void deathAnimation() override;
+    void takeDamage(int damage, Entity* attacker=nullptr, Projectile* projectile=nullptr) override{
+        Entity::takeDamage(damage, attacker, projectile);
+        if(hp == maxHp/2){
+            maxLightningCount = 25;
+        }
+    }
     void moveAnimation(qreal x = 0, qreal y = 0);
     void clawAttackAnimation();
     void checkCollisionsClawAttack();

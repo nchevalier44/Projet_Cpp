@@ -80,7 +80,8 @@ void CrystalKnight::moveAnimation(qreal x , qreal y ) {
 void CrystalKnight::deathAnimation() {
     isDead = true;
     setPos(1000,850);
-    player->setHasTreeHearth(true);
+    player->setHasTreeHeart(true);
+    gameScene->showTooltip(player->pos(),"You found the Tree Heart !");
     setAnimation(PATH_CK_DEATH, NB_FRAME_CK_DEATH, ANIM_SPEED_CK_DEATH);
     QTimer::singleShot(NB_FRAME_CK_DEATH*ANIM_SPEED_CK_DEATH, this, [this]() {
         stopAnimation();
@@ -274,7 +275,11 @@ void Lightning::checkCollisions() {
         Player* testPlayer = dynamic_cast<Player*>(collisions[i]);
         if(testPlayer) {
             hasCollided = true;
-            player->takeDamage(1, nullptr);
+            if(player && !player->getPlayerShield()->isActive()){
+                player->takeDamage(1, nullptr);
+                player->getPlayerShield()->decreaseHP();
+            }
+
         }
         i++;
     }

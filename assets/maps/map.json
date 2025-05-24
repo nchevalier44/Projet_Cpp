@@ -1014,8 +1014,8 @@
                  "type":"",
                  "visible":true,
                  "width":44.75,
-                 "x":975,
-                 "y":1182.27
+                 "x":974.667,
+                 "y":1164.94
                 }, 
                 {
                  "height":54.33,
@@ -2435,9 +2435,31 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":27,
+         "name":"TreeHeart",
+         "objects":[
+                {
+                 "height":64,
+                 "id":72,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":96,
+                 "x":1504,
+                 "y":1344
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":27,
- "nextobjectid":72,
+ "nextlayerid":28,
+ "nextobjectid":73,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
