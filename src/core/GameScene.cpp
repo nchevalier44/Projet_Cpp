@@ -60,6 +60,7 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     //TODO Delete when test are ok
     character->setHasMissile(true);
     character->setHasSlash(true);
+    character->setHasShield(true);
     /*
     CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 1, scoreManager, this);
     crystalKnight->setPos(1000, 2000);

@@ -5,6 +5,8 @@
 
 
 PlayerShield::PlayerShield(GameScene* scene,Player* player, QGraphicsObject* parent) : scene(scene), player(player), QGraphicsObject(parent){
+    scene->removeItem(this);
+    scene->addItem(this);
     movie = new QMovie(PATH_PLAYER_SHIELD);
     /*
     QSizeF playerSize = player->shape().boundingRect().size();

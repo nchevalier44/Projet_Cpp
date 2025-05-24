@@ -4,6 +4,8 @@
 
 PlayerSlash::PlayerSlash(GameScene *scene, Player* player, QGraphicsObject* parent) : scene(scene), player(player), QGraphicsObject(parent)
 {
+    scene->removeItem(this);
+    scene->addItem(this);
     // We load the slashAnimation
     QMovie *slash1 = new QMovie(PATH_PLAYER_SLASH1);
     QMovie *slash2 = new QMovie(PATH_PLAYER_SLASH2);
@@ -95,6 +97,7 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     }
     this->setPos(finalPos);
     this->setVisible(true);
+
 
 
     //Sound effect
