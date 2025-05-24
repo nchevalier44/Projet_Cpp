@@ -13,7 +13,7 @@ class GameScene;
 class Projectile : public QGraphicsObject{
 Q_OBJECT
 protected:
-    int damage = 1;
+    int damage = 3;
     int speed = 0;
     int distanceMax = 0;
     int distanceTravelled = 0;
@@ -27,6 +27,7 @@ protected:
     GameScene* gameScene = nullptr;
     bool isBeenDeleting = false;
     Entity* proprietary = nullptr;
+    QString pathMissileMoveSound;
 
 
 public :
@@ -57,6 +58,8 @@ public :
     void setStartAnimation(QString spriteSheet);
     void setMiddleAnimation(QString spriteSheet);
     virtual void setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed){}
+
+    void missileMoveSound();
 
 public slots:
     void moveProjectile();

@@ -21,13 +21,12 @@ class Player : public Entity
 private:
     MainView *mainView = nullptr;
     HUD *hud = nullptr;
-    QSoundEffect *movingSound = nullptr;
 
     bool hasSlash = false;
     bool hasMissile = false;
     bool hasShield = false;
 
-    PlayerSlash *slash = nullptr;
+    PlayerSlash* slash = nullptr;
     PlayerShield* shield = nullptr;
 
 public:
@@ -36,26 +35,23 @@ public:
     // Getters
     MainView* getMainView() const { return mainView; }
     Direction getCurrentDirection() const { return currentDirection; }
-    PlayerSlash *getPlayerSlash() const { return slash; }
-    PlayerShield *getPlayerShield() const { return shield; }
-    bool getHasSlash(){return hasSlash;}
-    bool getHasMissile(){return hasMissile;}
-    bool getHasShield(){return hasShield;}
+    PlayerSlash* getPlayerSlash() const { return slash; }
+    PlayerShield* getPlayerShield() const { return shield; }
+    bool getHasSlash() { return hasSlash; }
+    bool getHasMissile() { return hasMissile; }
+    bool getHasShield() { return hasShield; }
 
     // Setters
     void setMainView(MainView *new_main_view) { mainView = new_main_view; }
     void setPlayerSlash(PlayerSlash *new_slash) { slash = new_slash; }
-    void setPLayerShield(PlayerShield* new_shield) {shield = new_shield;}
+    void setPLayerShield(PlayerShield* new_shield) {shield = new_shield; }
     void setHUD(HUD *newHud) { hud = newHud; }
-    void setHasShield(bool b){hasShield = b;}
-    void setHasSlash(bool b){hasSlash = b;}
-    void setHasMissile(bool b){hasMissile = b;}
+    void setHasShield(bool b) { hasShield = b; }
+    void setHasSlash(bool b) { hasSlash = b; }
+    void setHasMissile(bool b) { hasMissile = b; }
 
     // Override bounding rect to reduce hitbox
-    QRectF boundingRect() const override
-    {
-        return QRectF(0, 0, frameWidth, frameHeight);
-    }
+    QRectF boundingRect() const override { return QRectF(0, 0, frameWidth, frameHeight); }
     QPainterPath shape() const override
     {
         QPainterPath path;
@@ -66,66 +62,18 @@ public:
     void takeDamage(int damage, Entity* attacker) override;
     // Animation methods
 
-    void frontIdleAnimation()
-    {
-        setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
-        if (movingSound->isPlaying())
-            movingSound->stop();
-    }
-    void frontWalkAnimation()
-    {
-        setAnimation(PATH_PLAYER_FRONT_WALK, 6, 100);
-        if (!movingSound->isPlaying())
-            movingSound->play();
-    }
-    void leftIdleAnimation()
-    {
-        setAnimation(PATH_PLAYER_LEFT_IDLE, 6, 100);
-        if (movingSound->isPlaying())
-            movingSound->stop();
-    }
-    void leftWalkAnimation()
-    {
-        setAnimation(PATH_PLAYER_LEFT_WALK, 6, 100);
-        if (!movingSound->isPlaying())
-            movingSound->play();
-    }
-    void rightIdleAnimation()
-    {
-        setAnimation(PATH_PLAYER_RIGHT_IDLE, 6, 100);
-        if (movingSound->isPlaying())
-            movingSound->stop();
-    }
-    void rightWalkAnimation()
-    {
-        setAnimation(PATH_PLAYER_RIGHT_WALK, 6, 100);
-        if (!movingSound->isPlaying())
-            movingSound->play();
-    }
-    void backIdleAnimation()
-    {
-        setAnimation(PATH_PLAYER_BACK_IDLE, 8, 100);
-        if (movingSound->isPlaying())
-            movingSound->stop();
-    }
-    void backWalkAnimation()
-    {
-        setAnimation(PATH_PLAYER_BACK_WALK, 8, 100);
-        if (!movingSound->isPlaying())
-            movingSound->play();
-    }
-    void hpAnimation() override
-    {
-        setAnimation(PATH_HP_DEAD, 8, 150);
-    }
+    void frontIdleAnimation() { setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100); }
+    void frontWalkAnimation() { setAnimation(PATH_PLAYER_FRONT_WALK, 6, 100); }
+    void leftIdleAnimation() { setAnimation(PATH_PLAYER_LEFT_IDLE, 6, 100); }
+    void leftWalkAnimation() { setAnimation(PATH_PLAYER_LEFT_WALK, 6, 100); }
+    void rightIdleAnimation() { setAnimation(PATH_PLAYER_RIGHT_IDLE, 6, 100); }
+    void rightWalkAnimation() { setAnimation(PATH_PLAYER_RIGHT_WALK, 6, 100); }
+    void backIdleAnimation() { setAnimation(PATH_PLAYER_BACK_IDLE, 8, 100); }
+    void backWalkAnimation() { setAnimation(PATH_PLAYER_BACK_WALK, 8, 100); }
 
-    void deathAnimation() override{
-        setAnimation(PATH_PLAYER_DEATH, NB_FRAME_PLAYER_DIE, ANIM_SPEED_PLAYER_IDLE);
-        QTimer::singleShot(NB_FRAME_PLAYER_DIE*ANIM_SPEED_PLAYER_IDLE, this, [this]() {
-            stopAnimation();
-        });
+    void hpAnimation() override { setAnimation(PATH_HP_DEAD, 8, 150); }
 
-    }
+    void deathAnimation() override;
 
     // Attack
     bool canShoot(QPointF clickPos);

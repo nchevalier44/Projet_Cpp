@@ -20,7 +20,7 @@ class Goblin : public Entity {
     void deathAnimation() override;
 
 
-        void shootProjectile(QPointF target, GameScene* scene);
+    void shootProjectile(QPointF target, GameScene* scene);
 
 };
 

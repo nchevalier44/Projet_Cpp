@@ -123,6 +123,8 @@ void Entity::takeDamage(int d, Entity* attacker) {
         this->takeKnockback(attacker);
     }
 
+    hitSound();
+
     //Display a red screen to indicate damage
     QGraphicsColorizeEffect* effect = new QGraphicsColorizeEffect(this);
     effect->setColor(Qt::darkRed);
@@ -137,6 +139,7 @@ void Entity::takeDamage(int d, Entity* attacker) {
         hp = 0;
         isDead = true;
         deathAnimation();
+        deathSound();
         Player* player = dynamic_cast<Player*>(attacker); //return nullptr if attacker is not a player
         if (player) { //if attacker is a player
             scoreManager->getActualScore()->setScore(scoreManager->getActualScore()->getScore() + this->getScore());
@@ -254,4 +257,31 @@ void Entity::moveEntityCollision(qreal dx, qreal dy){
     if(i != numberCollisions){
         this->moveBy(0, -dy);
     }
+}
+
+
+void Entity::deathSound() {
+    QSoundEffect* deathSFX = new QSoundEffect();
+    connect(deathSFX, &QSoundEffect::loadedChanged, deathSFX, &QSoundEffect::play);
+    deathSFX->setSource(QUrl::fromLocalFile(pathDeathSound));
+    deathSFX->setVolume(0.3);
+    gameScene->getAudioManager()->addSFXObject(deathSFX, deathSFX->volume());
+    connect(deathSFX, &QSoundEffect::playingChanged, [deathSFX](){
+        if(!deathSFX->isPlaying()){
+            delete deathSFX;
+        }
+    });
+}
+
+void Entity::hitSound(){
+    QSoundEffect* hitSFX = new QSoundEffect();
+    connect(hitSFX, &QSoundEffect::loadedChanged, hitSFX, &QSoundEffect::play);
+    hitSFX->setSource(QUrl::fromLocalFile(pathHitSound));
+    hitSFX->setVolume(0.3);
+    gameScene->getAudioManager()->addSFXObject(hitSFX, hitSFX->volume());
+    connect(hitSFX, &QSoundEffect::playingChanged, [hitSFX](){
+        if(!hitSFX->isPlaying()){
+            delete hitSFX;
+        }
+    });
 }

@@ -15,14 +15,14 @@ class Player;
 class PlayerSlash : public QGraphicsObject {
     Q_OBJECT
 private :
-    int damage = 1;
+    int damage = 5;
     int currentAttackIndex = 0;
     QElapsedTimer combotimer;
     const int comboMaxDelay = 1000;
     QVector<QMovie*> attackAnimation;
     qreal rotationAngle = 0;
     QPointF attackPosition;
-    QGraphicsScene* scene = nullptr;
+    GameScene* scene = nullptr;
     QPixmap currentPixmap;
     bool isSlashing = false;
     Player *player = nullptr;

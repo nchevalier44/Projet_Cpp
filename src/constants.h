@@ -32,11 +32,16 @@
 #define PATH_BAT_MOVE "../assets/images/bat/Bat-IdleFly.png"
 #define PATH_BAT_DEATH "../assets/images/bat/Bat-Die.png"
 #define NB_FRAME_BAT_MOVE 9
-#define ANIM_SPEED_BAT_MOVE 90
+#define ANIM_SPEED_BAT_MOVE 70
 #define NB_FRAME_BAT_DEATH 12
 #define ANIM_SPEED_BAT_DEATH 100
 #define NB_FRAME_BAT_ATTACK 8
 #define ANIM_SPEED_BAT_ATTACK 100
+
+#define PATH_BAT_DEATH_SOUND "../assets/sounds_effects/batDie.wav"
+#define PATH_BAT_HIT_SOUND "../assets/sounds_effects/hitBat.wav"
+
+#define BAT_HP 5
 
 
 //Goblin
@@ -46,18 +51,21 @@
 #define PATH_GOBLIN_PROJECTILE_MOVE "../assets/images/goblin/enemy1_missile.gif"
 #define PATH_GOBLIN_PROJECTILE_BLOW "../assets/images/goblin/enemy1_missile_blow.gif"
 #define NB_FRAME_GOBLIN_MOVE 4
-#define ANIM_SPEED_GOBLIN_MOVE 90
+#define ANIM_SPEED_GOBLIN_MOVE 100
 #define NB_FRAME_GOBLIN_IDLE 6
-#define ANIM_SPEED_GOBLIN_IDLE 350
+#define ANIM_SPEED_GOBLIN_IDLE 325
 #define NB_FRAME_GOBLIN_ATTACK 6
-#define ANIM_SPEED_GOBLIN_ATTACK 110
+#define ANIM_SPEED_GOBLIN_ATTACK 100
 
+#define PATH_GOBLIN_DEATH_SOUND "../assets/sounds_effects/minionDie.wav"
+#define PATH_GOBLIN_HIT_SOUND "../assets/sounds_effects/hitGoblin.wav"
+#define PATH_GOBLIN_PROJECTILE_MOVE_SOUND "../assets/sounds_effects/minionMissile.wav"
+
+#define GOBLIN_HP 10
 
 #define PATH_MISSILE_SPELL_GROW_ANIMATION "../assets/images/characters/Missile_spellGrow.gif"
 
 //Character
-#define PATH_PLAYER_FOOTSTEP_SOUND "../assets/sounds_effects/footsteps.wav"
-
 #define PATH_PLAYER_FRONT_IDLE "../assets/images/characters/Front_idle.png"
 #define PATH_PLAYER_FRONT_WALK "../assets/images/characters/Front_walk.png"
 #define PATH_PLAYER_LEFT_IDLE "../assets/images/characters/Left_idle.png"
@@ -69,6 +77,12 @@
 #define PATH_PLAYER_DEATH "../assets/images/characters/die.png"
 #define ANIM_SPEED_PLAYER_IDLE 100
 #define NB_FRAME_PLAYER_DIE 8
+
+#define PATH_PLAYER_DEATH_SOUND "../assets/sounds_effects/playerDie.wav"
+#define PATH_PLAYER_HIT_SOUND "../assets/sounds_effects/hitPlayer.wav"
+#define PATH_PLAYER_PROJECTILE_MOVE_SOUND "../assets/sounds_effects/playerMissile.wav"
+
+
 
 //HUD
 #define PATH_HP_ANIMATION "../assets/images/characters/Fire_head.gif"
@@ -97,6 +111,9 @@ enum Direction {None, Up, Down, Left, Right};
 #define PATH_PLAYER_SLASH1 "../assets/images/characters/Slash1.gif"
 #define PATH_PLAYER_SLASH2 "../assets/images/characters/Slash2.gif"
 #define PATH_PLAYER_SLASH3 "../assets/images/characters/Slash3.gif"
+
+#define PATH_PLAYER_SLASH_SOUND "../assets/sounds_effects/firstSlashAttack.wav"
+#define PATH_PLAYER_LAST_SLASH_SOUND "../assets/sounds_effects/thirdSlashAttack.wav"
 
 //Slash
 #define PATH_PLAYER_SHIELD "../assets/images/characters/Shield.gif"

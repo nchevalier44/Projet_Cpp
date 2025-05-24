@@ -10,6 +10,7 @@ PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QStri
     this->setPos(pos - centerOffset);
     throwProjectile();
     this->setTransform(QTransform::fromScale(2, 2));
+    pathMissileMoveSound = PATH_PLAYER_PROJECTILE_MOVE_SOUND;
 
 }
 
@@ -28,22 +29,21 @@ void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
     this->movie = new QMovie(PATH_PLAYER_PROJECTILE_FADE);
     gameScene->getMovieList().append(movie);
 
-    timerEndMovie = new QTimer();
+    timerEndMovie = new QTimer(this);
     gameScene->getTimerList().append(timerEndMovie);
     connect(timerEndMovie, &QTimer::timeout, this, [this](){
         if(this->movie->currentFrameNumber() == this->movie->frameCount() - 1){
-            this->movie->stop();
-            this->gameScene->removeProjectile(this);
+            movie->stop();
             timerEndMovie->stop();
             gameScene->getMovieList().removeAll(movie);
             gameScene->getTimerList().removeAll(timerEndMovie);
-            delete timerEndMovie;
             delete movie;
             movie = nullptr;
             timerEndMovie = nullptr;
+            gameScene->removeProjectile(this);
         } else{
-            this->movie->jumpToNextFrame();
-            this->gameScene->update(this->sceneBoundingRect());
+            movie->jumpToNextFrame();
+            gameScene->update(this->sceneBoundingRect());
             timerEndMovie->setInterval(this->movie->nextFrameDelay());
         }
     });
@@ -57,4 +57,5 @@ void PlayerProjectile::startMove() {
     setMiddleAnimation(PATH_PLAYER_PROJECTILE);
     //Starting the moving
     gameScene->addProjectile(this);
+    missileMoveSound();
 }

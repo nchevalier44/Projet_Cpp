@@ -40,6 +40,7 @@ private:
     QList<QMovie*> movieList;
     QGraphicsTextItem* tooltiptxt = nullptr;
     QGraphicsRectItem* tooltiprect = nullptr;
+    AudioManager* audioManager = nullptr;
 
 
 protected:
@@ -72,9 +73,10 @@ public :
     QList<QTimer*>& getTimerList() { return timerList; }
     QList<QMovie*>& getMovieList() { return movieList; }
     bool isGamePaused() const { return isPaused; }
+    AudioManager* getAudioManager() { return audioManager; }
 
     //Constructor and destructor
-    GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);
+    GameScene(AudioManager* audioManager, MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);
     virtual ~GameScene();
 
     //Functions

@@ -64,7 +64,13 @@ public:
     virtual void idleAnimation(){};
     void horizontalFlip();
 
-    //Method to set the animation
+    //Sound method
+    void deathSound();
+    void hitSound();
+
+
+
+        //Method to set the animation
     void setAnimation(QString spriteSheet, int frameCount, int animationSpeed);
 
     //Method to call setAnimation with the right parameters
@@ -92,6 +98,8 @@ protected:
     bool horizontalFlipped = false;
     GameScene* gameScene = nullptr;
     ScoreManager* scoreManager = nullptr;
+    QString pathDeathSound;
+    QString pathHitSound;
 
     //Animation variables
     QPixmap* spriteSheet = nullptr;

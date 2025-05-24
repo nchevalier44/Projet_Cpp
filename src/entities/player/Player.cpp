@@ -10,12 +10,17 @@
 Player::Player(std::string name, int life, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scoreManager, scene, parent) {
     this->maxHp = life;
     setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
-    movingSound = new QSoundEffect(this);
-    movingSound->setSource(QUrl::fromLocalFile(PATH_PLAYER_FOOTSTEP_SOUND));
-    movingSound->setLoopCount(QSoundEffect::Infinite);
-    movingSound->setVolume(30);
+    pathDeathSound = PATH_PLAYER_DEATH_SOUND;
+    pathHitSound = PATH_PLAYER_HIT_SOUND;
 }
 
+void Player::deathAnimation() {
+    setAnimation(PATH_PLAYER_DEATH, NB_FRAME_PLAYER_DIE, ANIM_SPEED_PLAYER_IDLE);
+    QTimer::singleShot((NB_FRAME_PLAYER_DIE-1)*ANIM_SPEED_PLAYER_IDLE, this, [this]() {
+        stopAnimation();
+        delete this;
+    });
+}
 
 void Player::takeDamage(int damage, Entity* attacker) {
     if(isDead) return;
@@ -23,6 +28,8 @@ void Player::takeDamage(int damage, Entity* attacker) {
     if(attacker){
         this->takeKnockback(attacker);
     }
+
+    hitSound();
 
     //Create a red screen to indicate damage
     QWidget* DamageScreen = new QWidget(mainView);
@@ -47,6 +54,7 @@ void Player::takeDamage(int damage, Entity* attacker) {
     if(hp <= 0){
         isDead = true;
         deathAnimation();
+        deathSound();
         QTimer::singleShot(1000, mainView, &MainView::displayDeathScreen);
         scoreManager->getActualScore()->setTimePlayed(scoreManager->getElapsedTimer()->elapsed() / 1000);
         scoreManager->getActualScore()->setDate(QDateTime::currentDateTime().toString("dd/MM/yyyy"));

@@ -11,14 +11,16 @@ Goblin::Goblin(std::string name, int life, ScoreManager* scoreManager, GameScene
     score = 10;
     horizontalFlipped = true;
     this->setScale(0.1);
+    pathDeathSound = PATH_GOBLIN_DEATH_SOUND;
+    pathHitSound = PATH_GOBLIN_HIT_SOUND;
 }
 
 void Goblin::attackAnimation() {
     setAnimation(PATH_GOBLIN_ATTACK, NB_FRAME_GOBLIN_ATTACK, ANIM_SPEED_GOBLIN_ATTACK);
 
     QTimer::singleShot(NB_FRAME_GOBLIN_ATTACK*ANIM_SPEED_GOBLIN_ATTACK, this, [=]() {
-        this->attacking = false;
-        setAnimation(PATH_GOBLIN_MOVE, NB_FRAME_GOBLIN_MOVE, ANIM_SPEED_GOBLIN_MOVE);
+        setAnimation(PATH_GOBLIN_IDLE, NB_FRAME_GOBLIN_IDLE, ANIM_SPEED_GOBLIN_IDLE);
+        QTimer::singleShot(700, this, [=](){ this->attacking = false; }); // Cooldown
     });
 }
 
@@ -66,5 +68,8 @@ void Goblin::shootProjectile(QPointF target, GameScene* scene) {
 void Goblin::attackEntity(Entity* entity) {
     attacking = true;
     this->attackAnimation();
-    shootProjectile(entity->getCenterPosition(), this->gameScene);;
+    QTimer::singleShot(150, this, [=](){
+        shootProjectile(entity->getCenterPosition(), this->gameScene);
+    });
+
 }

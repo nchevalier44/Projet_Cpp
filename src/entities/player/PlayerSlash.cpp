@@ -94,13 +94,31 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     }
     this->setPos(finalPos);
     this->setVisible(true);
+
+
+    //Sound effect
+    QSoundEffect* slashSFX = new QSoundEffect();
+    connect(slashSFX, &QSoundEffect::loadedChanged, slashSFX, &QSoundEffect::play);
+    if(currentAttackIndex == 0 || currentAttackIndex == 1){
+        slashSFX->setSource(QUrl::fromLocalFile(PATH_PLAYER_SLASH_SOUND));
+    } else{
+        slashSFX->setSource(QUrl::fromLocalFile(PATH_PLAYER_LAST_SLASH_SOUND));
+    }
+
+    slashSFX->setVolume(0.4);
+    scene->getAudioManager()->addSFXObject(slashSFX, slashSFX->volume());
+    connect(slashSFX, &QSoundEffect::playingChanged, [slashSFX](){
+        if(!slashSFX->isPlaying()){
+            delete slashSFX;
+        }
+    });
 }
 
 void PlayerSlash::checkCollide() {
     QList<QGraphicsItem *> collisions = scene->collidingItems(this);
     int n = collisions.length();
     for(int i = 0; i < n; i++) {
-        Entity *testEntity = dynamic_cast<Entity *>(collisions[i]);
+        Entity* testEntity = dynamic_cast<Entity *>(collisions[i]);
         if (testEntity) {
             if (testEntity != player) {
                 testEntity->takeDamage(damage, this->player);

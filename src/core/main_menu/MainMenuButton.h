@@ -8,12 +8,13 @@
 #include <QStyleOptionButton>
 
 #include "../../constants.h"
+#include "../AudioManager.h"
 
 class MainMenuButton : public QPushButton{
     Q_OBJECT
 public:
     //Constructor and destructor
-    MainMenuButton(QString text, QWidget* parent=nullptr);
+    MainMenuButton(QString text, AudioManager* audioManager, QWidget* parent=nullptr);
     virtual ~MainMenuButton();
 
 protected:
@@ -26,6 +27,7 @@ private:
     QMovie* hoverMovie = nullptr;
     bool isHovering = false;
     QPixmap* backgroundPixmap = nullptr;
+    AudioManager* audioManager = nullptr;
 };
 
 

@@ -7,11 +7,15 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
     //Add background music
     audioPlayer = new QMediaPlayer(this);
     QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(50);
+    audioOutput->setVolume(0.5);
     audioPlayer->setAudioOutput(audioOutput);
+    connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
+        if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
+            audioPlayer->play();
+        }
+    });
     audioPlayer->setSource(QUrl::fromLocalFile(PATH_MAIN_MENU_MUSIC));
     audioPlayer->setLoops(QMediaPlayer::Infinite);
-    audioPlayer->play();
     mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
 
     //Add background image
@@ -120,10 +124,10 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
     }
     buttonsContainer = new QWidget();
     buttonsContainer->setAttribute(Qt::WA_OpaquePaintEvent); //get background of the widget transparent
-    MainMenuButton* startButton = new MainMenuButton("Start", buttonsContainer);
-    MainMenuButton* settingsButton = new MainMenuButton("Options", buttonsContainer);
-    MainMenuButton* scoreboardButton = new MainMenuButton("Scoreboard", buttonsContainer);
-    MainMenuButton* exitButton = new MainMenuButton("Exit", buttonsContainer);
+    MainMenuButton* startButton = new MainMenuButton("Start", mainWindow->getAudioManager(), buttonsContainer);
+    MainMenuButton* settingsButton = new MainMenuButton("Options", mainWindow->getAudioManager(), buttonsContainer);
+    MainMenuButton* scoreboardButton = new MainMenuButton("Scoreboard", mainWindow->getAudioManager(), buttonsContainer);
+    MainMenuButton* exitButton = new MainMenuButton("Exit", mainWindow->getAudioManager(), buttonsContainer);
 
     //Create buttons layout
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsContainer);
@@ -146,13 +150,6 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
     exitButton->setFixedSize(exitButton->size() * 4);
 
 
-    //Add sound to buttons
-    sound = new QSoundEffect(buttonsContainer);
-    sound->setSource(QUrl::fromLocalFile(PATH_MAIN_MENU_BUTTON_SOUND));
-    sound->setVolume(20);
-    mainWindow->getAudioManager()->addSFXObject(sound, sound->volume());
-
-
     createSettingsWidget(mainWindow);
     createScoreboardWidget(mainWindow);
 
@@ -162,11 +159,6 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
     QObject::connect(settingsButton, &QPushButton::clicked, settingsWidget, &SettingsWidget::show);
     QObject::connect(scoreboardButton, &QPushButton::clicked, scoreboardWidget, &ScoreboardWidget::show);
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
-
-    QObject::connect(startButton, &QPushButton::clicked, sound, &QSoundEffect::play);
-    QObject::connect(settingsButton, &QPushButton::clicked, sound, &QSoundEffect::play);
-    QObject::connect(scoreboardButton, &QPushButton::clicked, sound, &QSoundEffect::play);
-    QObject::connect(exitButton, &QPushButton::clicked, sound, &QSoundEffect::play);
 
     //Add buttons container to the scene
     QGraphicsProxyWidget* proxyButtonsContainer = this->addWidget(buttonsContainer);

@@ -16,6 +16,7 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
 
 void Projectile::startMove(){
     gameScene->addProjectile(this);
+    missileMoveSound();
 }
 
 QRectF Projectile::boundingRect() const {
@@ -131,4 +132,17 @@ void Projectile::setMiddleAnimation(QString spriteSheet) {
     if(gameScene->isGamePaused()){
         movie->setPaused(true);
     }
+}
+
+void Projectile::missileMoveSound(){
+    QSoundEffect* missileSFX = new QSoundEffect();
+    connect(missileSFX, &QSoundEffect::loadedChanged, missileSFX, &QSoundEffect::play);
+    missileSFX->setSource(QUrl::fromLocalFile(pathMissileMoveSound));
+    missileSFX->setVolume(0.15);
+    gameScene->getAudioManager()->addSFXObject(missileSFX, missileSFX->volume());
+    missileSFX->setLoopCount(QSoundEffect::Infinite);
+    connect(this, &Projectile::destroyed, missileSFX, [missileSFX](){
+        missileSFX->stop();
+        delete missileSFX;
+    });
 }

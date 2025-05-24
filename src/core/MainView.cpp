@@ -247,9 +247,9 @@ void MainView::createContentPauseContainer(){
     titlePause->adjustSize();
 
     //Buttons
-    MainMenuButton* buttonBackToMenu = new MainMenuButton("Back to the menu", contentContainer);
-    MainMenuButton* buttonBackToGame = new MainMenuButton("Back to the game", contentContainer);
-    MainMenuButton* buttonSettings = new MainMenuButton("Settings", contentContainer);
+    MainMenuButton* buttonBackToMenu = new MainMenuButton("Back to the menu", mainWindow->getAudioManager(), contentContainer);
+    MainMenuButton* buttonBackToGame = new MainMenuButton("Back to the game", mainWindow->getAudioManager(), contentContainer);
+    MainMenuButton* buttonSettings = new MainMenuButton("Settings", mainWindow->getAudioManager(), contentContainer);
 
     //Set buttons font
     buttonBackToMenu->setFont(buttonFont);

@@ -9,16 +9,20 @@
 #include "../entities/NPC/Goblin.h"
 
 
-GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* scoreManager, QObject* parent) : QGraphicsScene(parent), scoreManager(scoreManager), mainView(view){
+GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* scoreManager, QObject* parent) : QGraphicsScene(parent), audioManager(audioManager), scoreManager(scoreManager), mainView(view){
     //Add background music
     audioPlayer = new QMediaPlayer(this);
     QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(50);
+    audioOutput->setVolume(0.45);
     audioPlayer->setAudioOutput(audioOutput);
+    connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
+        if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
+            audioPlayer->play();
+        }
+    });
     audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC));
     audioPlayer->setLoops(QMediaPlayer::Infinite);
-    audioPlayer->play();
-    mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
+    audioManager->addMusicObject(audioOutput, audioOutput->volume());
 
     try{
         loadMap("../assets/maps/map.json", 3000,3000);
@@ -44,7 +48,7 @@ GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* score
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
 
     //Setting up the player's character
-    this->character = new Player("Character", 3, scoreManager, this);
+    this->character = new Player("Character", 10, scoreManager, this);
     this->character->setPos(1480, 2730);
     this->character->setSpeed(6);
     this->character->setScale(0.2);
@@ -63,16 +67,18 @@ GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* score
     PlayerShield* shield = new PlayerShield(this, character);
     this->character->setPLayerShield(shield);
 
-    Goblin* goblin = new Goblin("Goblin", 1, scoreManager, this);
+    Goblin* goblin = new Goblin("Goblin", GOBLIN_HP, scoreManager, this);
     goblin->setPos(1200, 2350);
     this->addItem(goblin);
     listNPC.append(goblin);
 
-    Bat* bat = new Bat("Bat", 1, scoreManager, this);
+    Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
     bat->setPos(1100, 2200);
     this->addItem(bat);
     listNPC.append(bat);
 
+    character->setHasMissile(true);
+    character->setHasSlash(true);
 
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer();
@@ -735,9 +741,9 @@ void GameScene::moveNPC(){
 
     //We move each entity in listNPC
     for(Entity* entity : listNPC){
-        float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
         if(entity){
-            if(distance < 300){
+            float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
+            if(distance < mainView->width() * 0.4){
                 entity->moveEntity(posCharacterX, posCharacterY);
             } else{
                 entity->idleAnimation();

@@ -2,13 +2,13 @@
 #include "AudioManager.h"
 
 //Add QAudioOuput to the list
-void AudioManager::addMusicObject(QAudioOutput* sound, int initialVolume){
+void AudioManager::addMusicObject(QAudioOutput* sound, float initialVolume){
     musicObjectMap.insert(sound, initialVolume);
     sound->setVolume(float(initialVolume) * float(musicVolumePercentage) / 100);
 }
 
 //Add QSoundEffect to the list
-void AudioManager::addSFXObject(QSoundEffect* sound, int initialVolume){
+void AudioManager::addSFXObject(QSoundEffect* sound, float initialVolume){
     SFXObjectMap.insert(sound, initialVolume);
     sound->setVolume(float(initialVolume) * float(SFXVolumePercentage) / 100);
 }
