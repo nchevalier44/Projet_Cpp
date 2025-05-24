@@ -44,6 +44,7 @@ private:
     QGraphicsTextItem* tooltiptxt = nullptr;
     QGraphicsRectItem* tooltiprect = nullptr;
     AudioManager* audioManager = nullptr;
+    bool isPlayerDead = false;
 
 
 protected:
@@ -61,7 +62,7 @@ public :
     void setTimer(QTimer* new_timer) { timer = new_timer; }
     void setActiveKeys(const QList<int>& keys) { activeKeys = keys; }
     void setView(MainView* view) { mainView = view; }
-    virtual void setHp(int newHp){character->setHp(newHp); hud->getHPWidget()->setLife(character->getHp());}
+    virtual void setHp(int newHp){ if(isPlayerDead) return; character->setHp(newHp); hud->getHPWidget()->setLife(character->getHp());}
     void setHUD(HUD* newHud) { hud = newHud; }
 
     void addProjectile(Projectile* projectile) { listProjectiles.append(projectile); }
@@ -96,6 +97,7 @@ public :
     void checkInteractionZone();
     void showTooltip(QPointF pos, QString text);
     void removeTooltip();
+    void deletePlayer(){ if(character) delete character; character = nullptr; }
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

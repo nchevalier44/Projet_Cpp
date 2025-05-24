@@ -18,7 +18,7 @@ void Player::deathAnimation() {
     setAnimation(PATH_PLAYER_DEATH, NB_FRAME_PLAYER_DIE, ANIM_SPEED_PLAYER_IDLE);
     QTimer::singleShot((NB_FRAME_PLAYER_DIE-1)*ANIM_SPEED_PLAYER_IDLE, this, [this]() {
         stopAnimation();
-        delete this;
+        gameScene->deletePlayer();
     });
 }
 

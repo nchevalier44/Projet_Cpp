@@ -57,7 +57,7 @@ void MainView::resizeEvent (QResizeEvent* event){
             //Center on player
             QTimer::singleShot(0, this, [=]() {
                 Player* player = mainWindow->getGameSene()->getCharacter();
-                this->centerOn(player->sceneBoundingRect().center());
+                if(player) this->centerOn(player->sceneBoundingRect().center());
             });
 
             //Update size of pauseScreen elements
@@ -68,7 +68,10 @@ void MainView::resizeEvent (QResizeEvent* event){
             HUD* hud = mainWindow->getHUD();
             if(hud){
                 QPointF windowSize(this->width(), this->height());
-                hud->updateHUD(mainWindow->getGameSene()->getCharacter()->getHp(), hud->getHPWidget()->getMaxLife(), windowSize);
+                Player* p = mainWindow->getGameSene()->getCharacter();
+                if(p) {
+                    hud->updateHUD(p->getHp(), hud->getHPWidget()->getMaxLife(), windowSize);
+                }
             }
         }
         lastSize = event->size();

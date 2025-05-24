@@ -32,7 +32,7 @@ private :
 
 public :
     PlayerSlash(GameScene* scene, Player *player, QGraphicsObject* parent=nullptr);
-    ~PlayerSlash() {delete attackAnimation[0]; delete attackAnimation[1]; delete attackAnimation[2];}
+    ~PlayerSlash() {qDebug() << "[Start] Player Slash deleted"; delete attackAnimation[0]; delete attackAnimation[1]; delete attackAnimation[2]; qDebug() << "[End] Player Slash deleted"; }
 
     void slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection);
     void checkCollide();

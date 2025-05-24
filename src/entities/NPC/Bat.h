@@ -13,7 +13,7 @@ public:
         return path;
     }
 
-    void updateFlipFromPlayerPosition(QPointF playerPosition);
+    void updateFlipFromPlayerPosition(QPointF playerPosition) override;
 
     void deathAnimation() override;
     void attackAnimation() override;

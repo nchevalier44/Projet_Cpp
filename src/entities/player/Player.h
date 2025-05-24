@@ -31,7 +31,7 @@ private:
 
 public:
     Player(std::string name = "Player", int life = 100, ScoreManager* scoreManager=nullptr, GameScene* scene = nullptr, QGraphicsItem* parent = nullptr);
-    ~Player(){}
+    ~Player(){ qDebug() << "Player deleted"; }
     // Getters
     MainView* getMainView() const { return mainView; }
     Direction getCurrentDirection() const { return currentDirection; }

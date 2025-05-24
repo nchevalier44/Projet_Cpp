@@ -13,7 +13,7 @@ class Goblin : public Entity {
         return path;
     }
 
-    void updateFlipFromPlayerPosition(QPointF playerPosition);
+    void updateFlipFromPlayerPosition(QPointF playerPosition) override;
 
     void attackAnimation() override;
     void attackEntity(Entity* entity) override;

@@ -28,7 +28,7 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
 
     //Setting up the player's character
     //TODO Change player hp when test are ok
-    this->character = new Player("Character", 10, scoreManager, this);
+    this->character = new Player("Character", 3, scoreManager, this);
     this->character->setPos(1480, 2730);
     this->character->setSpeed(6);
     this->character->setScale(0.2);
@@ -240,7 +240,8 @@ void GameScene::loadDungeon() {
 //Mouvement functions
 //Adapt the animation according to the direction
 void GameScene::keyPressEvent(QKeyEvent* event){
-    if(character->isEntityDead() || isPaused) return;
+    if(isPlayerDead || isPaused) return;
+
     if(event->isAutoRepeat()){
         return; //They key stay pressed so the walk animation can continue
     }
@@ -307,7 +308,7 @@ void GameScene::reverseGamePaused(){
 
 //Set the idle animation according to the last key pressed
 void GameScene::keyReleaseEvent(QKeyEvent *event) {
-    if(event->isAutoRepeat() || character->isBeenTakingKnockback()){
+    if(isPlayerDead || event->isAutoRepeat() || character->isBeenTakingKnockback()){
         return; //They key stay pressed so the walk animation can continue
     }
 
@@ -339,9 +340,11 @@ void GameScene::keyReleaseEvent(QKeyEvent *event) {
 
 
 void GameScene::timerUpdate(){
+    if(isPlayerDead) return;
     moveNPC();
     movePlayer();
-    checkNPCAttackRange();
+    checkNPCAttackRange(); //He can be deleted here if an ennemy attack him
+    if(isPlayerDead) return;
     moveProjectiles();
     if(character->getPlayerSlash()->getIsSlashing()){
         character->getPlayerSlash()->checkCollide();
@@ -375,10 +378,10 @@ void GameScene::removeEntity(Entity* entity){
 
 
 void GameScene::checkNPCAttackRange(){
+    if(isPlayerDead) return;
+
     qreal posX = character->getCenterPosition().x();
     qreal posY = character->getCenterPosition().y();
-
-    if(character->isEntityDead()) return; //Do not attack if player is dead
 
     for(Entity* entity : listNPC){
         if(entity &&  entity->getHp() > 0){
@@ -392,7 +395,8 @@ void GameScene::checkNPCAttackRange(){
 
 //Move the player
 void GameScene::movePlayer(){
-    if(character->isEntityDead() || character->isBeenTakingKnockback()) return; //Do not move the player if he is dead
+    if(isPlayerDead || character->isBeenTakingKnockback()) return; //Do not move the player if he is dead
+
     qreal* deltaPosition = getDeltaPosition();
     character->moveEntityCollision(deltaPosition[0], deltaPosition[1]);
     mainView->centerOn(character);
@@ -401,6 +405,7 @@ void GameScene::movePlayer(){
 }
 
 void GameScene::checkInteractionZone(){
+    if(isPlayerDead) return;
     bool inValidZone = false;
 
     QList<QGraphicsItem*> collisions = this->collidingItems(character);
@@ -573,7 +578,7 @@ void GameScene::removeTooltip(){
 
 //Move all entities
 void GameScene::moveNPC(){
-    if(character->isEntityDead()) return; //Do not move entities if the player is Dead
+    if(isPlayerDead) return; //Do not move entities if the player is Dead
 
     //Get player position
     qreal posCharacterX = character->getCenterPosition().x();
@@ -655,12 +660,18 @@ qreal* GameScene::getDeltaPosition() {
 }
 
 GameScene::~GameScene(){
-    delete mapItem;
-    mapItem = nullptr;
-    delete character;
-    character = nullptr;
-    delete timer;
-    timer = nullptr;
+    if(mapItem){
+        delete mapItem;
+        mapItem = nullptr;
+    }
+    if(character){
+        delete character;
+        character = nullptr;
+    }
+    if(timer){
+        delete timer;
+        timer = nullptr;
+    }
     for(Entity* entity : listNPC){
         delete entity;
         entity = nullptr;
@@ -672,7 +683,7 @@ GameScene::~GameScene(){
 //Detection des clics
 
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if(character->isEntityDead() || isPaused) return;
+    if(isPlayerDead || isPaused) return;
     QPointF clickPos = event->scenePos();
 
     //Check if the player is on the missile spell

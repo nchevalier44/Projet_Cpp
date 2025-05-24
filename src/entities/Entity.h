@@ -65,6 +65,7 @@ public:
     virtual void moveAnimation() {};
     virtual void idleAnimation(){};
     void horizontalFlip();
+    virtual void updateFlipFromPlayerPosition(QPointF pos) {}
 
     //Sound method
     void deathSound();

@@ -16,6 +16,7 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
     movie->setFileName(path);
     gameScene->getMovieList().append(movie);
 }
+
 QPointF Projectile::getCenterPosition() const {
     return mapToScene(shape().boundingRect().center());
 }
