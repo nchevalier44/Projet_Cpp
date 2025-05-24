@@ -75,11 +75,11 @@
 #define ANIM_SPEED_CK_MOVE 150
 #define PATH_CK_ATTACK_LEFT "../assets/images/crystalKnight/boss_attackLeft.png"
 #define PATH_CK_ATTACK_RIGHT "../assets/images/crystalKnight/boss_attackRight.png"
-#define NB_FRAME_CK_ATTACK_LR 4
+#define NB_FRAME_CK_ATTACK_LR 6
 #define ANIM_SPEED_CK_ATTACK_LR 150
 #define PATH_CK_THUNDER "../assets/images/crystalKnight/boss_thunder.png"
-#define NB_FRAME_CK_THUNDER 8
-#define ANIM_SPEED_CK_THUNDER 100
+#define NB_FRAME_CK_THUNDER 10
+#define ANIM_SPEED_CK_THUNDER 150
 #define PATH_CK_DEATH "../assets/images/crystalKnight/boss_die.png"
 #define NB_FRAME_CK_DEATH 10
 #define ANIM_SPEED_CK_DEATH 150

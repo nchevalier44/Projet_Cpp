@@ -25,6 +25,7 @@ private:
     bool hasSlash = false;
     bool hasMissile = false;
     bool hasShield = false;
+    bool hasTreeHearth = false; // For the Crystal Knight fight
 
     PlayerSlash* slash = nullptr;
     PlayerShield* shield = nullptr;
@@ -35,13 +36,14 @@ public:
     // Getters
     MainView* getMainView() const { return mainView; }
     Direction getCurrentDirection() const { return currentDirection; }
-    PlayerSlash* getPlayerSlash() const { return slash; }
-    PlayerShield* getPlayerShield() const { return shield; }
-    bool getHasSlash() { return hasSlash; }
-    bool getHasMissile() { return hasMissile; }
-    bool getHasShield() { return hasShield; }
+    PlayerSlash *getPlayerSlash() const { return slash; }
+    PlayerShield *getPlayerShield() const { return shield; }
     int getMaxHP() const { return maxHp; }
     int getCurrentHP() const { return hp; }
+    bool getHasSlash(){return hasSlash;}
+    bool getHasMissile(){return hasMissile;}
+    bool getHasShield(){return hasShield;}
+    bool getHasTreeHearth(){return hasTreeHearth;}
 
     // Setters
     void setMainView(MainView *new_main_view) { mainView = new_main_view; }
@@ -52,6 +54,7 @@ public:
     void setHasShield(bool b) { hasShield = b; }
     void setHasSlash(bool b) { hasSlash = b; }
     void setHasMissile(bool b) { hasMissile = b; }
+    void setHasTreeHearth(bool b){hasTreeHearth = b;}
 
     // Override bounding rect to reduce hitbox
     QRectF boundingRect() const override { return QRectF(0, 0, frameWidth, frameHeight); }

@@ -233,6 +233,23 @@ void GameScene::loadDungeon() {
     audioManager->addMusicObject(audioOutput, audioOutput->volume());
      */
 
+    try{
+        loadMap("../assets/maps/mapDonjon.json", 2000,2000);
+    } catch(QException e){
+        qCritical() << "Error when loading the map : " << e.what();
+    } catch(std::exception e){
+        qCritical() << "Error when loading the map : " << e.what();
+    }
+    character->setPos(990,1400);
+
+    if(!character->getHasTreeHearth()){
+        CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 1,character, scoreManager, this);
+        crystalKnight->setPos(1000, 880);
+        this->addItem(crystalKnight);
+        listNPC.append(crystalKnight);
+    }
+
+
 
 }
 //Mouvement functions
@@ -507,16 +524,7 @@ void GameScene::checkInteractionZone(){
             }
             for(int key : activeKeys){
                 if(key == Qt::Key_F){
-                    try{
-                        loadMap("../assets/maps/mapDonjon.json", 2000,2000);
-                        qDebug() << "Dungeon loaded";
-                    } catch(QException e){
-                        qCritical() << "Error when loading the map : " << e.what();
-                    } catch(std::exception e){
-                        qCritical() << "Error when loading the map : " << e.what();
-                    }
-                    character->setPos(990,1400);
-                    qDebug() << "Player position set to (990,1400)";
+                    loadDungeon();
                     removeTooltip();
                     break;
                 }
@@ -588,6 +596,8 @@ void GameScene::moveNPC(){
 
     //We move each entity in listNPC
     for(Entity* entity : listNPC){
+        if(dynamic_cast<CrystalKnight*>(entity)) return; //Do not move the CrystalKnight, he teleports
+        float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
         if(entity){
             float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
             if(distance < mainView->mapToScene(mainView->viewport()->rect()).boundingRect().width() * 0.5){
