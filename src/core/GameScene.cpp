@@ -48,12 +48,14 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->character->setPlayerShield(shield);
 
     Goblin* goblin = new Goblin("Goblin", GOBLIN_HP, scoreManager, this);
-    goblin->setPos(1200, 2350);
+    goblin->setPos(1110, 2180);
+    goblin->updateFlipFromPlayerPosition(character->getCenterPosition());
     this->addItem(goblin);
     listNPC.append(goblin);
 
     Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
-    bat->setPos(1100, 2200);
+    bat->setPos(910, 1970);
+    bat->updateFlipFromPlayerPosition(character->getCenterPosition());
     this->addItem(bat);
     listNPC.append(bat);
 

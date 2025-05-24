@@ -12,6 +12,17 @@ Bat::Bat(std::string name, int life, ScoreManager* scoreManager, GameScene* scen
     pathHitSound = PATH_BAT_HIT_SOUND;
 }
 
+void Bat::updateFlipFromPlayerPosition(QPointF playerPosition){
+    if(playerPosition.x() < getCenterPosition().x()){
+        if(!horizontalFlipped) horizontalFlip();
+        horizontalFlipped = true;
+
+    } else{
+        if(horizontalFlipped) horizontalFlip();
+        horizontalFlipped = false;
+    }
+}
+
 void Bat::deathAnimation() {
     setAnimation(PATH_BAT_DEATH, NB_FRAME_BAT_DEATH, ANIM_SPEED_BAT_DEATH);
     QTimer::singleShot(NB_FRAME_BAT_DEATH*ANIM_SPEED_BAT_DEATH, this, [this]() {

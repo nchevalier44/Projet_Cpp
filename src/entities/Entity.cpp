@@ -179,7 +179,7 @@ void Entity::takeKnockback(int originX, int originY){
     });
 
     knockbackTimer->start();
-    QTimer::singleShot(200, this, [knockbackTimer, this](){
+    QTimer::singleShot(180, this, [knockbackTimer, this](){
         knockbackTimer->stop();
         delete knockbackTimer;
         this->isTakingKnockback = false;

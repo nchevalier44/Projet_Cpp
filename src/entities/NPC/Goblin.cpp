@@ -9,10 +9,24 @@ Goblin::Goblin(std::string name, int life, ScoreManager* scoreManager, GameScene
     speed = 2;
     rangeAttack = 200;
     score = 10;
-    horizontalFlipped = true;
     this->setScale(0.1);
     pathDeathSound = PATH_GOBLIN_DEATH_SOUND;
     pathHitSound = PATH_GOBLIN_HIT_SOUND;
+}
+
+void Goblin::updateFlipFromPlayerPosition(QPointF playerPosition){
+    if(playerPosition.x() < getCenterPosition().x()){
+        if(horizontalFlipped){
+            horizontalFlip();
+        }
+        horizontalFlipped = false;
+
+    } else{
+        if(!horizontalFlipped){
+            horizontalFlip();
+        }
+        horizontalFlipped = true;
+    }
 }
 
 void Goblin::attackAnimation() {
