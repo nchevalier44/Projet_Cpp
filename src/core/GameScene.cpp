@@ -242,7 +242,11 @@ void GameScene::keyPressEvent(QKeyEvent* event){
     if(event->isAutoRepeat()){
         return; //They key stay pressed so the walk animation can continue
     }
-    activeKeys.append(event->key());
+
+    if(!character->isBeenTakingKnockback()){
+        activeKeys.append(event->key());
+    }
+
 
     switch (event->key()){
         case Qt::Key_A :
@@ -301,7 +305,7 @@ void GameScene::reverseGamePaused(){
 
 //Set the idle animation according to the last key pressed
 void GameScene::keyReleaseEvent(QKeyEvent *event) {
-    if(event->isAutoRepeat()){
+    if(event->isAutoRepeat() || character->isBeenTakingKnockback()){
         return; //They key stay pressed so the walk animation can continue
     }
 
@@ -386,7 +390,7 @@ void GameScene::checkNPCAttackRange(){
 
 //Move the player
 void GameScene::movePlayer(){
-    if(character->isEntityDead()) return; //Do not move the player if he is dead
+    if(character->isEntityDead() || character->isBeenTakingKnockback()) return; //Do not move the player if he is dead
     qreal* deltaPosition = getDeltaPosition();
     character->moveEntityCollision(deltaPosition[0], deltaPosition[1]);
     mainView->centerOn(character);
@@ -577,7 +581,7 @@ void GameScene::moveNPC(){
     for(Entity* entity : listNPC){
         if(entity){
             float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
-            if(distance < mainView->width() * 0.4){
+            if(distance < mainView->mapToScene(mainView->viewport()->rect()).boundingRect().width() * 0.5){
                 entity->moveEntity(posCharacterX, posCharacterY);
             } else{
                 entity->idleAnimation();

@@ -1,7 +1,7 @@
 #include "Projectile.h"
 #include "../core/GameScene.h"
 #include "player/PlayerShield.h"
-
+#include "Entity.h"
 
 Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent)
         : proprietary(proprietary), gameScene(scene), speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
@@ -15,6 +15,9 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
     this->movie = new QMovie(this);
     movie->setFileName(path);
     gameScene->getMovieList().append(movie);
+}
+QPointF Projectile::getCenterPosition() const {
+    return mapToScene(shape().boundingRect().center());
 }
 
 void Projectile::startMove(){

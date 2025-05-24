@@ -14,6 +14,7 @@
 #include <QMovie>
 
 class GameScene;
+class Projectile;
 
 class Entity  : public QGraphicsObject {
     Q_OBJECT
@@ -35,6 +36,7 @@ public:
     bool isHorizontalFlipped() const { return horizontalFlipped; }
     int getScore(){ return score; }
     bool isEntityDead() const { return isDead; }
+    bool isBeenTakingKnockback() const { return isTakingKnockback; }
 
     //Setters
     virtual void setHp(int newHp) { hp = newHp; }
@@ -45,7 +47,7 @@ public:
 
     //Attack Method
     virtual void attackEntity(Entity* entity);
-    virtual void takeDamage(int damage, Entity* attacker);
+    virtual void takeDamage(int damage, Entity* attacker=nullptr, Projectile* projectile=nullptr);
 
     //Other methods
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
@@ -54,7 +56,7 @@ public:
     void moveEntity(qreal x, qreal y, bool forceMove=false);
     //void moveEntityCollision(qreal posX, qreal posY, qreal x, qreal y);
     void moveEntityCollision(qreal dx, qreal dy);
-    void takeKnockback(Entity* originEntity);
+    void takeKnockback(int originX, int originY);
 
     //Animation method
     void stopAnimation();
@@ -100,6 +102,7 @@ protected:
     ScoreManager* scoreManager = nullptr;
     QString pathDeathSound;
     QString pathHitSound;
+    bool isTakingKnockback = false;
 
     //Animation variables
     QPixmap* spriteSheet = nullptr;

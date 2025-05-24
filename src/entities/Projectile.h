@@ -7,8 +7,8 @@
 #include <QGraphicsObject>
 #include <QTimer>
 #include <QSoundEffect>
-#include "Entity.h"
 
+class Entity;
 class GameScene;
 
 class Projectile : public QGraphicsObject{
@@ -35,6 +35,7 @@ protected:
 public :
     Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary=nullptr, QGraphicsObject* parent=nullptr);
     ~Projectile(){}
+    QPointF getCenterPosition() const;
     virtual QRectF boundingRect() const override;
     virtual QPainterPath shape() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

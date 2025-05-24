@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QTimer>
-
+#include "Projectile.h"
 #include "../core/GameScene.h"
 
 Entity::Entity(std::string name, int hp, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : hp(hp), name(name), scoreManager(scoreManager), gameScene(scene), QGraphicsObject(parent) {
@@ -116,11 +116,13 @@ void Entity::attackEntity(Entity* entity) {
     entity->takeDamage(this->getDamage(), this);
 }
 
-void Entity::takeDamage(int d, Entity* attacker) {
+void Entity::takeDamage(int d, Entity* attacker, Projectile* projectile) {
     if(isDead) return;
 
-    if(attacker){
-        this->takeKnockback(attacker);
+    if(projectile){
+        this->takeKnockback(projectile->getCenterPosition().x(), projectile->getCenterPosition().y());
+    }else if(attacker){
+        this->takeKnockback(attacker->getCenterPosition().x(), attacker->getCenterPosition().y());
     }
 
     hitSound();
@@ -149,21 +151,38 @@ void Entity::takeDamage(int d, Entity* attacker) {
     }
 }
 
-void Entity::takeKnockback(Entity* originEntity){
+void Entity::takeKnockback(int originX, int originY){
+    isTakingKnockback = true;
     QTimer* knockbackTimer = new QTimer();
     knockbackTimer->setInterval(30);
 
-    connect(knockbackTimer, &QTimer::timeout, [this, originEntity]() {
-        qreal posOriginX = originEntity->getCenterPosition().x();
-        qreal posOriginY = originEntity->getCenterPosition().y();
+    connect(knockbackTimer, &QTimer::timeout, [this, originX, originY]() {
         qreal posEntityX = this->getCenterPosition().x();
         qreal posEntityY = this->getCenterPosition().y();
-        this->moveEntity(posOriginX + posEntityX, posOriginY + posEntityY, true);
+
+        qreal finalX = posEntityX;
+        qreal finalY = posEntityY;
+
+        if(originX - posEntityX < this->sceneBoundingRect().width() * 0.05){
+            finalX += originX;
+        } else if(originX + posEntityX > this->sceneBoundingRect().width() * 0.05){
+            finalX -= originX;
+        }
+
+        if(originY - posEntityY < this->sceneBoundingRect().height() * 0.05){
+            finalY += originY;
+        } else if(originY + posEntityY > this->sceneBoundingRect().height() * 0.05){
+            finalY -= originY;
+        }
+
+        this->moveEntity(finalX, finalY, true);
     });
+
     knockbackTimer->start();
-    QTimer::singleShot(150, knockbackTimer, [knockbackTimer](){
+    QTimer::singleShot(200, this, [knockbackTimer, this](){
         knockbackTimer->stop();
         delete knockbackTimer;
+        this->isTakingKnockback = false;
     });
 }
 
@@ -212,7 +231,7 @@ void Entity::moveEntity(qreal posX, qreal posY, bool forceMove){
         }
     }
 
-    if(direction != currentDirection){
+    if(!isBeenTakingKnockback() && direction != currentDirection){
         horizontalFlipped = !horizontalFlipped;
         this->horizontalFlip();
     }

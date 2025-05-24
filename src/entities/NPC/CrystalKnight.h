@@ -21,7 +21,7 @@ public:
     void deathAnimation() override{}
     void moveAnimation() override;
     void attackEntity(Entity* entity) override{}
-    void takeDamage(int damage, Entity* attacker) override{}
+    void takeDamage(int damage, Entity* attacker=nullptr, Projectile* projectile=nullptr) override{}
 
     void lightingAnimation();
     void lightingAttck();

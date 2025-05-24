@@ -22,11 +22,13 @@ void Player::deathAnimation() {
     });
 }
 
-void Player::takeDamage(int damage, Entity* attacker) {
+void Player::takeDamage(int damage, Entity* attacker, Projectile* projectile) {
     if(isDead) return;
 
-    if(attacker){
-        this->takeKnockback(attacker);
+    if(projectile){
+        this->takeKnockback(projectile->getCenterPosition().x(), projectile->getCenterPosition().y());
+    }else if(attacker){
+        this->takeKnockback(attacker->getCenterPosition().x(), attacker->getCenterPosition().y());
     }
 
     hitSound();

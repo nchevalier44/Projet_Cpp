@@ -62,8 +62,8 @@ public:
         return path;
     }
     // Take damage
-    void takeDamage(int damage, Entity* attacker) override;
-    // Animation methods
+    void takeDamage(int damage, Entity* attacker=nullptr, Projectile* projectile=nullptr) override;
+        // Animation methods
 
     void frontIdleAnimation() { setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100); }
     void frontWalkAnimation() { setAnimation(PATH_PLAYER_FRONT_WALK, 6, 100); }
