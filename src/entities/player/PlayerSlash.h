@@ -5,7 +5,7 @@
 #include <QElapsedTimer>
 #include <QMovie>
 #include "../../constants.h"
-
+#include "../Entity.h"
 
 
 class GameScene;
@@ -15,7 +15,7 @@ class Player;
 class PlayerSlash : public QGraphicsObject {
     Q_OBJECT
 private :
-    int damage = 5;
+    int damage = 4;
     int currentAttackIndex = 0;
     QElapsedTimer combotimer;
     const int comboMaxDelay = 1000;
@@ -27,6 +27,7 @@ private :
     bool isSlashing = false;
     Player *player = nullptr;
     QTimer* animationTimer = nullptr;
+    QList<Entity*> entityDamagedList;
 
 
 public :

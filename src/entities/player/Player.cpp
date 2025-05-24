@@ -118,6 +118,5 @@ bool Player::canShoot(QPointF clickPos){
 }
 
 void Player::slashAttack(QPointF target, QGraphicsScene* scene){
-    QPointF direction = target - this->pos();
-    slash->slashAttack(target, this->pos(), currentDirection);
+    slash->slashAttack(target, this->getCenterPosition(), currentDirection);
 }
