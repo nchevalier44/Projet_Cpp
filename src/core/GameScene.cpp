@@ -53,11 +53,11 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->addItem(goblin);
     listNPC.append(goblin);
 
-    Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
+    /*Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
     bat->setPos(910, 1970);
     bat->updateFlipFromPlayerPosition(character->getCenterPosition());
     this->addItem(bat);
-    listNPC.append(bat);
+    listNPC.append(bat);*/
 
     //TODO Delete when test are ok
     character->setHasMissile(true);
@@ -313,15 +313,14 @@ void GameScene::reverseGamePaused(){
 
 //Set the idle animation according to the last key pressed
 void GameScene::keyReleaseEvent(QKeyEvent *event) {
-    if(isPlayerDead || event->isAutoRepeat() || character->isBeenTakingKnockback()){
+    if(isPlayerDead || event->isAutoRepeat()){
         return; //They key stay pressed so the walk animation can continue
     }
 
     activeKeys.removeAll(event->key());
 
-    if(!activeKeys.isEmpty()){
-        return; //We change the animation to idle only if there are no others key pressed
-    }
+    if(!activeKeys.isEmpty()) return; //We change the animation to idle only if there are no others key pressed
+
     switch(event->key()){
         case Qt::Key_Up:
         case Qt::Key_Z:
