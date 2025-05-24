@@ -25,22 +25,6 @@
 #define PATH_GAME_MUSIC "../assets/musics/game_music.mp3"
 #define PATH_GAME_MUSIC2 "../assets/musics/game_music2.mp3"
 
-//Game sounds effects
-
-//Player
-#define PATH_PLAYER_SLASH1_SOUND "../assets/sounds_effects/firstAttack.wav"
-#define PATH_PLAYER_SLASH3_SOUND "../assets/sounds_effects/thirdAttack.wav"
-#define PATH_PLAYER_DIE_SOUND "../assets/sounds_effects/playerDie.wav"
-#define PATH_PLAYER_MISSILE_SOUND "../assets/sounds_effects/playerMissile.wav"
-
-//NPCs
-#define PATH_BAT_DIE_SOUND "../assets/sounds_effects/batDie.wav"
-#define PATH_GOBLIN_DIE_SOUND "../assets/sounds_effects/minionDie.wav"
-#define PATH_GOBLIN_ATTACK_SOUND "../assets/sounds_effects/minionMissile.wav"
-#define PATH_HIT1_SOUND "../assets/sounds_effects/hit1.wav"
-#define PATH_HIT2_SOUND "../assets/sounds_effects/hit2.wav"
-#define PATH_HIT3_SOUND "../assets/sounds_effects/hit3.wav"
-
 
 //Font
 #define PATH_JERSEY10_FONT "../assets/fonts/Jersey10-Regular.ttf"

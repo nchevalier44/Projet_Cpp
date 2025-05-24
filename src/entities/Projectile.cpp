@@ -138,7 +138,7 @@ void Projectile::missileMoveSound(){
     QSoundEffect* missileSFX = new QSoundEffect();
     connect(missileSFX, &QSoundEffect::loadedChanged, missileSFX, &QSoundEffect::play);
     missileSFX->setSource(QUrl::fromLocalFile(pathMissileMoveSound));
-    missileSFX->setVolume(0.15);
+    missileSFX->setVolume(0.25);
     gameScene->getAudioManager()->addSFXObject(missileSFX, missileSFX->volume());
     missileSFX->setLoopCount(QSoundEffect::Infinite);
     connect(this, &Projectile::destroyed, missileSFX, [missileSFX](){

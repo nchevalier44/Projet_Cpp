@@ -10,7 +10,7 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     //Add background music
     audioPlayer = new QMediaPlayer(this);
     QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(0.45);
+    audioOutput->setVolume(0.4);
     audioPlayer->setAudioOutput(audioOutput);
     connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
         if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
@@ -207,15 +207,6 @@ void GameScene::clearInteractionZones(const QStringList& tags) {
 }
 
 void GameScene::loadOverworld() {
-    //Add background music
-    audioPlayer = new QMediaPlayer(this);
-    QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(50);
-    audioPlayer->setAudioOutput(audioOutput);
-    audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC));
-    audioPlayer->setLoops(QMediaPlayer::Infinite);
-    audioPlayer->play();
-    mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
 
     try{
         loadMap("../assets/maps/map.json", 3000,3000);
@@ -231,12 +222,12 @@ void GameScene::loadDungeon() {
     /*
     audioPlayer = new QMediaPlayer(this);
     QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(50);
+    audioOutput->setVolume(0.5);
     audioPlayer->setAudioOutput(audioOutput);
     audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC2));
     audioPlayer->setLoops(QMediaPlayer::Infinite);
     audioPlayer->play();
-    mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
+    audioManager->addMusicObject(audioOutput, audioOutput->volume());
      */
 
 
