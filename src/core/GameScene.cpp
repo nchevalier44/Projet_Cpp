@@ -21,11 +21,13 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     audioPlayer->setLoops(QMediaPlayer::Infinite);
     audioManager->addMusicObject(audioOutput, audioOutput->volume());
 
+    //Map
     loadOverworld();
 
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
 
     //Setting up the player's character
+    //TODO Change player hp when test are ok
     this->character = new Player("Character", 10, scoreManager, this);
     this->character->setPos(1480, 2730);
     this->character->setSpeed(6);
@@ -38,12 +40,12 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->character->setMainView(mainView);
 
     //Load slash animation
-    PlayerSlash* slash = new PlayerSlash(this, character);
+    PlayerSlash* slash = new PlayerSlash(this, character, character);
     this->character->setPlayerSlash(slash);
 
     //Load the shield animation
-    PlayerShield* shield = new PlayerShield(this, character);
-    this->character->setPLayerShield(shield);
+    PlayerShield* shield = new PlayerShield(this, character, character);
+    this->character->setPlayerShield(shield);
 
     Goblin* goblin = new Goblin("Goblin", GOBLIN_HP, scoreManager, this);
     goblin->setPos(1200, 2350);
@@ -55,6 +57,7 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->addItem(bat);
     listNPC.append(bat);
 
+    //TODO Delete when test are ok
     character->setHasMissile(true);
     character->setHasSlash(true);
     /*

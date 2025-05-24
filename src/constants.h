@@ -109,6 +109,7 @@
 #define PATH_HP_ANIMATION "../assets/images/characters/Fire_head.gif"
 #define PATH_HP_DEAD_ANIMATION "../assets/images/characters/Fireless_head.gif"
 #define PATH_HP_DEAD "../assets/images/characters/Fire_head.png"
+
 //Other
 #define DEFAULT_WINDOW_HEIGHT 720
 #define LIST_WINDOW_HEIGHT {1440, 1080, 720, 480}

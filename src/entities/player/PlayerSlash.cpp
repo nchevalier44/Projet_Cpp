@@ -2,7 +2,7 @@
 #include "../../core/GameScene.h"
 
 
-PlayerSlash::PlayerSlash(GameScene *scene, Player* player) : scene(scene), player(player)
+PlayerSlash::PlayerSlash(GameScene *scene, Player* player, QGraphicsObject* parent) : scene(scene), player(player)
 {
     // We load the slashAnimation
     scene->addItem(this);

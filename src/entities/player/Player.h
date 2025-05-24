@@ -47,7 +47,7 @@ public:
     void setMainView(MainView *new_main_view) { mainView = new_main_view; }
     void setMaxHP(int newMaxHP) { maxHp = newMaxHP; }
     void setPlayerSlash(PlayerSlash *new_slash) { slash = new_slash; }
-    void setPLayerShield(PlayerShield* new_shield) {shield = new_shield; }
+    void setPlayerShield(PlayerShield* new_shield) {shield = new_shield; }
     void setHUD(HUD *newHud) { hud = newHud; }
     void setHasShield(bool b) { hasShield = b; }
     void setHasSlash(bool b) { hasSlash = b; }

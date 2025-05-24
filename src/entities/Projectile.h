@@ -6,6 +6,7 @@
 #include <QMovie>
 #include <QGraphicsObject>
 #include <QTimer>
+#include <QSoundEffect>
 #include "Entity.h"
 
 class GameScene;
@@ -13,7 +14,7 @@ class GameScene;
 class Projectile : public QGraphicsObject{
 Q_OBJECT
 protected:
-    int damage = 3;
+    int damage = 1;
     int speed = 0;
     int distanceMax = 0;
     int distanceTravelled = 0;
@@ -28,6 +29,7 @@ protected:
     bool isBeenDeleting = false;
     Entity* proprietary = nullptr;
     QString pathMissileMoveSound;
+    QSoundEffect* missileMoveSFX = nullptr;
 
 
 public :

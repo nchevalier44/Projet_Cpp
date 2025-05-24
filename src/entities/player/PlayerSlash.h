@@ -30,7 +30,7 @@ private :
 
 
 public :
-    PlayerSlash(GameScene* scene, Player *player);
+    PlayerSlash(GameScene* scene, Player *player, QGraphicsObject* parent=nullptr);
     ~PlayerSlash() {delete attackAnimation[0]; delete attackAnimation[1]; delete attackAnimation[2];}
 
     void slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection);

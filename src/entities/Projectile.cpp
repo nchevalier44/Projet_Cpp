@@ -101,6 +101,12 @@ void Projectile::moveProjectile(){
     if(distanceTravelled >= distanceMax || hasCollided){
         setEndAnimation("",0,0);
         isBeenDeleting = true;
+        if(missileMoveSFX){
+            missileMoveSFX->stop();
+            delete missileMoveSFX;
+            missileMoveSFX = nullptr;
+        }
+
     }
 }
 
@@ -135,14 +141,10 @@ void Projectile::setMiddleAnimation(QString spriteSheet) {
 }
 
 void Projectile::missileMoveSound(){
-    QSoundEffect* missileSFX = new QSoundEffect();
-    connect(missileSFX, &QSoundEffect::loadedChanged, missileSFX, &QSoundEffect::play);
-    missileSFX->setSource(QUrl::fromLocalFile(pathMissileMoveSound));
-    missileSFX->setVolume(0.25);
-    gameScene->getAudioManager()->addSFXObject(missileSFX, missileSFX->volume());
-    missileSFX->setLoopCount(QSoundEffect::Infinite);
-    connect(this, &Projectile::destroyed, missileSFX, [missileSFX](){
-        missileSFX->stop();
-        delete missileSFX;
-    });
+    missileMoveSFX = new QSoundEffect();
+    connect(missileMoveSFX, &QSoundEffect::loadedChanged, missileMoveSFX, &QSoundEffect::play);
+    missileMoveSFX->setSource(QUrl::fromLocalFile(pathMissileMoveSound));
+    missileMoveSFX->setVolume(0.25);
+    gameScene->getAudioManager()->addSFXObject(missileMoveSFX, missileMoveSFX->volume());
+    missileMoveSFX->setLoopCount(QSoundEffect::Infinite);
 }

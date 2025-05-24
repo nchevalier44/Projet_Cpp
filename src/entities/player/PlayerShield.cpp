@@ -4,8 +4,7 @@
 
 
 
-PlayerShield::PlayerShield(GameScene* scene,Player* player) : scene(scene), player(player){
-    scene->addItem(this);
+PlayerShield::PlayerShield(GameScene* scene,Player* player, QGraphicsObject* parent) : scene(scene), player(player), QGraphicsObject(parent){
     movie = new QMovie(PATH_PLAYER_SHIELD);
     /*
     QSizeF playerSize = player->shape().boundingRect().size();
@@ -36,9 +35,8 @@ PlayerShield::PlayerShield(GameScene* scene,Player* player) : scene(scene), play
 
     movie->start();
 
-    QTimer* timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &PlayerShield::updatePosition);
-    timer->start(16); // 60 FPS ~ 16ms
+    timerShield = new QTimer(this);
+    connect(timerShield, &QTimer::timeout, this, &PlayerShield::updatePosition);
     this->hide();
 }
 
@@ -48,7 +46,6 @@ void PlayerShield::updatePosition() {
         QRectF shape = player->shape().boundingRect();
         this->setPos(player->pos().x() - shape.width() / 14, player->pos().y() - shape.height() / 20);
     }
-
 }
 
 void PlayerShield::activeShield() {
@@ -56,12 +53,14 @@ void PlayerShield::activeShield() {
         return;
     }
     isActivated = true;
+    timerShield->start(16); // 16ms = 60 FPS
     this->show();
     QTimer::singleShot(durability, this, &PlayerShield::desactiveShield);
 }
 
 void PlayerShield::desactiveShield() {
     isActivated = false;
+    timerShield->stop(); // 16ms = 60 FPS
     this->hide();
     HP = maxHP;
 }
