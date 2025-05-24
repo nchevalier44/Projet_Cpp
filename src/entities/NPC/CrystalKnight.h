@@ -38,6 +38,12 @@ public:
             delete lightningTimer;
             lightningTimer = nullptr;
         }
+        player = nullptr;
+        if(clawTimer) {
+            clawTimer->stop();
+            delete clawTimer;
+            clawTimer = nullptr;
+        }
     }
     void attackAnimation() override{}
     void deathAnimation() override;

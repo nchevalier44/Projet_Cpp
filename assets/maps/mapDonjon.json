@@ -51,8 +51,8 @@
                  "type":"",
                  "visible":true,
                  "width":19,
-                 "x":892.939393939394,
-                 "y":1160.0303030303
+                 "x":892.939,
+                 "y":1160.03
                 }, 
                 {
                  "height":338,
@@ -62,8 +62,8 @@
                  "type":"",
                  "visible":true,
                  "width":15,
-                 "x":1125.66666666667,
-                 "y":1161.33333333333
+                 "x":1125.67,
+                 "y":1161.33
                 }, 
                 {
                  "height":35.5,
@@ -84,8 +84,8 @@
                  "type":"",
                  "visible":true,
                  "width":20,
-                 "x":1335.99966666667,
-                 "y":605.333333333333
+                 "x":1336,
+                 "y":605.333
                 }, 
                 {
                  "height":40,
@@ -95,7 +95,7 @@
                  "type":"",
                  "visible":true,
                  "width":640,
-                 "x":707.333333333333,
+                 "x":707.333,
                  "y":596
                 }, 
                 {
@@ -106,8 +106,8 @@
                  "type":"",
                  "visible":true,
                  "width":10.6667,
-                 "x":687.636696969697,
-                 "y":604.363303030303
+                 "x":687.637,
+                 "y":604.363
                 }, 
                 {
                  "height":28,
@@ -117,8 +117,8 @@
                  "type":"",
                  "visible":true,
                  "width":209.333,
-                 "x":697.818181818182,
-                 "y":1159.15118181818
+                 "x":697.818,
+                 "y":1159.15
                 }, 
                 {
                  "height":28,
@@ -129,7 +129,29 @@
                  "visible":true,
                  "width":209.333,
                  "x":919.152,
-                 "y":1471.14666666667
+                 "y":1471.15
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":8,
+         "name":"exitDonjon",
+         "objects":[
+                {
+                 "height":28,
+                 "id":10,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":121.5,
+                 "x":958.5,
+                 "y":1440.5
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -137,39 +159,13 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":8,
- "nextobjectid":10,
+ "nextlayerid":9,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
  "tileheight":32,
- "tilesets":[
-        {
-         "columns":32,
-         "firstgid":1,
-         "image":"..\/..\/..\/..\/Downloads\/ChatGPT Image 22 mai 2025, 13_10_45.png",
-         "imageheight":1024,
-         "imagewidth":1024,
-         "margin":0,
-         "name":"ChatGPT Image 22 mai 2025, 13_10_45",
-         "spacing":0,
-         "tilecount":1024,
-         "tileheight":32,
-         "tilewidth":32
-        }, 
-        {
-         "columns":32,
-         "firstgid":1025,
-         "image":"..\/..\/..\/..\/Downloads\/ChatGPT Image 22 mai 2025, 13_10_45.png",
-         "imageheight":1024,
-         "imagewidth":1024,
-         "margin":0,
-         "name":"ChatGPT Image 22 mai 2025, 13_10_45",
-         "spacing":0,
-         "tilecount":1024,
-         "tileheight":32,
-         "tilewidth":32
-        }],
+ "tilesets":[],
  "tilewidth":32,
  "type":"map",
  "version":"1.10",

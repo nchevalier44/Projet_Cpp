@@ -57,17 +57,6 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->addItem(bat);
     listNPC.append(bat);*/
 
-    //TODO Delete when test are ok
-    character->setHasMissile(true);
-    character->setHasSlash(true);
-    /*
-    CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 1, scoreManager, this);
-    crystalKnight->setPos(1000, 2000);
-    this->addItem(crystalKnight);
-    listNPC.append(crystalKnight);
-     */
-
-
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer();
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
@@ -82,13 +71,20 @@ void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
     if(mapItem != nullptr){
         delete mapItem;
         mapItem = nullptr;
-        for(QGraphicsPixmapItem* item : listBackground) {
-            delete item;
+        if(!listBackground.isEmpty()) {
+            for(QGraphicsPixmapItem* item : listBackground) {
+                if(item){
+                    this->removeItem(item);
+                    delete item;
+                    item = nullptr;
+                }
+            }
+            listBackground.clear();
         }
         for(Entity * entity : listNPC) {
             this->removeEntity(entity);
         }
-        QStringList tags = {"collision", "missileSpellZone", "shieldSpellZone", "slashSpellZone", "chest", "DonjonEntryZone"};
+        QStringList tags = {"collision", "missileSpellZone", "shieldSpellZone", "slashSpellZone", "chest", "DonjonEntryZone","exitDonjon"};
         clearInteractionZones(tags);
 
     }
@@ -99,8 +95,6 @@ void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
 
     QJsonDocument document = QJsonDocument::fromJson(file.readAll());
     QJsonObject mapObject = document.object();
-    qDebug() << "Map loaded:" << mapObject["width"].toInt() << mapObject["height"].toInt();
-
     this->backgroundWidth = mapWidth;
     this->backgroundHeight = mapHeight;
 
@@ -145,6 +139,8 @@ void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
             addInteractionZone("chest", layer);
         }else if (layer["name"] == "DonjonEntryZone") {
             addInteractionZone("DonjonEntryZone", layer);
+        }else if(layer["name"] == "exitDonjon"){
+            addInteractionZone("exitDonjon", layer);
         }
     }
     painter.end();
@@ -240,10 +236,10 @@ void GameScene::loadDungeon() {
     } catch(std::exception e){
         qCritical() << "Error when loading the map : " << e.what();
     }
-    character->setPos(990,1400);
+    character->setPos(990,1350);
 
     if(!character->getHasTreeHearth()){
-        CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 1,character, scoreManager, this);
+        CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 100,character, scoreManager, this);
         crystalKnight->setPos(1000, 880);
         this->addItem(crystalKnight);
         listNPC.append(crystalKnight);
@@ -513,8 +509,15 @@ void GameScene::checkInteractionZone(){
         }
         else if(interactionZoneName == "chest"){
             inValidZone = true;
-            if(!character->getHasSlash() && !tooltiptxt){
+            if(!tooltiptxt){
                 showTooltip(character->pos(), "Press F to interact");
+                for(int key : activeKeys){
+                    if(key == Qt::Key_F){
+                        removeTooltip();
+                        break;
+                    }
+                }
+
             }
         }
         else if(interactionZoneName == "DonjonEntryZone") {
@@ -530,6 +533,22 @@ void GameScene::checkInteractionZone(){
                 }
             }
         }
+
+        else if(interactionZoneName == "exitDonjon"){
+            inValidZone = true;
+            if(!tooltiptxt){
+                showTooltip(character->pos(), "Press F to exit dungeon");
+            }
+            for(int key : activeKeys){
+                if(key == Qt::Key_F){
+                    loadOverworld();
+                    character->setPos(500, 2635); //Reset the player position
+                    removeTooltip();
+                    break;
+                }
+            }
+        }
+
     }
     if(!inValidZone){
         removeTooltip();
