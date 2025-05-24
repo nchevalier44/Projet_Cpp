@@ -272,6 +272,11 @@ void GameScene::keyPressEvent(QKeyEvent* event){
     }
 }
 
+void GameScene::deletePlayer() {
+    delete character;
+    character = nullptr;
+}
+
 void GameScene::putGamePaused(){
     isPaused = true;
     //Pause the timers

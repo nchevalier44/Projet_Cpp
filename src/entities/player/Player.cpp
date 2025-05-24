@@ -55,6 +55,7 @@ void Player::takeDamage(int damage, Entity* attacker, Projectile* projectile) {
     if(hud != nullptr) hud->getHPWidget()->setLife(hp);
     if(hp <= 0){
         isDead = true;
+        gameScene->setPlayerDead(true);
         deathAnimation();
         deathSound();
         QTimer::singleShot(1000, mainView, &MainView::displayDeathScreen);

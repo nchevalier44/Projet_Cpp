@@ -97,7 +97,8 @@ public :
     void checkInteractionZone();
     void showTooltip(QPointF pos, QString text);
     void removeTooltip();
-    void deletePlayer(){ if(character) delete character; character = nullptr; }
+    void deletePlayer();
+    void setPlayerDead(bool b) { isPlayerDead = b; }
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

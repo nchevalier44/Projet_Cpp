@@ -5,7 +5,6 @@
 PlayerSlash::PlayerSlash(GameScene *scene, Player* player, QGraphicsObject* parent) : scene(scene), player(player), QGraphicsObject(parent)
 {
     // We load the slashAnimation
-    scene->addItem(this);
     QMovie *slash1 = new QMovie(PATH_PLAYER_SLASH1);
     QMovie *slash2 = new QMovie(PATH_PLAYER_SLASH2);
     QMovie *slash3 = new QMovie(PATH_PLAYER_SLASH3);
