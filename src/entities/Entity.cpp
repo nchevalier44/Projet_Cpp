@@ -121,7 +121,7 @@ void Entity::takeDamage(int d, Entity* attacker, Projectile* projectile) {
 
     if(projectile){
         this->takeKnockback(projectile->getCenterPosition().x(), projectile->getCenterPosition().y());
-    }else if(attacker){
+    }else if(attacker && !attacker->isEntityDead()){
         this->takeKnockback(attacker->getCenterPosition().x(), attacker->getCenterPosition().y());
     }
 
@@ -174,7 +174,6 @@ void Entity::takeKnockback(int originX, int originY){
         } else if(originY + posEntityY > this->sceneBoundingRect().height() * 0.05){
             finalY -= originY;
         }
-
         this->moveEntity(finalX, finalY, true);
     });
 
@@ -203,10 +202,10 @@ void Entity::moveEntity(qreal posX, qreal posY, bool forceMove){
 
     if(distanceX < 0){
         dx = -speed;
-        this->setCurrentDirection(Left);
+        if(!forceMove) setCurrentDirection(Left); //We don't change the direction
     } else if(distanceX > 0){
         dx = speed;
-        this->setCurrentDirection(Right);
+        if(!forceMove) setCurrentDirection(Right);
     }
 
     if(distanceY < 0){

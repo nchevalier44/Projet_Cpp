@@ -9,7 +9,8 @@
 
 Player::Player(std::string name, int life, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scoreManager, scene, parent) {
     this->maxHp = life;
-    setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
+    setAnimation(PATH_PLAYER_BACK_IDLE, 8, 100);
+    this->setCurrentDirection(Up);
     pathDeathSound = PATH_PLAYER_DEATH_SOUND;
     pathHitSound = PATH_PLAYER_HIT_SOUND;
 }
@@ -27,7 +28,7 @@ void Player::takeDamage(int damage, Entity* attacker, Projectile* projectile) {
 
     if(projectile){
         this->takeKnockback(projectile->getCenterPosition().x(), projectile->getCenterPosition().y());
-    }else if(attacker){
+    }else if(attacker && !attacker->isEntityDead()){
         this->takeKnockback(attacker->getCenterPosition().x(), attacker->getCenterPosition().y());
     }
 
@@ -104,13 +105,16 @@ bool Player::canShoot(QPointF clickPos){
         default: return false; // No direction, no shooting
     }
 
+
     QPointF dirClick = clickPos - playerPos;
     qreal lenClick = std::hypot(dirClick.x(), dirClick.y());
     if(lenClick == 0) return false; // No click position
     QPointF normClick = dirClick / lenClick;
 
+
     qreal dot = normClick.x() * playerDir.x() + normClick.y() * playerDir.y();
     qreal angleDeg = qRadiansToDegrees(qAcos(dot));
+
 
     if(angleDeg < 75){
         return true;

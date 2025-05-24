@@ -78,6 +78,10 @@ void MainWindow::startGame(){
     gameScene->getCharacter()->setHUD(hud);
 
     scoreManager->getElapsedTimer()->start();
+
+    mainView->setFocusPolicy(Qt::StrongFocus);
+    mainView->setFocus();
+    mainView->setMouseTracking(true);
 }
 
 void MainWindow::resetGame(){

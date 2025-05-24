@@ -32,9 +32,7 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->character->setPos(1480, 2730);
     this->character->setSpeed(6);
     this->character->setScale(0.2);
-    this->character->setFocus();
     this->character->setZValue(40);
-    this->mainView->setFocus(); //Set the focus on the mainView so we can detect the key press
 
     this->addItem(character);
     this->character->setMainView(mainView);
@@ -374,7 +372,7 @@ void GameScene::removeProjectile(Projectile* projectile){
 void GameScene::removeEntity(Entity* entity){
     if(entity){
         listNPC.removeAll(entity);
-        delete entity;
+        entity->deleteLater();
         entity = nullptr;
     }
 }
