@@ -2,10 +2,9 @@
 #include "../../core/GameScene.h"
 
 
-PlayerSlash::PlayerSlash(GameScene *scene, Player* player) : scene(scene), player(player)
+PlayerSlash::PlayerSlash(GameScene *scene, Player* player, QGraphicsObject* parent) : scene(scene), player(player), QGraphicsObject(parent)
 {
     // We load the slashAnimation
-    scene->addItem(this);
     QMovie *slash1 = new QMovie(PATH_PLAYER_SLASH1);
     QMovie *slash2 = new QMovie(PATH_PLAYER_SLASH2);
     QMovie *slash3 = new QMovie(PATH_PLAYER_SLASH3);
@@ -31,6 +30,7 @@ PlayerSlash::PlayerSlash(GameScene *scene, Player* player) : scene(scene), playe
                         isSlashing = false;
                         currentAttackIndex = (currentAttackIndex + 1) % attackAnimation.size();
                         combotimer.restart();
+                        entityDamagedList.clear();
                     } else{
                         movie->jumpToNextFrame();
                         this->scene->update(this->sceneBoundingRect());
@@ -72,37 +72,58 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     // adjuste the position of the attack according to the current direction
     qreal distance = 20; // distance à laquelle l'effet est affiché
     QPointF finalPos = playerPos + direction * distance;
+    qreal w = player->sceneBoundingRect().width();
+    qreal h = player->sceneBoundingRect().height();
     switch (CurrentDirection)
     {
         case Up:
-            finalPos.setX(finalPos.x() + 10);
-            finalPos.setY(finalPos.y() - 5);
+            finalPos.setY(finalPos.y() - h * 0.8);
+            this->setZValue(39);
             break;
         case Down:
-            finalPos.setY(finalPos.y() + 25);
-            finalPos.setX(finalPos.x() + 10);
+            finalPos.setY(finalPos.y() + h * 0.75);
             break;
         case Left:
-            finalPos.setY(finalPos.y() + 10);
+            finalPos.setX(finalPos.x() - w * 0.75);
             break;
         case Right:
-            finalPos.setX(finalPos.x() + 25);
-            finalPos.setY(finalPos.y() + 10);
+            finalPos.setX(finalPos.x() + w * 0.75);
+            this->setZValue(42);
             break;
         default:
             break;
     }
     this->setPos(finalPos);
     this->setVisible(true);
+
+
+    //Sound effect
+    QSoundEffect* slashSFX = new QSoundEffect();
+    connect(slashSFX, &QSoundEffect::loadedChanged, slashSFX, &QSoundEffect::play);
+    if(currentAttackIndex == 0 || currentAttackIndex == 1){
+        slashSFX->setSource(QUrl::fromLocalFile(PATH_PLAYER_SLASH_SOUND));
+    } else{
+        slashSFX->setSource(QUrl::fromLocalFile(PATH_PLAYER_LAST_SLASH_SOUND));
+    }
+
+    slashSFX->setVolume(0.4);
+    scene->getAudioManager()->addSFXObject(slashSFX, slashSFX->volume());
+    connect(slashSFX, &QSoundEffect::playingChanged, [slashSFX](){
+        if(!slashSFX->isPlaying()){
+            delete slashSFX;
+        }
+    });
 }
 
 void PlayerSlash::checkCollide() {
     QList<QGraphicsItem *> collisions = scene->collidingItems(this);
     int n = collisions.length();
     for(int i = 0; i < n; i++) {
-        Entity *testEntity = dynamic_cast<Entity *>(collisions[i]);
+        Entity* testEntity = dynamic_cast<Entity *>(collisions[i]);
         if (testEntity) {
-            if (testEntity != player) {
+            if (testEntity != player && !entityDamagedList.contains(testEntity)) {
+                entityDamagedList.append(testEntity);
+                damage = currentAttackIndex == 2 ? 7 : 4; //if it's the third slash, it's make more damage
                 testEntity->takeDamage(damage, this->player);
             }
         }

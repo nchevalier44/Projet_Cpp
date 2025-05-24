@@ -13,6 +13,8 @@ class Goblin : public Entity {
         return path;
     }
 
+    void updateFlipFromPlayerPosition(QPointF playerPosition) override;
+
     void attackAnimation() override;
     void attackEntity(Entity* entity) override;
     void moveAnimation() override;
@@ -20,7 +22,7 @@ class Goblin : public Entity {
     void deathAnimation() override;
 
 
-        void shootProjectile(QPointF target, GameScene* scene);
+    void shootProjectile(QPointF target, GameScene* scene);
 
 };
 

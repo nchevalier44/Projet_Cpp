@@ -43,6 +43,8 @@ private:
     QList<QMovie*> movieList;
     QGraphicsTextItem* tooltiptxt = nullptr;
     QGraphicsRectItem* tooltiprect = nullptr;
+    AudioManager* audioManager = nullptr;
+    bool isPlayerDead = false;
 
 
 protected:
@@ -60,7 +62,7 @@ public :
     void setTimer(QTimer* new_timer) { timer = new_timer; }
     void setActiveKeys(const QList<int>& keys) { activeKeys = keys; }
     void setView(MainView* view) { mainView = view; }
-    virtual void setHp(int newHp){character->setHp(newHp); hud->getHPWidget()->setLife(character->getHp());}
+    virtual void setHp(int newHp){ if(isPlayerDead) return; character->setHp(newHp); hud->getHPWidget()->setLife(character->getHp());}
     void setHUD(HUD* newHud) { hud = newHud; }
 
     void addProjectile(Projectile* projectile) { listProjectiles.append(projectile); }
@@ -75,9 +77,10 @@ public :
     QList<QTimer*>& getTimerList() { return timerList; }
     QList<QMovie*>& getMovieList() { return movieList; }
     bool isGamePaused() const { return isPaused; }
+    AudioManager* getAudioManager() { return audioManager; }
 
     //Constructor and destructor
-    GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);
+    GameScene(AudioManager* audioManager, MainView* view, ScoreManager* scoreManager, QObject* parent = nullptr);
     virtual ~GameScene();
 
     //Functions
@@ -94,6 +97,8 @@ public :
     void checkInteractionZone();
     void showTooltip(QPointF pos, QString text);
     void removeTooltip();
+    void deletePlayer();
+    void setPlayerDead(bool b) { isPlayerDead = b; }
 
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

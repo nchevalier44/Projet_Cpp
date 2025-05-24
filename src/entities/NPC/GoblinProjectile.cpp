@@ -7,8 +7,10 @@ GoblinProjectile::GoblinProjectile(int damage, int speed, int distanceMax, QStri
     frameHeight = 21;
     QPointF centerOffset(frameWidth / 2, frameHeight / 2);
     this->setPos(pos - centerOffset);
-    throwProjectile();
     this->setTransform(QTransform::fromScale(2, 2));
+    pathMissileMoveSound = PATH_GOBLIN_PROJECTILE_MOVE_SOUND;
+    throwProjectile();
+
 
 }
 
@@ -33,7 +35,6 @@ void GoblinProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
     connect(timerEndMovie, &QTimer::timeout, this, [this](){
         if(this->movie->currentFrameNumber() == this->movie->frameCount() - 1){
             this->movie->stop();
-            this->gameScene->removeProjectile(this);
             timerEndMovie->stop();
             gameScene->getMovieList().removeAll(movie);
             gameScene->getTimerList().removeAll(timerEndMovie);
@@ -41,6 +42,7 @@ void GoblinProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
             delete movie;
             movie = nullptr;
             timerEndMovie = nullptr;
+            this->gameScene->removeProjectile(this);
         } else{
             this->movie->jumpToNextFrame();
             this->gameScene->update(this->sceneBoundingRect());
@@ -57,4 +59,5 @@ void GoblinProjectile::startMove() {
     setMiddleAnimation(PATH_GOBLIN_PROJECTILE_MOVE);
     //Starting the moving
     gameScene->addProjectile(this);
+    missileMoveSound();
 }

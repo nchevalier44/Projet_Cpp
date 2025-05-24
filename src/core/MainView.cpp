@@ -57,7 +57,7 @@ void MainView::resizeEvent (QResizeEvent* event){
             //Center on player
             QTimer::singleShot(0, this, [=]() {
                 Player* player = mainWindow->getGameSene()->getCharacter();
-                this->centerOn(player->sceneBoundingRect().center());
+                if(player) this->centerOn(player->sceneBoundingRect().center());
             });
 
             //Update size of pauseScreen elements
@@ -68,7 +68,10 @@ void MainView::resizeEvent (QResizeEvent* event){
             HUD* hud = mainWindow->getHUD();
             if(hud){
                 QPointF windowSize(this->width(), this->height());
-                hud->updateHUD(mainWindow->getGameSene()->getCharacter()->getHp(), hud->getHPWidget()->getMaxLife(), windowSize);
+                Player* p = mainWindow->getGameSene()->getCharacter();
+                if(p) {
+                    hud->updateHUD(p->getHp(), hud->getHPWidget()->getMaxLife(), windowSize);
+                }
             }
         }
         lastSize = event->size();
@@ -247,9 +250,9 @@ void MainView::createContentPauseContainer(){
     titlePause->adjustSize();
 
     //Buttons
-    MainMenuButton* buttonBackToMenu = new MainMenuButton("Back to the menu", contentContainer);
-    MainMenuButton* buttonBackToGame = new MainMenuButton("Back to the game", contentContainer);
-    MainMenuButton* buttonSettings = new MainMenuButton("Settings", contentContainer);
+    MainMenuButton* buttonBackToMenu = new MainMenuButton("Back to the menu", mainWindow->getAudioManager(), contentContainer);
+    MainMenuButton* buttonBackToGame = new MainMenuButton("Back to the game", mainWindow->getAudioManager(), contentContainer);
+    MainMenuButton* buttonSettings = new MainMenuButton("Settings", mainWindow->getAudioManager(), contentContainer);
 
     //Set buttons font
     buttonBackToMenu->setFont(buttonFont);

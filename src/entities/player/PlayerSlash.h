@@ -5,7 +5,7 @@
 #include <QElapsedTimer>
 #include <QMovie>
 #include "../../constants.h"
-
+#include "../Entity.h"
 
 
 class GameScene;
@@ -15,23 +15,24 @@ class Player;
 class PlayerSlash : public QGraphicsObject {
     Q_OBJECT
 private :
-    int damage = 1;
+    int damage = 4;
     int currentAttackIndex = 0;
     QElapsedTimer combotimer;
     const int comboMaxDelay = 1000;
     QVector<QMovie*> attackAnimation;
     qreal rotationAngle = 0;
     QPointF attackPosition;
-    QGraphicsScene* scene = nullptr;
+    GameScene* scene = nullptr;
     QPixmap currentPixmap;
     bool isSlashing = false;
     Player *player = nullptr;
     QTimer* animationTimer = nullptr;
+    QList<Entity*> entityDamagedList;
 
 
 public :
-    PlayerSlash(GameScene* scene, Player *player);
-    ~PlayerSlash() {delete attackAnimation[0]; delete attackAnimation[1]; delete attackAnimation[2];}
+    PlayerSlash(GameScene* scene, Player *player, QGraphicsObject* parent=nullptr);
+    ~PlayerSlash() {qDebug() << "[Start] Player Slash deleted"; delete attackAnimation[0]; delete attackAnimation[1]; delete attackAnimation[2]; qDebug() << "[End] Player Slash deleted"; }
 
     void slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection);
     void checkCollide();

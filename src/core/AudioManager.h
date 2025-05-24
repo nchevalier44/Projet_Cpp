@@ -27,8 +27,8 @@ public:
     void updateSFXVolume();
 
     //Add functions
-    void addSFXObject(QSoundEffect* sound, int initialVolume);
-    void addMusicObject(QAudioOutput* sound, int initialVolume);
+    void addSFXObject(QSoundEffect* sound, float initialVolume);
+    void addMusicObject(QAudioOutput* sound, float initialVolume);
 };
 
 

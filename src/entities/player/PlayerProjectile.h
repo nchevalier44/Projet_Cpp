@@ -8,7 +8,7 @@
 class PlayerProjectile : public Projectile {
 public :
     PlayerProjectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent=nullptr);
-    ~PlayerProjectile() {}
+    ~PlayerProjectile() {qDebug() << "Player projectile deleted"; }
     void throwProjectile();
 
 

@@ -54,7 +54,7 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
 
    
     //Close button
-    MainMenuButton* closeButton = new MainMenuButton("Close", this);
+    MainMenuButton* closeButton = new MainMenuButton("Close", mainWindow->getAudioManager(), this);
     closeButton->setFont(textFont);
     QHBoxLayout* closeButtonLayout = new QHBoxLayout();
     closeButtonLayout->addWidget(closeButton);

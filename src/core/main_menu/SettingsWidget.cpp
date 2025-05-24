@@ -121,7 +121,7 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
 
 
     //Close button
-    closeButton = new MainMenuButton("Close", this);
+    closeButton = new MainMenuButton("Close", mainWindow->getAudioManager(), this);
     QHBoxLayout* closeButtonLayout = new QHBoxLayout();
     closeButtonLayout->addWidget(closeButton);
     QObject::connect(closeButton, &QPushButton::clicked, this, &SettingsWidget::hide);

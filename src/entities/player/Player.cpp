@@ -10,19 +10,28 @@
 Player::Player(std::string name, int life, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scoreManager, scene, parent) {
     this->maxHp = life;
     setAnimation(PATH_PLAYER_FRONT_IDLE, 8, 100);
-    movingSound = new QSoundEffect(this);
-    movingSound->setSource(QUrl::fromLocalFile(PATH_PLAYER_FOOTSTEP_SOUND));
-    movingSound->setLoopCount(QSoundEffect::Infinite);
-    movingSound->setVolume(30);
+    pathDeathSound = PATH_PLAYER_DEATH_SOUND;
+    pathHitSound = PATH_PLAYER_HIT_SOUND;
 }
 
+void Player::deathAnimation() {
+    setAnimation(PATH_PLAYER_DEATH, NB_FRAME_PLAYER_DIE, ANIM_SPEED_PLAYER_IDLE);
+    QTimer::singleShot((NB_FRAME_PLAYER_DIE-1)*ANIM_SPEED_PLAYER_IDLE, this, [this]() {
+        stopAnimation();
+        gameScene->deletePlayer();
+    });
+}
 
-void Player::takeDamage(int damage, Entity* attacker) {
+void Player::takeDamage(int damage, Entity* attacker, Projectile* projectile) {
     if(isDead) return;
 
-    if(attacker){
-        this->takeKnockback(attacker);
+    if(projectile){
+        this->takeKnockback(projectile->getCenterPosition().x(), projectile->getCenterPosition().y());
+    }else if(attacker){
+        this->takeKnockback(attacker->getCenterPosition().x(), attacker->getCenterPosition().y());
     }
+
+    hitSound();
 
     //Create a red screen to indicate damage
     QWidget* DamageScreen = new QWidget(mainView);
@@ -46,7 +55,9 @@ void Player::takeDamage(int damage, Entity* attacker) {
     if(hud != nullptr) hud->getHPWidget()->setLife(hp);
     if(hp <= 0){
         isDead = true;
+        gameScene->setPlayerDead(true);
         deathAnimation();
+        deathSound();
         QTimer::singleShot(1000, mainView, &MainView::displayDeathScreen);
         scoreManager->getActualScore()->setTimePlayed(scoreManager->getElapsedTimer()->elapsed() / 1000);
         scoreManager->getActualScore()->setDate(QDateTime::currentDateTime().toString("dd/MM/yyyy"));
@@ -56,23 +67,25 @@ void Player::takeDamage(int damage, Entity* attacker) {
 
 void Player::shootProjectile(QPointF target, GameScene* scene) {
     //Ajust the position of the projectile
-    QPointF posInit = this->pos();
-    posInit.setX(posInit.x() + frameWidth/20);
-    posInit.setY(posInit.y() + frameHeight/20);
-    QPointF direction = target - posInit;
+    QPointF posInit = this->getCenterPosition();
 
     //Adjusting the position of the projectile to make it appear in front of the player
-
+    qreal w = this->sceneBoundingRect().width();
+    qreal h = this->sceneBoundingRect().height();
     switch (currentDirection) {
-        case Up : posInit.setY(posInit.y() - 12); posInit.setX(posInit.x() + 7); break;
-        case Down : posInit.setY(posInit.y() + 7); posInit.setX(posInit.x() + 7); break;
-        case Left : posInit.setX(posInit.x() - 2); break;
-        case Right : posInit.setX(posInit.x() + 15); break;
+        case Up : posInit.setX(posInit.x() - w*0.32); posInit.setY(posInit.y() - h*0.8); break;
+        case Down : posInit.setX(posInit.x() - w*0.32); posInit.setY(posInit.y()); break;
+        case Left : posInit.setX(posInit.x() - w*0.7); posInit.setY(posInit.y() - h * 0.35); break;
+        case Right : posInit.setX(posInit.x()); posInit.setY(posInit.y() - h * 0.35); break;
         default: break;
     }
-    PlayerProjectile* projectile = new PlayerProjectile(1,5, 400, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);
 
-    projectile->setZValue(10);
+    QPointF direction = target - posInit;
+
+
+    PlayerProjectile* projectile = new PlayerProjectile(3,5, 400, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);
+
+    projectile->setZValue(41);
     projectile->setScale(0.5);
     scene->addItem(projectile);
 
@@ -108,6 +121,5 @@ bool Player::canShoot(QPointF clickPos){
 }
 
 void Player::slashAttack(QPointF target, QGraphicsScene* scene){
-    QPointF direction = target - this->pos();
-    slash->slashAttack(target, this->pos(), currentDirection);
+    slash->slashAttack(target, this->getCenterPosition(), currentDirection);
 }

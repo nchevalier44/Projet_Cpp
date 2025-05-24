@@ -4,10 +4,23 @@
 Bat::Bat(std::string name, int life, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : Entity(name, life, scoreManager, scene, parent) {
     setAnimation(PATH_BAT_MOVE, NB_FRAME_BAT_MOVE, ANIM_SPEED_BAT_MOVE);
     maxHp = life;
-    speed = 2;
-    rangeAttack = 24;
+    speed = 3;
+    rangeAttack = 50;
     score = 10;
     this->setScale(2);
+    pathDeathSound = PATH_BAT_DEATH_SOUND;
+    pathHitSound = PATH_BAT_HIT_SOUND;
+}
+
+void Bat::updateFlipFromPlayerPosition(QPointF playerPosition){
+    if(playerPosition.x() < getCenterPosition().x()){
+        if(!horizontalFlipped) horizontalFlip();
+        horizontalFlipped = true;
+
+    } else{
+        if(horizontalFlipped) horizontalFlip();
+        horizontalFlipped = false;
+    }
 }
 
 void Bat::deathAnimation() {

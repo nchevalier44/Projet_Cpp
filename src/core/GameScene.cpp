@@ -6,16 +6,30 @@
 #include "GameScene.h"
 #include "MainWindow.h"
 
+GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* scoreManager, QObject* parent) : QGraphicsScene(parent), audioManager(audioManager), scoreManager(scoreManager), mainView(view){
+    //Add background music
+    audioPlayer = new QMediaPlayer(this);
+    QAudioOutput* audioOutput = new QAudioOutput(this);
+    audioOutput->setVolume(0.4);
+    audioPlayer->setAudioOutput(audioOutput);
+    connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
+        if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
+            audioPlayer->play();
+        }
+    });
+    audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC));
+    audioPlayer->setLoops(QMediaPlayer::Infinite);
+    audioManager->addMusicObject(audioOutput, audioOutput->volume());
 
-GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* scoreManager, QObject* parent) : mainWindow(mainWindow),QGraphicsScene(parent), scoreManager(scoreManager), mainView(view){
-
+    //Map
     loadOverworld();
 
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
 
     //Setting up the player's character
+    //TODO Change player hp when test are ok
     this->character = new Player("Character", 3, scoreManager, this);
-    this->character->setPos(200, 2600); //ex 1480,2730
+    this->character->setPos(1480, 2730);
     this->character->setSpeed(6);
     this->character->setScale(0.2);
     this->character->setFocus();
@@ -26,22 +40,34 @@ GameScene::GameScene(MainWindow* mainWindow, MainView* view, ScoreManager* score
     this->character->setMainView(mainView);
 
     //Load slash animation
-    PlayerSlash* slash = new PlayerSlash(this, character);
+    PlayerSlash* slash = new PlayerSlash(this, character, character);
     this->character->setPlayerSlash(slash);
 
     //Load the shield animation
-    PlayerShield* shield = new PlayerShield(this, character);
-    this->character->setPLayerShield(shield);
+    PlayerShield* shield = new PlayerShield(this, character, character);
+    this->character->setPlayerShield(shield);
 
-    Goblin* goblin = new Goblin("Goblin", 1, scoreManager, this);
-    goblin->setPos(1200, 2350);
+    Goblin* goblin = new Goblin("Goblin", GOBLIN_HP, scoreManager, this);
+    goblin->setPos(1110, 2180);
+    goblin->updateFlipFromPlayerPosition(character->getCenterPosition());
     this->addItem(goblin);
     listNPC.append(goblin);
 
-    Bat* bat = new Bat("Bat", 1, scoreManager, this);
-    bat->setPos(1100, 2200);
+    /*Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
+    bat->setPos(910, 1970);
+    bat->updateFlipFromPlayerPosition(character->getCenterPosition());
     this->addItem(bat);
-    listNPC.append(bat);
+    listNPC.append(bat);*/
+
+    //TODO Delete when test are ok
+    character->setHasMissile(true);
+    character->setHasSlash(true);
+    /*
+    CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 1, scoreManager, this);
+    crystalKnight->setPos(1000, 2000);
+    this->addItem(crystalKnight);
+    listNPC.append(crystalKnight);
+     */
 
 
     //Starting the timer to update the animation and mouvement
@@ -186,15 +212,6 @@ void GameScene::clearInteractionZones(const QStringList& tags) {
 }
 
 void GameScene::loadOverworld() {
-    //Add background music
-    audioPlayer = new QMediaPlayer(this);
-    QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(50);
-    audioPlayer->setAudioOutput(audioOutput);
-    audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC));
-    audioPlayer->setLoops(QMediaPlayer::Infinite);
-    audioPlayer->play();
-    mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
 
     try{
         loadMap("../assets/maps/map.json", 3000,3000);
@@ -210,12 +227,12 @@ void GameScene::loadDungeon() {
     /*
     audioPlayer = new QMediaPlayer(this);
     QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(50);
+    audioOutput->setVolume(0.5);
     audioPlayer->setAudioOutput(audioOutput);
     audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC2));
     audioPlayer->setLoops(QMediaPlayer::Infinite);
     audioPlayer->play();
-    mainWindow->getAudioManager()->addMusicObject(audioOutput, audioOutput->volume());
+    audioManager->addMusicObject(audioOutput, audioOutput->volume());
      */
 
     try{
@@ -240,11 +257,16 @@ void GameScene::loadDungeon() {
 //Mouvement functions
 //Adapt the animation according to the direction
 void GameScene::keyPressEvent(QKeyEvent* event){
-    if(character->isEntityDead() || isPaused) return;
+    if(isPlayerDead || isPaused) return;
+
     if(event->isAutoRepeat()){
         return; //They key stay pressed so the walk animation can continue
     }
-    activeKeys.append(event->key());
+
+    if(!character->isBeenTakingKnockback()){
+        activeKeys.append(event->key());
+    }
+
 
     switch (event->key()){
         case Qt::Key_A :
@@ -265,6 +287,11 @@ void GameScene::keyPressEvent(QKeyEvent* event){
             putGamePaused();
             break;
     }
+}
+
+void GameScene::deletePlayer() {
+    delete character;
+    character = nullptr;
 }
 
 void GameScene::putGamePaused(){
@@ -303,15 +330,14 @@ void GameScene::reverseGamePaused(){
 
 //Set the idle animation according to the last key pressed
 void GameScene::keyReleaseEvent(QKeyEvent *event) {
-    if(event->isAutoRepeat()){
+    if(isPlayerDead || event->isAutoRepeat()){
         return; //They key stay pressed so the walk animation can continue
     }
 
     activeKeys.removeAll(event->key());
 
-    if(!activeKeys.isEmpty()){
-        return; //We change the animation to idle only if there are no others key pressed
-    }
+    if(!activeKeys.isEmpty()) return; //We change the animation to idle only if there are no others key pressed
+
     switch(event->key()){
         case Qt::Key_Up:
         case Qt::Key_Z:
@@ -335,9 +361,11 @@ void GameScene::keyReleaseEvent(QKeyEvent *event) {
 
 
 void GameScene::timerUpdate(){
+    if(isPlayerDead) return;
     moveNPC();
     movePlayer();
-    checkNPCAttackRange();
+    checkNPCAttackRange(); //He can be deleted here if an ennemy attack him
+    if(isPlayerDead) return;
     moveProjectiles();
     if(character->getPlayerSlash()->getIsSlashing()){
         character->getPlayerSlash()->checkCollide();
@@ -371,10 +399,10 @@ void GameScene::removeEntity(Entity* entity){
 
 
 void GameScene::checkNPCAttackRange(){
+    if(isPlayerDead) return;
+
     qreal posX = character->getCenterPosition().x();
     qreal posY = character->getCenterPosition().y();
-
-    if(character->isEntityDead()) return; //Do not attack if player is dead
 
     for(Entity* entity : listNPC){
         if(entity &&  entity->getHp() > 0){
@@ -388,7 +416,8 @@ void GameScene::checkNPCAttackRange(){
 
 //Move the player
 void GameScene::movePlayer(){
-    if(character->isEntityDead()) return; //Do not move the player if he is dead
+    if(isPlayerDead || character->isBeenTakingKnockback()) return; //Do not move the player if he is dead
+
     qreal* deltaPosition = getDeltaPosition();
     character->moveEntityCollision(deltaPosition[0], deltaPosition[1]);
     mainView->centerOn(character);
@@ -397,6 +426,7 @@ void GameScene::movePlayer(){
 }
 
 void GameScene::checkInteractionZone(){
+    if(isPlayerDead) return;
     bool inValidZone = false;
 
     QList<QGraphicsItem*> collisions = this->collidingItems(character);
@@ -560,7 +590,7 @@ void GameScene::removeTooltip(){
 
 //Move all entities
 void GameScene::moveNPC(){
-    if(character->isEntityDead()) return; //Do not move entities if the player is Dead
+    if(isPlayerDead) return; //Do not move entities if the player is Dead
 
     //Get player position
     qreal posCharacterX = character->getCenterPosition().x();
@@ -571,7 +601,8 @@ void GameScene::moveNPC(){
         if(dynamic_cast<CrystalKnight*>(entity)) return; //Do not move the CrystalKnight, he teleports
         float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
         if(entity){
-            if(distance < 300){
+            float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
+            if(distance < mainView->mapToScene(mainView->viewport()->rect()).boundingRect().width() * 0.5){
                 entity->moveEntity(posCharacterX, posCharacterY);
             } else{
                 entity->idleAnimation();
@@ -643,12 +674,18 @@ qreal* GameScene::getDeltaPosition() {
 }
 
 GameScene::~GameScene(){
-    delete mapItem;
-    mapItem = nullptr;
-    delete character;
-    character = nullptr;
-    delete timer;
-    timer = nullptr;
+    if(mapItem){
+        delete mapItem;
+        mapItem = nullptr;
+    }
+    if(character){
+        delete character;
+        character = nullptr;
+    }
+    if(timer){
+        delete timer;
+        timer = nullptr;
+    }
     for(Entity* entity : listNPC){
         delete entity;
         entity = nullptr;
@@ -660,7 +697,7 @@ GameScene::~GameScene(){
 //Detection des clics
 
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if(character->isEntityDead() || isPaused) return;
+    if(isPlayerDead || isPaused) return;
     QPointF clickPos = event->scenePos();
 
     //Check if the player is on the missile spell

@@ -20,6 +20,7 @@ private :
     QGraphicsScene* scene = nullptr;
     QMovie* movie;
     QElapsedTimer time;
+    QTimer* timerShield = nullptr;
     QPixmap currentPixmap;
     int HP = 3;
     int maxHP = 3;
@@ -27,8 +28,8 @@ private :
     Player* player;
 
 public :
-    PlayerShield(GameScene* scene, Player* player);
-    ~PlayerShield(){}
+    PlayerShield(GameScene* scene, Player* player, QGraphicsObject* parent=nullptr);
+    ~PlayerShield(){ qDebug() << "Player Shield deleted"; }
 
     void activeShield();
     void desactiveShield();

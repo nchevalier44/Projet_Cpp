@@ -1,12 +1,15 @@
 #include "Projectile.h"
 #include "../core/GameScene.h"
 #include "player/PlayerShield.h"
-
+#include "Entity.h"
 
 Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent)
         : proprietary(proprietary), gameScene(scene), speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
     this->setPos(pos);
-    this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
+    QPointF centerOffset(sceneBoundingRect().width() / 2, sceneBoundingRect().height() / 2);
+    QPointF normalizedDirection = direction - centerOffset;
+
+    this->rotationAngle = std::atan2(normalizedDirection.y(), normalizedDirection.x()) * 180 / M_PI;
     this->dx = std::cos(rotationAngle * M_PI / 180);
     this->dy = std::sin(rotationAngle * M_PI / 180);
     this->movie = new QMovie(this);
@@ -14,8 +17,13 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
     gameScene->getMovieList().append(movie);
 }
 
+QPointF Projectile::getCenterPosition() const {
+    return mapToScene(shape().boundingRect().center());
+}
+
 void Projectile::startMove(){
     gameScene->addProjectile(this);
+    missileMoveSound();
 }
 
 QRectF Projectile::boundingRect() const {
@@ -65,7 +73,6 @@ void Projectile::moveProjectile(){
     while(!hasCollided && i < n){
         //dynamic_cast<Entity*> return an Entity if it's an entity else nullptr
         Entity* testEntity = dynamic_cast<Entity*>(collisions[i]);
-        Player* player = dynamic_cast<Player*>(collisions[i]);
         if(testEntity){
             if(proprietary){
                 if(testEntity != proprietary){
@@ -100,6 +107,12 @@ void Projectile::moveProjectile(){
     if(distanceTravelled >= distanceMax || hasCollided){
         setEndAnimation("",0,0);
         isBeenDeleting = true;
+        if(missileMoveSFX){
+            missileMoveSFX->stop();
+            delete missileMoveSFX;
+            missileMoveSFX = nullptr;
+        }
+
     }
 }
 
@@ -131,4 +144,13 @@ void Projectile::setMiddleAnimation(QString spriteSheet) {
     if(gameScene->isGamePaused()){
         movie->setPaused(true);
     }
+}
+
+void Projectile::missileMoveSound(){
+    missileMoveSFX = new QSoundEffect();
+    connect(missileMoveSFX, &QSoundEffect::loadedChanged, missileMoveSFX, &QSoundEffect::play);
+    missileMoveSFX->setSource(QUrl::fromLocalFile(pathMissileMoveSound));
+    missileMoveSFX->setVolume(0.25);
+    gameScene->getAudioManager()->addSFXObject(missileMoveSFX, missileMoveSFX->volume());
+    missileMoveSFX->setLoopCount(QSoundEffect::Infinite);
 }

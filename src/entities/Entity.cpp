@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QTimer>
-
+#include "Projectile.h"
 #include "../core/GameScene.h"
 
 Entity::Entity(std::string name, int hp, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : hp(hp), name(name), scoreManager(scoreManager), gameScene(scene), QGraphicsObject(parent) {
@@ -116,12 +116,16 @@ void Entity::attackEntity(Entity* entity) {
     entity->takeDamage(this->getDamage(), this);
 }
 
-void Entity::takeDamage(int d, Entity* attacker) {
+void Entity::takeDamage(int d, Entity* attacker, Projectile* projectile) {
     if(isDead) return;
 
-    if(attacker){
-        this->takeKnockback(attacker);
+    if(projectile){
+        this->takeKnockback(projectile->getCenterPosition().x(), projectile->getCenterPosition().y());
+    }else if(attacker){
+        this->takeKnockback(attacker->getCenterPosition().x(), attacker->getCenterPosition().y());
     }
+
+    hitSound();
 
     //Display a red screen to indicate damage
     QGraphicsColorizeEffect* effect = new QGraphicsColorizeEffect(this);
@@ -137,6 +141,7 @@ void Entity::takeDamage(int d, Entity* attacker) {
         hp = 0;
         isDead = true;
         deathAnimation();
+        deathSound();
         Player* player = dynamic_cast<Player*>(attacker); //return nullptr if attacker is not a player
         if (player) { //if attacker is a player
             scoreManager->getActualScore()->setScore(scoreManager->getActualScore()->getScore() + this->getScore());
@@ -146,21 +151,39 @@ void Entity::takeDamage(int d, Entity* attacker) {
     }
 }
 
-void Entity::takeKnockback(Entity* originEntity){
+void Entity::takeKnockback(int originX, int originY){
+    isTakingKnockback = true;
     QTimer* knockbackTimer = new QTimer();
     knockbackTimer->setInterval(30);
 
-    connect(knockbackTimer, &QTimer::timeout, [this, originEntity]() {
-        qreal posOriginX = originEntity->getCenterPosition().x();
-        qreal posOriginY = originEntity->getCenterPosition().y();
+    connect(knockbackTimer, &QTimer::timeout, [this, originX, originY]() {
         qreal posEntityX = this->getCenterPosition().x();
         qreal posEntityY = this->getCenterPosition().y();
-        this->moveEntity(posOriginX + posEntityX, posOriginY + posEntityY, true);
+
+        qreal finalX = posEntityX;
+        qreal finalY = posEntityY;
+
+        if(originX - posEntityX < this->sceneBoundingRect().width() * 0.05){
+            finalX += originX;
+        } else if(originX + posEntityX > this->sceneBoundingRect().width() * 0.05){
+            finalX -= originX;
+        }
+
+        if(originY - posEntityY < this->sceneBoundingRect().height() * 0.05){
+            finalY += originY;
+        } else if(originY + posEntityY > this->sceneBoundingRect().height() * 0.05){
+            finalY -= originY;
+        }
+
+        this->moveEntity(finalX, finalY, true);
     });
+
     knockbackTimer->start();
-    QTimer::singleShot(150, knockbackTimer, [knockbackTimer](){
+    QTimer::singleShot(150, this, [knockbackTimer, this](){
         knockbackTimer->stop();
         delete knockbackTimer;
+        this->isTakingKnockback = false;
+        this->updateFlipFromPlayerPosition(this->gameScene->getCharacter()->getCenterPosition());
     });
 }
 
@@ -209,7 +232,7 @@ void Entity::moveEntity(qreal posX, qreal posY, bool forceMove){
         }
     }
 
-    if(direction != currentDirection){
+    if(!isBeenTakingKnockback() && direction != currentDirection){
         horizontalFlipped = !horizontalFlipped;
         this->horizontalFlip();
     }
@@ -254,4 +277,31 @@ void Entity::moveEntityCollision(qreal dx, qreal dy){
     if(i != numberCollisions){
         this->moveBy(0, -dy);
     }
+}
+
+
+void Entity::deathSound() {
+    QSoundEffect* deathSFX = new QSoundEffect();
+    connect(deathSFX, &QSoundEffect::loadedChanged, deathSFX, &QSoundEffect::play);
+    deathSFX->setSource(QUrl::fromLocalFile(pathDeathSound));
+    deathSFX->setVolume(0.4);
+    gameScene->getAudioManager()->addSFXObject(deathSFX, deathSFX->volume());
+    connect(deathSFX, &QSoundEffect::playingChanged, [deathSFX](){
+        if(!deathSFX->isPlaying()){
+            delete deathSFX;
+        }
+    });
+}
+
+void Entity::hitSound(){
+    QSoundEffect* hitSFX = new QSoundEffect();
+    connect(hitSFX, &QSoundEffect::loadedChanged, hitSFX, &QSoundEffect::play);
+    hitSFX->setSource(QUrl::fromLocalFile(pathHitSound));
+    hitSFX->setVolume(0.4);
+    gameScene->getAudioManager()->addSFXObject(hitSFX, hitSFX->volume());
+    connect(hitSFX, &QSoundEffect::playingChanged, [hitSFX](){
+        if(!hitSFX->isPlaying()){
+            delete hitSFX;
+        }
+    });
 }

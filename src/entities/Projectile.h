@@ -6,8 +6,9 @@
 #include <QMovie>
 #include <QGraphicsObject>
 #include <QTimer>
-#include "Entity.h"
+#include <QSoundEffect>
 
+class Entity;
 class GameScene;
 
 class Projectile : public QGraphicsObject{
@@ -27,11 +28,14 @@ protected:
     GameScene* gameScene = nullptr;
     bool isBeenDeleting = false;
     Entity* proprietary = nullptr;
+    QString pathMissileMoveSound;
+    QSoundEffect* missileMoveSFX = nullptr;
 
 
 public :
     Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary=nullptr, QGraphicsObject* parent=nullptr);
     ~Projectile(){}
+    QPointF getCenterPosition() const;
     virtual QRectF boundingRect() const override;
     virtual QPainterPath shape() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -57,6 +61,8 @@ public :
     void setStartAnimation(QString spriteSheet);
     void setMiddleAnimation(QString spriteSheet);
     virtual void setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed){}
+
+    void missileMoveSound();
 
 public slots:
     void moveProjectile();

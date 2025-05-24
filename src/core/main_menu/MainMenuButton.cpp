@@ -1,7 +1,8 @@
+#include <QSoundEffect>
 #include "MainMenuButton.h"
 
 //Constructor
-MainMenuButton::MainMenuButton(QString text, QWidget* parent): QPushButton(text, parent) {
+MainMenuButton::MainMenuButton(QString text, AudioManager* audioManager, QWidget* parent): audioManager(audioManager), QPushButton(text, parent) {
     //Set color of the text white
     setStyleSheet("color: white;");
 
@@ -18,6 +19,16 @@ MainMenuButton::MainMenuButton(QString text, QWidget* parent): QPushButton(text,
         }
         update(); //We update to let the last frame as the background while hovering
     });
+
+    //Add sound to buttons
+    QSoundEffect* clickSound = new QSoundEffect(this);
+    clickSound->setSource(QUrl::fromLocalFile(PATH_MAIN_MENU_BUTTON_SOUND));
+    clickSound->setVolume(20);
+    audioManager->addSFXObject(clickSound, clickSound->volume());
+    connect(this, &MainMenuButton::clicked, clickSound, &QSoundEffect::play);
+
+
+
 }
 
 //Destructor

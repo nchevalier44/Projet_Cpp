@@ -27,7 +27,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     windowSizeTimer->start(500);
     connect(windowSizeTimer, &QTimer::timeout, this, [=](){
         this->checkRatio(this->size(), true);
-        qDebug() << "check";
     });
 }
 
@@ -61,7 +60,7 @@ void MainWindow::startGame(){
     startMenuScene->getAudioPlayer()->stop();
 
     //Set the scene to the game scene
-    gameScene = new GameScene(this,mainView, scoreManager, this);
+    gameScene = new GameScene(audioManager, mainView, scoreManager, this);
     gameScene->setView(mainView);
     mainView->setScene(gameScene);
     mainView->setFitView(false);
@@ -122,7 +121,6 @@ QSize MainWindow::checkRatio(QSize size, bool check){
 
     if(check){
         if(size != QSize(newWidth, newHeight) || mainView->size() != this->size()){
-            qDebug() << "Size not good" << size << QSize(newWidth, newHeight) << mainView->size();
             this->resize(QSize(newWidth, newHeight));
             mainView->setFixedSize(QSize(newWidth, newHeight));
         }
