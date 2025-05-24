@@ -6,7 +6,10 @@
 Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary, QGraphicsObject* parent)
         : proprietary(proprietary), gameScene(scene), speed(speed), damage(damage), distanceMax(distanceMax), distanceTravelled(0), QGraphicsObject(parent){
     this->setPos(pos);
-    this->rotationAngle = std::atan2(direction.y(), direction.x())*180/M_PI;
+    QPointF centerOffset(sceneBoundingRect().width() / 2, sceneBoundingRect().height() / 2);
+    QPointF normalizedDirection = direction - centerOffset;
+
+    this->rotationAngle = std::atan2(normalizedDirection.y(), normalizedDirection.x()) * 180 / M_PI;
     this->dx = std::cos(rotationAngle * M_PI / 180);
     this->dy = std::sin(rotationAngle * M_PI / 180);
     this->movie = new QMovie(this);
@@ -69,8 +72,6 @@ void Projectile::moveProjectile(){
         if(testEntity){
             if(proprietary){
                 if(testEntity != proprietary){
-                    qDebug() << "Projectile damage" << damage;
-                    qDebug() << "Entity life" << testEntity->getHp();
                     testEntity->takeDamage(damage, this->proprietary);
                     hasCollided = true;
                 }

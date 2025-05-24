@@ -70,14 +70,14 @@ void Player::shootProjectile(QPointF target, GameScene* scene) {
     qreal w = this->sceneBoundingRect().width();
     qreal h = this->sceneBoundingRect().height();
     switch (currentDirection) {
-        case Up : posInit.setY(posInit.y() - h * 0.5); break;
-        case Down : posInit.setY(posInit.y() + h * 0.25); break;
-        case Left : posInit.setX(posInit.x() - w * 0.4); posInit.setY(posInit.y() - h * 0.25); break;
-        case Right : posInit.setX(posInit.x() + w * 0.35); posInit.setY(posInit.y() - h * 0.25); break;
+        case Up : posInit.setX(posInit.x() - w*0.32); posInit.setY(posInit.y() - h*0.8); break;
+        case Down : posInit.setX(posInit.x() - w*0.32); posInit.setY(posInit.y()); break;
+        case Left : posInit.setX(posInit.x() - w*0.7); posInit.setY(posInit.y() - h * 0.35); break;
+        case Right : posInit.setX(posInit.x()); posInit.setY(posInit.y() - h * 0.35); break;
         default: break;
     }
 
-    QPointF direction = target - posInit - QPointF(32/2, 21/2);
+    QPointF direction = target - posInit;
 
 
     PlayerProjectile* projectile = new PlayerProjectile(3,5, 400, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);

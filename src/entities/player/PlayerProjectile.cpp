@@ -6,8 +6,6 @@ PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QStri
         : Projectile(damage, speed, distanceMax, spriteSheet, pos, direction, scene, proprietary, parent) {
     frameWidth = 32;
     frameHeight = 21;
-    QPointF centerOffset(frameWidth / 2, frameHeight / 2);
-    this->setPos(pos - centerOffset);
     throwProjectile();
     this->setTransform(QTransform::fromScale(2, 2));
     pathMissileMoveSound = PATH_PLAYER_PROJECTILE_MOVE_SOUND;
