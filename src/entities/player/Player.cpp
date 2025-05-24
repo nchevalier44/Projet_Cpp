@@ -78,7 +78,7 @@ void Player::shootProjectile(QPointF target, GameScene* scene) {
         case Right : posInit.setX(posInit.x() + 15); break;
         default: break;
     }
-    PlayerProjectile* projectile = new PlayerProjectile(1,5, 400, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);
+    PlayerProjectile* projectile = new PlayerProjectile(3,5, 400, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);
 
     projectile->setZValue(10);
     projectile->setScale(0.5);

@@ -66,10 +66,11 @@ void Projectile::moveProjectile(){
     while(!hasCollided && i < n){
         //dynamic_cast<Entity*> return an Entity if it's an entity else nullptr
         Entity* testEntity = dynamic_cast<Entity*>(collisions[i]);
-        Player* player = dynamic_cast<Player*>(collisions[i]);
         if(testEntity){
             if(proprietary){
                 if(testEntity != proprietary){
+                    qDebug() << "Projectile damage" << damage;
+                    qDebug() << "Entity life" << testEntity->getHp();
                     testEntity->takeDamage(damage, this->proprietary);
                     hasCollided = true;
                 }
