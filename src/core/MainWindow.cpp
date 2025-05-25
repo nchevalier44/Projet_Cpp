@@ -58,12 +58,11 @@ void MainWindow::goToStartMenu() {
     mainView->setScene(startMenuScene);
     mainView->setFitView(true);
     mainView->fitInView(mainView->sceneRect(), Qt::KeepAspectRatio);
+
+    startMenuScene->getAudioPlayer()->play(); //Start the music
 }
 
 void MainWindow::startGame(){
-    //Stop music
-    startMenuScene->getAudioPlayer()->stop();
-
     //Set the scene to the game scene
     gameScene = new GameScene(audioManager, mainView, scoreManager, this);
     gameScene->setView(mainView);

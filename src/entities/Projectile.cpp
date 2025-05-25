@@ -17,6 +17,14 @@ Projectile::Projectile(int damage, int speed, int distanceMax, QString path, QPo
     gameScene->getMovieList().append(movie);
 }
 
+Projectile::~Projectile(){
+    if(missileMoveSFX){
+        missileMoveSFX->stop();
+        delete missileMoveSFX;
+        missileMoveSFX = nullptr;
+    }
+}
+
 QPointF Projectile::getCenterPosition() const {
     return mapToScene(shape().boundingRect().center());
 }

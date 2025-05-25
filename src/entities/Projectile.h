@@ -35,7 +35,7 @@ protected:
 
 public :
     Projectile(int damage, int speed, int distanceMax, QString spriteSheet, QPointF pos, QPointF direction, GameScene* scene, Entity* proprietary=nullptr, QGraphicsObject* parent=nullptr);
-    ~Projectile(){}
+    ~Projectile();
     QPointF getCenterPosition() const;
     virtual QRectF boundingRect() const override;
     virtual QPainterPath shape() const override;

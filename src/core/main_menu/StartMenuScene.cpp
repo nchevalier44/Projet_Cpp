@@ -6,7 +6,7 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
 
     //Add background music
     audioPlayer = new QMediaPlayer(this);
-    QAudioOutput* audioOutput = new QAudioOutput(this);
+    audioOutput = new QAudioOutput(this);
     audioOutput->setVolume(0.5);
     audioPlayer->setAudioOutput(audioOutput);
     connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
@@ -123,6 +123,7 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
         delete buttonsContainer;
         buttonsContainer = nullptr;
     }
+
     buttonsContainer = new QWidget();
     buttonsContainer->setAttribute(Qt::WA_OpaquePaintEvent); //get background of the widget transparent
     MainMenuButton* startButton = new MainMenuButton("Start", mainWindow->getAudioManager(), buttonsContainer);
@@ -157,6 +158,7 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
 
     //Set buttons actions
     QObject::connect(startButton, &QPushButton::clicked, this, &StartMenuScene::startGameRequested);
+    QObject::connect(startButton, &QPushButton::clicked, audioPlayer, &QMediaPlayer::pause);
     QObject::connect(settingsButton, &QPushButton::clicked, settingsWidget, &SettingsWidget::show);
     QObject::connect(scoreboardButton, &QPushButton::clicked, scoreboardWidget, &ScoreboardWidget::show);
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);

@@ -49,6 +49,7 @@ class StartMenuScene : public QGraphicsScene{
         QWidget* buttonsContainer = nullptr;
 
         QMediaPlayer* audioPlayer = nullptr;
+        QAudioOutput* audioOutput = nullptr;
         SettingsWidget* settingsWidget = nullptr;
         ScoreboardWidget* scoreboardWidget = nullptr;
         QGraphicsProxyWidget* settingsProxyWidget = nullptr;

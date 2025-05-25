@@ -7,6 +7,9 @@
 PlayerShield::PlayerShield(GameScene* scene,Player* player, QGraphicsObject* parent) : scene(scene), player(player), QGraphicsObject(parent){
     scene->removeItem(this);
     scene->addItem(this);
+
+    this->setZValue(50);
+
     movie = new QMovie(PATH_PLAYER_SHIELD);
     /*
     QSizeF playerSize = player->shape().boundingRect().size();
@@ -74,6 +77,7 @@ QRectF PlayerShield::boundingRect() const {
     QSize size = currentPixmap.size();
     return QRectF(0, 0, size.width(), size.height());
 }
+
 QPainterPath PlayerShield::shape() const {
     if(!isActivated){
         return QPainterPath();
