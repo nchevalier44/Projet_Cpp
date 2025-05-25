@@ -29,8 +29,11 @@ private :
 
 public :
     PlayerShield(GameScene* scene, Player* player, QGraphicsObject* parent=nullptr);
-    ~PlayerShield(){ qDebug() << "Player Shield deleted"; }
+    ~PlayerShield(){ }
 
+    bool isActive(){
+        return isActivated;
+    }
     void activeShield();
     void desactiveShield();
     void updatePosition();
