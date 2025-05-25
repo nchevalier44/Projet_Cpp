@@ -3,6 +3,7 @@
 #include <QPainterPath>
 #include <QResizeEvent>
 #include <QGraphicsProxyWidget>
+#include <QLabel>
 #include "../../constants.h"
 #include "../FontManager.h"
 
@@ -18,7 +19,7 @@ public:
     //Constructor and destructor
     ScoreboardWidget(MainWindow *mainWindow, QWidget *parent = nullptr);
 
-    virtual ~ScoreboardWidget(){if(backgroundPixmap){delete backgroundPixmap;} if(scoresContainer){delete scoresContainer;} };
+    ~ScoreboardWidget();
 
 private:
     QPixmap* backgroundPixmap = nullptr;
