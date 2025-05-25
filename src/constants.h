@@ -107,6 +107,8 @@
 #define PATH_PLAYER_DEATH_SOUND "../assets/sounds_effects/playerDie.wav"
 #define PATH_PLAYER_HIT_SOUND "../assets/sounds_effects/hitPlayer.wav"
 #define PATH_PLAYER_PROJECTILE_MOVE_SOUND "../assets/sounds_effects/playerMissile.wav"
+#define PATH_PLAYER_PROJECTILE_BLOW_SOUND "../assets/sounds_effects/playerMissileBlow.wav"
+#define PATH_PLAYER_POWER_UP_SOUND "../assets/sounds_effects/playerPowerUp.wav"
 
 
 

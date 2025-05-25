@@ -471,6 +471,7 @@ void GameScene::checkInteractionZone(){
                 }
                 for(int key : activeKeys){
                     if(key == Qt::Key_F){
+                        powerUpSound();
                         removeTooltip();
                         character->setHasMissile(true);
                         hud->getSpellWidget()->getSpell()[0]->show();
@@ -497,6 +498,7 @@ void GameScene::checkInteractionZone(){
                 }
                 for(int key : activeKeys){
                     if(key == Qt::Key_F){
+                        powerUpSound();
                         removeTooltip();
                         character->setHasShield(true);
                         hud->getSpellWidget()->getSpell()[2]->show();
@@ -525,6 +527,7 @@ void GameScene::checkInteractionZone(){
                 }
                 for(int key : activeKeys){
                     if(key == Qt::Key_F){
+                        powerUpSound();
                         removeTooltip();
                         character->setHasSlash(true);
                         hud->getSpellWidget()->getSpell()[1]->show();
@@ -823,4 +826,17 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             hud->getSpellWidget()->shieldUsed();
         }
     }
+}
+
+void GameScene::powerUpSound(){
+    QSoundEffect* powerUpSFX = new QSoundEffect();
+    connect(powerUpSFX, &QSoundEffect::loadedChanged, powerUpSFX, &QSoundEffect::play);
+    powerUpSFX->setSource(QUrl::fromLocalFile(PATH_PLAYER_POWER_UP_SOUND));
+    powerUpSFX->setVolume(0.45);
+    audioManager->addSFXObject(powerUpSFX, powerUpSFX->volume());
+    connect(powerUpSFX, &QSoundEffect::playingChanged, [powerUpSFX](){
+        if(!powerUpSFX->isPlaying()){
+            delete powerUpSFX;
+        }
+    });
 }

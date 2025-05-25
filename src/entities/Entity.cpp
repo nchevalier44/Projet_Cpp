@@ -280,6 +280,7 @@ void Entity::moveEntityCollision(qreal dx, qreal dy){
 
 
 void Entity::deathSound() {
+    if(pathDeathSound.isEmpty()) return;
     QSoundEffect* deathSFX = new QSoundEffect();
     connect(deathSFX, &QSoundEffect::loadedChanged, deathSFX, &QSoundEffect::play);
     deathSFX->setSource(QUrl::fromLocalFile(pathDeathSound));
@@ -293,6 +294,7 @@ void Entity::deathSound() {
 }
 
 void Entity::hitSound(){
+    if(pathHitSound.isEmpty()) return;
     QSoundEffect* hitSFX = new QSoundEffect();
     connect(hitSFX, &QSoundEffect::loadedChanged, hitSFX, &QSoundEffect::play);
     hitSFX->setSource(QUrl::fromLocalFile(pathHitSound));
