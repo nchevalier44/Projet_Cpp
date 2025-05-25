@@ -28,6 +28,9 @@ CrystalKnight::CrystalKnight(std::string name, int life, Player* player, ScoreMa
     );
     attackLoop();
 
+    pathHitSound = PATH_CK_HIT_SOUND;
+    pathDeathSound = PATH_CK_DEATH_SOUND;
+
 
 }
 
@@ -67,6 +70,8 @@ void CrystalKnight::moveAnimation(qreal x , qreal y ) {
     QTimer::singleShot(7*ANIM_SPEED_CK_MOVE, this, [this,x,y]() {
         teleport(x,y);
     });
+
+    tpSound();
 
     if(!isAttacking){
         qDebug() << "after teleport";
@@ -116,6 +121,7 @@ void CrystalKnight::teleport(qreal x, qreal y) {
     qreal randX = QRandomGenerator::global()->bounded(minX, maxX + 1); // +1 si tu veux inclure max
     qreal randY = QRandomGenerator::global()->bounded(minY, maxY + 1);
     this->setPos(randX, randY);
+
 }
 
 
@@ -170,6 +176,20 @@ void CrystalKnight::checkCollisionsClawAttack(){
     }
 }
 
+void CrystalKnight::tpSound() {
+    QSoundEffect* tpSFX = new QSoundEffect();
+    connect(tpSFX, &QSoundEffect::loadedChanged, tpSFX, &QSoundEffect::play);
+    tpSFX->setSource(QUrl::fromLocalFile(PATH_CK_TP_SOUND));
+    tpSFX->setVolume(0.35);
+    gameScene->getAudioManager()->addSFXObject(tpSFX, tpSFX->volume());
+    connect(tpSFX, &QSoundEffect::playingChanged, [tpSFX](){
+        if(!tpSFX->isPlaying()){
+            delete tpSFX;
+        }
+    });
+}
+
+
 
 
 
@@ -194,10 +214,27 @@ Lightning::Lightning(const QRectF& spawnZone, Player* player,GameScene* scene,QG
     connect(&timer, &QTimer::timeout, this, &Lightning::updateFrame);
     connect(&timer, &QTimer::timeout, this, &Lightning::checkCollisions);
     timer.start(animSpeedMs);
+
+    QTimer::singleShot(animSpeedMs*6, this, [=](){
+        thunderSound();
+    });
 }
 
 Lightning::~Lightning() {
     timer.stop();
+}
+
+void Lightning::thunderSound() {
+    QSoundEffect* thunderSFX = new QSoundEffect();
+    connect(thunderSFX, &QSoundEffect::loadedChanged, thunderSFX, &QSoundEffect::play);
+    thunderSFX->setSource(QUrl::fromLocalFile(PATH_CK_THUNDER_SOUND));
+    thunderSFX->setVolume(0.05);
+    gameScene->getAudioManager()->addSFXObject(thunderSFX, thunderSFX->volume());
+    connect(thunderSFX, &QSoundEffect::playingChanged, [thunderSFX](){
+        if(!thunderSFX->isPlaying()){
+            delete thunderSFX;
+        }
+    });
 }
 
 void Lightning::setRandomPosition() {

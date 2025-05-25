@@ -283,7 +283,7 @@ void Entity::deathSound() {
     QSoundEffect* deathSFX = new QSoundEffect();
     connect(deathSFX, &QSoundEffect::loadedChanged, deathSFX, &QSoundEffect::play);
     deathSFX->setSource(QUrl::fromLocalFile(pathDeathSound));
-    deathSFX->setVolume(0.4);
+    deathSFX->setVolume(0.75);
     gameScene->getAudioManager()->addSFXObject(deathSFX, deathSFX->volume());
     connect(deathSFX, &QSoundEffect::playingChanged, [deathSFX](){
         if(!deathSFX->isPlaying()){
@@ -296,7 +296,7 @@ void Entity::hitSound(){
     QSoundEffect* hitSFX = new QSoundEffect();
     connect(hitSFX, &QSoundEffect::loadedChanged, hitSFX, &QSoundEffect::play);
     hitSFX->setSource(QUrl::fromLocalFile(pathHitSound));
-    hitSFX->setVolume(0.4);
+    hitSFX->setVolume(0.45);
     gameScene->getAudioManager()->addSFXObject(hitSFX, hitSFX->volume());
     connect(hitSFX, &QSoundEffect::playingChanged, [hitSFX](){
         if(!hitSFX->isPlaying()){

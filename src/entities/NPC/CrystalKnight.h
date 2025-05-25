@@ -45,6 +45,9 @@ public:
             clawTimer = nullptr;
         }
     }
+
+    void tpSound();
+
     void attackAnimation() override{}
     void deathAnimation() override;
     void takeDamage(int damage, Entity* attacker=nullptr, Projectile* projectile=nullptr) override{
@@ -104,6 +107,7 @@ private:
     bool hasCollided = false;
     Player* player = nullptr;
     void setRandomPosition();
+    void thunderSound();
 };
 
 #endif //PROJET_CPP_CRYSTALKNIGHT_H

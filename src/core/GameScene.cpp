@@ -10,7 +10,7 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     //Add background music
     audioPlayer = new QMediaPlayer(this);
     QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(0.4);
+    audioOutput->setVolume(0.35);
     audioPlayer->setAudioOutput(audioOutput);
     connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
         if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
@@ -37,7 +37,7 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->addItem(character);
     this->character->setMainView(mainView);
 
-    character->setHasTreeHeart(true);
+    //character->setHasTreeHeart(true);
 
     //Load slash animation
     PlayerSlash* slash = new PlayerSlash(this, character, character);
@@ -260,7 +260,7 @@ void GameScene::loadDungeon() {
         }
         audioPlayer = new QMediaPlayer(this);
         QAudioOutput* audioOutput = new QAudioOutput(this);
-        audioOutput->setVolume(0.4);
+        audioOutput->setVolume(0.2);
         audioPlayer->setAudioOutput(audioOutput);
         connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
             if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
