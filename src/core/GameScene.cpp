@@ -228,6 +228,7 @@ void GameScene::loadOverworld() {
     audioPlayer->setLoops(QMediaPlayer::Infinite);
     audioManager->addMusicObject(audioOutput, audioOutput->volume());
 
+    //Chargement de la map
     try{
         loadMap("../assets/maps/map.json", 3000,3000);
     } catch(QException e){
@@ -235,6 +236,11 @@ void GameScene::loadOverworld() {
     } catch(std::exception e){
         qCritical() << "Error when loading the map : " << e.what();
     }
+
+    //Ajout des ennemy
+
+
+
 }
 
 void GameScene::loadDungeon() {
@@ -274,7 +280,7 @@ void GameScene::loadDungeon() {
 
 
         //Load the boss
-        CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 100,character, scoreManager, this);
+        CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 150,character, scoreManager, this);
         crystalKnight->setPos(1000, 880);
         this->addItem(crystalKnight);
         listNPC.append(crystalKnight);

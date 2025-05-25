@@ -13,6 +13,7 @@ PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QStri
 }
 
 void PlayerProjectile::throwProjectile() {
+    //The projectile is growing before moving
     setStartAnimation(PATH_PLAYER_PROJECTILE_GROW);
     QTimer::singleShot(6*100, this, &PlayerProjectile::startMove);
 }
@@ -30,7 +31,7 @@ void PlayerProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
     timerEndMovie = new QTimer(this);
     gameScene->getTimerList().append(timerEndMovie);
     connect(timerEndMovie, &QTimer::timeout, this, [this](){
-        if(this->movie->currentFrameNumber() == this->movie->frameCount() - 1){
+        if(this->movie->currentFrameNumber() == this->movie->frameCount() - 1){ //if the last frame is reached, we stop the movie
             movie->stop();
             timerEndMovie->stop();
             gameScene->getMovieList().removeAll(movie);

@@ -54,7 +54,7 @@ void Player::takeDamage(int damage, Entity* attacker, Projectile* projectile) {
 
     setHp(hp - damage);
     if(hud != nullptr) hud->getHPWidget()->setLife(hp);
-    if(hp <= 0){
+    if(hp <= 0){ //Player is dead
         isDead = true;
         gameScene->setPlayerDead(true);
         deathAnimation();
@@ -81,8 +81,6 @@ void Player::shootProjectile(QPointF target, GameScene* scene) {
     }
 
     QPointF direction = target - posInit;
-
-
     PlayerProjectile* projectile = new PlayerProjectile(3,5, 400, PATH_MISSILE_SPELL_GROW_ANIMATION, posInit, direction, scene, this);
 
     projectile->setZValue(41);
@@ -105,6 +103,7 @@ bool Player::canShoot(QPointF clickPos){
     }
 
 
+    // Normalize the player direction
     QPointF dirClick = clickPos - playerPos;
     qreal lenClick = std::hypot(dirClick.x(), dirClick.y());
     if(lenClick == 0) return false; // No click position
@@ -114,7 +113,7 @@ bool Player::canShoot(QPointF clickPos){
     qreal dot = normClick.x() * playerDir.x() + normClick.y() * playerDir.y();
     qreal angleDeg = qRadiansToDegrees(qAcos(dot));
 
-
+    //Agree for shooting if the angle is less than 75°
     if(angleDeg < 75){
         return true;
     }

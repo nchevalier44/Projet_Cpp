@@ -10,8 +10,6 @@ GoblinProjectile::GoblinProjectile(int damage, int speed, int distanceMax, QStri
     this->setTransform(QTransform::fromScale(2, 2));
     pathMissileMoveSound = PATH_GOBLIN_PROJECTILE_MOVE_SOUND;
     throwProjectile();
-
-
 }
 
 void GoblinProjectile::throwProjectile() {
@@ -20,7 +18,7 @@ void GoblinProjectile::throwProjectile() {
 }
 
 void GoblinProjectile::setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed) {
-    if(movie){
+    if(movie){ //clear previous movie
         movie->stop();
         gameScene->getMovieList().removeAll(movie);
         delete movie;
@@ -28,7 +26,6 @@ void GoblinProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
     }
     this->movie = new QMovie(PATH_GOBLIN_PROJECTILE_BLOW);
     gameScene->getMovieList().append(movie);
-
 
     timerEndMovie = new QTimer();
     gameScene->getTimerList().append(timerEndMovie);
@@ -50,6 +47,7 @@ void GoblinProjectile::setEndAnimation(QString spriteSheet, int frameCount, int 
         }
     });
     timerEndMovie->start();
+
     if(gameScene->isGamePaused()){
         timerEndMovie->stop();
     }

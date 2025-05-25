@@ -22,6 +22,7 @@ PlayerSlash::PlayerSlash(GameScene *scene, Player* player, QGraphicsObject* pare
     for (QMovie *movie : attackAnimation)
     {
         movie->setSpeed(100);
+        //Connect the movie to update the currentPixmap or delete it when finished
         connect(animationTimer, &QTimer::timeout, this, [this, movie](){
             if(isSlashing){
                 if (attackAnimation[currentAttackIndex] == movie) {
@@ -64,7 +65,7 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
         currentAttackIndex = 0;
     }
 
-    // Positionnement de l'attaque
+    // Position of the slash
     qreal length = std::sqrt(direction.x() * direction.x() + direction.y() * direction.y());
     if (length > 0)
     {
@@ -72,7 +73,7 @@ void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentD
     }
 
     // adjuste the position of the attack according to the current direction
-    qreal distance = 20; // distance à laquelle l'effet est affiché
+    qreal distance = 20; // distance from the player to the slash
     QPointF finalPos = playerPos + direction * distance;
     qreal w = player->sceneBoundingRect().width();
     qreal h = player->sceneBoundingRect().height();
@@ -170,19 +171,10 @@ void PlayerSlash::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     qreal width = size.width();
     qreal height = size.height();
     painter->save();
-    // Appliquer la rotation directement, sans translation supplémentaire
-    // car le boundingRect est maintenant centré sur (0,0)
+    // Apply rotation around the center of the bounding rectangle
     painter->translate(boundingRect().center());
     painter->rotate(rotationAngle);
     painter->translate(-boundingRect().center());
     painter->drawPixmap(-width / 2, -height / 2, width, height, attackAnimation[currentAttackIndex]->currentPixmap());
     painter->restore();
-
-    // Debug - rectangle de délimitation
-    painter->setPen(QPen(Qt::red, 1, Qt::DashLine));
-    painter->drawRect(boundingRect());
-
-    // Debug - shape (hitbox)
-    painter->setPen(QPen(Qt::blue, 1));
-    painter->drawPath(shape());
 }

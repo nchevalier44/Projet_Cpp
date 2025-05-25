@@ -40,13 +40,13 @@ QRectF Projectile::boundingRect() const {
 
 QPainterPath Projectile::shape() const {
     QPainterPath path;
-    // Hitbox circulaire plus petite que l'image
+    // Circular shape for the projectile
     path.addEllipse(boundingRect().center(), 9, 9);  // rayon 8px
     return path;
 }
 
 void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
-    // Affichage de l'image actuelle de l'animation
+    // Display the current frame of the movie
     if (movie && !movie->currentPixmap().isNull()) {
         painter->save();
         painter->translate(boundingRect().center());
@@ -55,15 +55,6 @@ void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         painter->drawPixmap(0, 10, frameWidth, frameHeight, movie->currentPixmap());
         painter->restore();
     }
-
-    // Debug : dessiner boundingRect (en rouge)
-    painter->setPen(QPen(Qt::red, 1, Qt::DashLine));
-    painter->drawRect(boundingRect());
-
-    // Debug : dessiner shape (en bleu)
-    painter->setPen(QPen(Qt::blue, 1));
-    painter->drawPath(shape());
-
 }
 
 void Projectile::moveProjectile(){
@@ -96,7 +87,7 @@ void Projectile::moveProjectile(){
         if(testShield){
             if(testEntity != proprietary){
                 if (dynamic_cast<Player*>(proprietary)) {
-                    // Le joueur a tiré -> on ignore le bouclier
+                    // Player shooted so we ignore the shield collision
                     ++i;
                     continue;
                 }
@@ -156,6 +147,7 @@ void Projectile::setMiddleAnimation(QString spriteSheet) {
 }
 
 void Projectile::missileMoveSound(){
+    // Load the sound effect for missile movement
     if(pathMissileMoveSound.isEmpty()) return;
     missileMoveSFX = new QSoundEffect();
     connect(missileMoveSFX, &QSoundEffect::loadedChanged, missileMoveSFX, &QSoundEffect::play);
@@ -166,6 +158,7 @@ void Projectile::missileMoveSound(){
 }
 
 void Projectile::missileBlowSound(){
+    // Load the sound effect for missile blow
     if(pathMissileBlowSound.isEmpty()) return;
     QSoundEffect* missileBlowSFX = new QSoundEffect();
     connect(missileBlowSFX, &QSoundEffect::loadedChanged, missileBlowSFX, &QSoundEffect::play);

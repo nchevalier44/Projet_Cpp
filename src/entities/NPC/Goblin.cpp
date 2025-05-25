@@ -15,6 +15,7 @@ Goblin::Goblin(std::string name, int life, ScoreManager* scoreManager, GameScene
 }
 
 void Goblin::updateFlipFromPlayerPosition(QPointF playerPosition){
+    // If the player is on the left of the goblin, flip it horizontally
     if(playerPosition.x() < getCenterPosition().x()){
         if(horizontalFlipped){
             horizontalFlip();
@@ -71,12 +72,12 @@ void Goblin::shootProjectile(QPointF target, GameScene* scene) {
         default: break;
     }
 
+    //Creating the projectile
     GoblinProjectile* projectile = new GoblinProjectile(1,3, 400, nullptr, posInit, direction, scene, this);
     scene->addProjectile(projectile);
     projectile->setZValue(10);
     projectile->setScale(0.5);
     scene->addItem(projectile);
-
 }
 
 void Goblin::attackEntity(Entity* entity) {

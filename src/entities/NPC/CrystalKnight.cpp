@@ -10,16 +10,18 @@ CrystalKnight::CrystalKnight(std::string name, int life, Player* player, ScoreMa
     maxHp = life;
     speed = 2;
     score = 100;
-    QRectF baseZone(750, 690, 550, 430);
+    QRectF baseZone(750, 690, 550, 430); //Arena zone
     QRectF spriteRect = this->boundingRect();
     QSizeF spriteSize = spriteRect.size() * this->scale();
 
+    //Zone where the boss can teleport
     zoneTP = QRectF(
             baseZone.left()- spriteSize.width()/2,
             baseZone.top()- spriteSize.height()/2,
             baseZone.width() - spriteSize.width(),
             baseZone.height() - spriteSize.height()
     );
+    //Zone where the boss can attack
     zoneAttack = QRectF(
             baseZone.left()- 30,
             baseZone.top()- 100,
@@ -35,6 +37,7 @@ CrystalKnight::CrystalKnight(std::string name, int life, Player* player, ScoreMa
 }
 
 void CrystalKnight::attackLoop(){
+    //Loop called so the boss attack automatically
     QTimer::singleShot(3000, this, [this]() {
         if(gameScene->isGamePaused()){
             QTimer::singleShot(3000, this, &CrystalKnight::attackLoop);
@@ -45,22 +48,18 @@ void CrystalKnight::attackLoop(){
 }
 
 void CrystalKnight::performRandomAction(){
+    //Choose a random number (1,2 or 3) and act according to it
     int randomAction = QRandomGenerator::global()->bounded(3);
-    qDebug() << "Random action: " << randomAction;
     switch(randomAction){
         case 0:
             moveAnimation();
-
             break;
-
         case 1:
             lightningAttck();
             break;
-
         case 2 :
             teleportOnPlayer();
             break;
-
         default:
             break;
     }
@@ -69,14 +68,15 @@ void CrystalKnight::performRandomAction(){
 
 void CrystalKnight::moveAnimation(qreal x , qreal y ) {
     setAnimation(PATH_CK_MOVE, NB_FRAME_CK_MOVE, ANIM_SPEED_CK_MOVE);
+    //Move the boss during the invisible frames
     QTimer::singleShot(7*ANIM_SPEED_CK_MOVE, this, [this,x,y]() {
         teleport(x,y);
     });
 
     tpSound();
 
+    //back to idle
     if(!isAttacking){
-        qDebug() << "after teleport";
         QTimer::singleShot(NB_FRAME_CK_MOVE*ANIM_SPEED_CK_MOVE, this, [this]() {
             setAnimation(PATH_CK_IDLE, NB_FRAME_CK_IDLE, ANIM_SPEED_CK_IDLE);
         });
@@ -86,23 +86,23 @@ void CrystalKnight::moveAnimation(qreal x , qreal y ) {
 
 void CrystalKnight::deathAnimation() {
     isDead = true;
-    setPos(1000,850);
+    setPos(1000,850); //Placing at the center of the room
     player->setHasTreeHeart(true);
     gameScene->showTooltip(player->pos(),"You found the Tree Heart !");
     setAnimation(PATH_CK_DEATH, NB_FRAME_CK_DEATH, ANIM_SPEED_CK_DEATH);
-    QTimer::singleShot(NB_FRAME_CK_DEATH*ANIM_SPEED_CK_DEATH, this, [this]() {
+    QTimer::singleShot(NB_FRAME_CK_DEATH*ANIM_SPEED_CK_DEATH, this, [this]() { //Removing the boss then
         stopAnimation();
         gameScene->removeEntity(this);
     });
 }
 
 void CrystalKnight::teleportOnPlayer() {
+    //Attack where the boss teleports above the player and performs a claw attack
     if (player) {
         isAttacking = true;
         qreal playerX = player->x();
         qreal playerY = player->y();
         moveAnimation(playerX- frameWidth / 5, playerY - frameHeight /5);
-        qDebug() << "Frame width:" << frameWidth << "Frame height: " << frameHeight;
         QTimer::singleShot(NB_FRAME_CK_MOVE*ANIM_SPEED_CK_MOVE, this, [this]() {
             clawAttackAnimation();
             attackLoop();
@@ -111,33 +111,35 @@ void CrystalKnight::teleportOnPlayer() {
 }
 
 void CrystalKnight::teleport(qreal x, qreal y) {
+    //Either he teleports to a random position either to the given position
     if (x != 0 && y != 0) {
         this->setPos(x, y);
         return;
     }
+    //Call with quint32 to be used in bounded method
     quint32 minX = static_cast<quint32>(zoneTP.left());
     quint32 maxX = static_cast<quint32>(zoneTP.right());
     quint32 minY = static_cast<quint32>(zoneTP.top());
     quint32 maxY = static_cast<quint32>(zoneTP.bottom());
 
-    qreal randX = QRandomGenerator::global()->bounded(minX, maxX + 1); // +1 si tu veux inclure max
+    qreal randX = QRandomGenerator::global()->bounded(minX, maxX + 1);
     qreal randY = QRandomGenerator::global()->bounded(minY, maxY + 1);
     this->setPos(randX, randY);
-
 }
 
 
 void CrystalKnight::lightningAttck(){
+    //Perform lightnings attacks all over the arena
     lightningCount = 0;
     if (!lightningTimer) {
         lightningTimer = new QTimer(this);
         connect(lightningTimer, &QTimer::timeout, this, [this]() {
-            if (lightningCount >= maxLightningCount) {
+            if (lightningCount >= maxLightningCount) { //When reached the limit, continue on another loop
                 lightningTimer->stop();
                 attackLoop();
                 return;
             }
-            Lightning* lightning = new Lightning(zoneAttack,player, gameScene);
+            Lightning* lightning = new Lightning(zoneAttack,player, gameScene); //Create a new lightning every 100ms
             gameScene->addItem(lightning);
             lightningCount++;
         });
@@ -150,7 +152,7 @@ void CrystalKnight::clawAttackAnimation(){
     isAttacking = true;
     if (!clawTimer) {
         clawTimer = new QTimer(this);
-        connect(clawTimer, &QTimer::timeout, this, &CrystalKnight::checkCollisionsClawAttack);
+        connect(clawTimer, &QTimer::timeout, this, &CrystalKnight::checkCollisionsClawAttack); //Check if the claw touched the player
     }
     clawTimer->start(30);
     setAnimation(PATH_CK_ATTACK_RIGHT, NB_FRAME_CK_ATTACK_LR, ANIM_SPEED_CK_ATTACK_LR);
@@ -170,7 +172,7 @@ void CrystalKnight::checkCollisionsClawAttack(){
     int i = 0;
     while(i < n){
         //dynamic_cast<Player*> return a Player if it's a player else nullptr
-        Player* testPlayer = dynamic_cast<Player*>(collisions[i]);
+        Player* testPlayer = dynamic_cast<Player*>(collisions[i]); //Cast the player, nullptr if not a player
         if(testPlayer && isClawAttacking && !clawAttackTouched) {
             player->takeDamage(1, this);
             clawAttackTouched = true;
@@ -180,6 +182,7 @@ void CrystalKnight::checkCollisionsClawAttack(){
 }
 
 void CrystalKnight::tpSound() {
+    //Sound effect for teleportation
     QSoundEffect* tpSFX = new QSoundEffect();
     connect(tpSFX, &QSoundEffect::loadedChanged, tpSFX, &QSoundEffect::play);
     tpSFX->setSource(QUrl::fromLocalFile(PATH_CK_TP_SOUND));
@@ -230,6 +233,7 @@ Lightning::~Lightning() {
 }
 
 void Lightning::thunderSound() {
+    // Sound effect for thunder
     QSoundEffect* thunderSFX = new QSoundEffect();
     connect(thunderSFX, &QSoundEffect::loadedChanged, thunderSFX, &QSoundEffect::play);
     thunderSFX->setSource(QUrl::fromLocalFile(PATH_CK_THUNDER_SOUND));
@@ -243,15 +247,11 @@ void Lightning::thunderSound() {
 }
 
 void Lightning::setRandomPosition() {
-
+    //Set a random position within the defined zone
     quint32 minX = static_cast<quint32>(zone.left());
     quint32 maxX = static_cast<quint32>(zone.right());
     quint32 minY = static_cast<quint32>(zone.top());
     quint32 maxY = static_cast<quint32>(zone.bottom());
-
-
-    qDebug() << "Zone X:" << minX << "to" << maxX;
-    qDebug() << "Zone Y:" << minY << "to" << maxY;
 
     qreal randX = QRandomGenerator::global()->bounded(minX, maxX + 1);
     qreal randY = QRandomGenerator::global()->bounded(minY, maxY + 1);
@@ -286,7 +286,7 @@ QPainterPath Lightning::shape() const {
     qreal scaleFactor = 0.33;
     QRectF fullRect(0, 0, frameWidth * scaleFactor, frameHeight * scaleFactor);
 
-    // Pour frames 6 à 9 inclus, shape = petit rectangle en bas du sprite
+    //For the 6 to 9 frames, we add a hitbox at the bottom of the lightning
     if (currentFrame >= 6 && currentFrame <= 9) {
         qreal hitboxHeight = 150 * scaleFactor;   // hauteur du hitbox (ajustable)
         QRectF hitboxRect(0, fullRect.height() - hitboxHeight, fullRect.width(), hitboxHeight);
@@ -297,31 +297,24 @@ QPainterPath Lightning::shape() const {
 
 void Lightning::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     QGraphicsPixmapItem::paint(painter, option, widget);
-
-    painter->setPen(QPen(Qt::blue, 2, Qt::DashLine));
-    painter->setBrush(QColor(0, 0, 255, 0));
-    painter->drawRect(boundingRect());
-
-    painter->setPen(QPen(Qt::red, 2, Qt::SolidLine));
-    painter->setBrush(QColor(255, 0, 0, 0));
-    painter->drawPath(shape());
 }
 
 
 void Lightning::checkCollisions() {
+    //Check collision with the player
     if(gameScene->isGamePaused()) return;
     QList<QGraphicsItem*> collisions = gameScene->collidingItems(this);
     int n = collisions.length();
     int i = 0;
     while(!hasCollided && i < n){
         //dynamic_cast<Player*> return a Player if it's a player else nullptr
-        Player* testPlayer = dynamic_cast<Player*>(collisions[i]);
+        Player* testPlayer = dynamic_cast<Player*>(collisions[i]); //Cast the player, nullptr if not a player
         if(testPlayer) {
             hasCollided = true;
-            if(player && !player->getPlayerShield()->isActive()){
+            if(player && !player->getPlayerShield()->isActive()){ //If no shield
                 player->takeDamage(1, nullptr);
             }
-            else if(player && player->getPlayerShield()->isActive()){
+            else if(player && player->getPlayerShield()->isActive()){ //if shield
                 player->getPlayerShield()->decreaseHP();
             }
         }

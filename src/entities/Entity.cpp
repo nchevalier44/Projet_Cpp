@@ -9,7 +9,8 @@
 #include "Projectile.h"
 #include "../core/GameScene.h"
 
-Entity::Entity(std::string name, int hp, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent) : hp(hp), name(name), scoreManager(scoreManager), gameScene(scene), QGraphicsObject(parent) {
+Entity::Entity(std::string name, int hp, ScoreManager* scoreManager, GameScene* scene, QGraphicsItem* parent)
+        : hp(hp), name(name), scoreManager(scoreManager), gameScene(scene), QGraphicsObject(parent) {
     this->setZValue(40);
 }
 
@@ -63,9 +64,8 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
     }
     stopAnimation();
 
-    // Update the current sprite sheet path
+    // Update and load the current sprite sheet path
     currentSpriteSheetPath = newSpriteSheet;
-    // Load the new sprite sheet
     this->spriteSheet = new QPixmap(newSpriteSheet);
 
     if(spriteSheet->isNull()) {
@@ -105,10 +105,6 @@ void Entity::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
     // Draw the current frame of the sprite sheet
     QRect sourceRect(currentFrame * frameWidth, 0, frameWidth, frameHeight);
     painter->drawPixmap(0, 0, frameWidth, frameHeight, *spriteSheet, sourceRect.x(), sourceRect.y(), sourceRect.width(), sourceRect.height());
-    painter->drawRect(boundingRect()); // Optional: Draw the bounding rect for debugging
-
-    painter->setPen(QPen(Qt::green, 2, Qt::DashLine));
-    painter->drawPath(shape());
 
     Q_UNUSED(option);
     Q_UNUSED(widget);
@@ -141,13 +137,13 @@ void Entity::takeDamage(int d, Entity* attacker, Projectile* projectile) {
         this->setGraphicsEffect(nullptr);
     });
 
-    if(hp - d <= 0) {
+    if(hp - d <= 0) { //check if the entity is dead
         hp = 0;
         isDead = true;
         deathAnimation();
         deathSound();
         Player* player = dynamic_cast<Player*>(attacker); //return nullptr if attacker is not a player
-        if (player) { //if attacker is a player
+        if (player) { //if attacker is a player, update the score
             scoreManager->getActualScore()->setScore(scoreManager->getActualScore()->getScore() + this->getScore());
         }
     } else {
@@ -160,6 +156,7 @@ void Entity::takeKnockback(int originX, int originY){
     QTimer* knockbackTimer = new QTimer();
     knockbackTimer->setInterval(30);
 
+    //Create a knockback effect that will move the entity away from the origin point
     connect(knockbackTimer, &QTimer::timeout, [this, originX, originY]() {
         qreal posEntityX = this->getCenterPosition().x();
         qreal posEntityY = this->getCenterPosition().y();
@@ -248,7 +245,6 @@ void Entity::moveEntity(qreal posX, qreal posY, bool forceMove){
 }
 
 void Entity::moveEntityCollision(qreal dx, qreal dy){
-
     QList<QGraphicsItem*> collisions;
     int numberCollisions;
     int i;
@@ -284,6 +280,7 @@ void Entity::moveEntityCollision(qreal dx, qreal dy){
 
 
 void Entity::deathSound() {
+    //Play the death sound effect
     if(pathDeathSound.isEmpty()) return;
     QSoundEffect* deathSFX = new QSoundEffect();
     connect(deathSFX, &QSoundEffect::loadedChanged, deathSFX, &QSoundEffect::play);
@@ -298,6 +295,7 @@ void Entity::deathSound() {
 }
 
 void Entity::hitSound(){
+    //Play the hit sound effect
     if(pathHitSound.isEmpty()) return;
     QSoundEffect* hitSFX = new QSoundEffect();
     connect(hitSFX, &QSoundEffect::loadedChanged, hitSFX, &QSoundEffect::play);
