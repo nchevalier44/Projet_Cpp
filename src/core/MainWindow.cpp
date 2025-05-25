@@ -39,17 +39,22 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::restartGame(){
+    scoreManager->addScore(*(scoreManager->getActualScore()));
     resetGame();
     startGame();
 
 }
 
 void MainWindow::goToStartMenu() {
+
+    scoreManager->addScore(*(scoreManager->getActualScore()));
     resetGame();
 
     scoreManager->loadScores();
 
+    startMenuScene->createButtons(this); //Update scoreboardWidget and settingsWidget
     startMenuScene->getAudioPlayer()->play();
+
     mainView->setScene(startMenuScene);
     mainView->setFitView(true);
     mainView->fitInView(mainView->sceneRect(), Qt::KeepAspectRatio);
@@ -85,7 +90,6 @@ void MainWindow::startGame(){
 }
 
 void MainWindow::resetGame(){
-    qDebug() << "reset";
     mainView->deleteDeathScreen();
     mainView->deleteWinScreen();
     mainView->resetTransform();

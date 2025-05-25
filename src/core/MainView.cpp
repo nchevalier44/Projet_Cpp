@@ -373,7 +373,6 @@ void MainView::createContentPauseContainer(){
     connect(buttonSettings, &QPushButton::clicked, settingsWidget, &SettingsWidget::show);
 
     //Score
-    scoreManager->getActualScore()->setTimePlayed(scoreManager->getElapsedTimer()->elapsed() / 1000);
     int score = scoreManager->getActualScore()->getScore();
     int seconds = scoreManager->getActualScore()->getTimePlayed();
     QString timePlayed = QString::number(seconds / 60) + "m" + QString::number(seconds % 60) + "s";
@@ -444,10 +443,6 @@ void MainView::backToMenu() {
     pauseScreen = nullptr;
     contentContainer = nullptr;
     settingsWidget = nullptr;
-    //Save score
-    scoreManager->getActualScore()->setTimePlayed(scoreManager->getElapsedTimer()->elapsed() / 1000);
-    scoreManager->getActualScore()->setDate(QDateTime::currentDateTime().toString("dd/MM/yyyy"));
-    scoreManager->addScore(*(scoreManager->getActualScore()));
     //Go to menu
     mainWindow->goToStartMenu();
 }

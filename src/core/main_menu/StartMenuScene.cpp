@@ -30,6 +30,7 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
 
 //Destructor
 StartMenuScene::~StartMenuScene() {
+    qDebug() << "Delete start menu scene";
     delete background;
     background = nullptr;
     delete settingsProxyWidget;

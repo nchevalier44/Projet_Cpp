@@ -34,10 +34,10 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->character->setScale(0.2);
     this->character->setZValue(40);
 
-    this->character->setHasTreeHeart(true);
-
     this->addItem(character);
     this->character->setMainView(mainView);
+
+    character->setHasTreeHeart(true);
 
     //Load slash animation
     PlayerSlash* slash = new PlayerSlash(this, character, character);
@@ -306,6 +306,8 @@ void GameScene::putGamePaused(){
     for(QLabel* anim : hud->getHPWidget()->getLifeList()){
         anim->movie()->setPaused(true);
     }
+    scoreManager->getActualScore()->setTimePlayed(scoreManager->getElapsedTimer()->elapsed() / 1000);
+    scoreManager->getActualScore()->setDate(QDateTime::currentDateTime().toString("dd/MM/yyyy"));
     mainView->displayPauseMenu();
 }
 
@@ -560,6 +562,8 @@ void GameScene::checkInteractionZone(){
                 }
                 for(int key : activeKeys) {
                     if (key == Qt::Key_F) {
+                        scoreManager->getActualScore()->setTimePlayed(scoreManager->getElapsedTimer()->elapsed() / 1000);
+                        scoreManager->getActualScore()->setDate(QDateTime::currentDateTime().toString("dd/MM/yyyy"));
                         mainView->displayWinScreen();
                     }
                 }

@@ -1,3 +1,4 @@
+#include <QtWidgets>
 #include "ScoreboardWidget.h"
 #include "../MainWindow.h"
 
@@ -21,9 +22,8 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
     title->setAlignment(Qt::AlignCenter);
     title->setFont(titleFont);
 
-    if(scoresContainer) delete scoresContainer; ///Delete the previous score container
-    scoresContainer = new QWidget();
-    QVBoxLayout* scoresLayout = new QVBoxLayout(scoresContainer);
+    scoresContainer = new QWidget(this);
+    QVBoxLayout* scoresLayout = new QVBoxLayout();
 
     //Get scores
     mainWindow->getScoreManager()->loadScores();
@@ -31,10 +31,11 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
     int n = scores.size();
 
     if(n == 0){ // if no scores
-        QLabel* label = new QLabel("No previous scores...", scoresContainer);
+        //it crash if we decomment this (only when we start the first time and we do 'back to menu')
+        /*QLabel* label = new QLabel("No previous scores...");
         label->setFont(font);
         label->setStyleSheet("color: white;");
-        scoresLayout->addWidget(label);
+        scoresLayout->addWidget(label);*/
     } else{ //if scores exist display each scores
         for (int i = n - 1; i >= 0; i--) {
             QString number = QString::number(n - i);
@@ -43,7 +44,7 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
             QString timePlayed = QString::number(seconds / 60) + "m" + QString::number(seconds % 60) + "s";
             QString date = scores[i].getDate();
 
-            QLabel *label = new QLabel(number + " | " + score + " pts - " + timePlayed + " - " + date, scoresContainer);
+            QLabel* label = new QLabel(number + " | " + score + " pts - " + timePlayed + " - " + date);
             label->setFont(font);
             label->setStyleSheet("color: white;");
             scoresLayout->addWidget(label);
@@ -86,6 +87,17 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
 
 }
 
+
+ScoreboardWidget::~ScoreboardWidget(){
+    if(backgroundPixmap){
+        delete backgroundPixmap;
+        backgroundPixmap = nullptr;
+    }
+    if(scoresContainer){
+        delete scoresContainer;
+        scoresContainer = nullptr;
+    }
+}
 
 
 
