@@ -277,9 +277,10 @@ void Lightning::checkCollisions() {
             hasCollided = true;
             if(player && !player->getPlayerShield()->isActive()){
                 player->takeDamage(1, nullptr);
+            }
+            else if(player && player->getPlayerShield()->isActive()){
                 player->getPlayerShield()->decreaseHP();
             }
-
         }
         i++;
     }

@@ -72,7 +72,7 @@
 #define ANIM_SPEED_CK_IDLE 100
 #define PATH_CK_MOVE "../assets/images/crystalKnight/boss_teleport.png"
 #define NB_FRAME_CK_MOVE 16
-#define ANIM_SPEED_CK_MOVE 150
+#define ANIM_SPEED_CK_MOVE 100
 #define PATH_CK_ATTACK_LEFT "../assets/images/crystalKnight/boss_attackLeft.png"
 #define PATH_CK_ATTACK_RIGHT "../assets/images/crystalKnight/boss_attackRight.png"
 #define NB_FRAME_CK_ATTACK_LR 6

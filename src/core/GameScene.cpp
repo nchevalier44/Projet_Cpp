@@ -34,7 +34,6 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->character->setScale(0.2);
     this->character->setZValue(40);
 
-    this->character->setHasTreeHeart(true);
 
     this->addItem(character);
     this->character->setMainView(mainView);
@@ -210,6 +209,23 @@ void GameScene::clearInteractionZones(const QStringList& tags) {
 }
 
 void GameScene::loadOverworld() {
+    if(audioPlayer) {
+        audioPlayer->stop();
+        delete audioPlayer;
+        audioPlayer = nullptr;
+    }
+    audioPlayer = new QMediaPlayer(this);
+    QAudioOutput* audioOutput = new QAudioOutput(this);
+    audioOutput->setVolume(0.4);
+    audioPlayer->setAudioOutput(audioOutput);
+    connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
+        if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
+            audioPlayer->play();
+        }
+    });
+    audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC));
+    audioPlayer->setLoops(QMediaPlayer::Infinite);
+    audioManager->addMusicObject(audioOutput, audioOutput->volume());
 
     try{
         loadMap("../assets/maps/map.json", 3000,3000);
@@ -221,17 +237,9 @@ void GameScene::loadOverworld() {
 }
 
 void GameScene::loadDungeon() {
-    //Add background music
-    /*
-    audioPlayer = new QMediaPlayer(this);
-    QAudioOutput* audioOutput = new QAudioOutput(this);
-    audioOutput->setVolume(0.5);
-    audioPlayer->setAudioOutput(audioOutput);
-    audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC2));
-    audioPlayer->setLoops(QMediaPlayer::Infinite);
-    audioPlayer->play();
-    audioManager->addMusicObject(audioOutput, audioOutput->volume());
-     */
+
+
+
 
     try{
         loadMap("../assets/maps/mapDonjon.json", 2000,2000);
@@ -243,6 +251,28 @@ void GameScene::loadDungeon() {
     character->setPos(990,1350);
 
     if(!character->getHasTreeHeart()){
+        //Load the boss Music
+        if(audioPlayer) {
+            audioPlayer->stop();
+            delete audioPlayer;
+            audioPlayer = nullptr;
+        }
+        audioPlayer = new QMediaPlayer(this);
+        QAudioOutput* audioOutput = new QAudioOutput(this);
+        audioOutput->setVolume(0.4);
+        audioPlayer->setAudioOutput(audioOutput);
+        connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
+            if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
+                audioPlayer->play();
+            }
+        });
+        audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC2));
+        audioPlayer->setLoops(QMediaPlayer::Infinite);
+        audioManager->addMusicObject(audioOutput, audioOutput->volume());
+
+
+
+        //Load the boss
         CrystalKnight* crystalKnight = new CrystalKnight("CrystalKnight", 100,character, scoreManager, this);
         crystalKnight->setPos(1000, 880);
         this->addItem(crystalKnight);
