@@ -17,6 +17,10 @@ Entity::~Entity() {
     if (spriteSheet) {
         delete spriteSheet;
         spriteSheet = nullptr;
+    }
+    if(timer){
+        timer->stop();
+        gameScene->getTimerList().removeAll(timer);
         delete timer;
         timer = nullptr;
     }
@@ -73,7 +77,7 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
     this->frameWidth = this->spriteSheet->width() / frameCount;
     this->frameHeight = this->spriteSheet->height();
     this->animationSpeed = newAnimationSpeed;
-    this->timer = new QTimer(this);
+    this->timer = new QTimer();
     gameScene->getTimerList().append(timer);
 
     connect(this->timer, &QTimer::timeout, this, &Entity::updateAnimation);

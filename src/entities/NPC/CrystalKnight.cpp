@@ -36,7 +36,9 @@ CrystalKnight::CrystalKnight(std::string name, int life, Player* player, ScoreMa
 
 void CrystalKnight::attackLoop(){
     QTimer::singleShot(3000, this, [this]() {
-        if(!isDead) {
+        if(gameScene->isGamePaused()){
+            QTimer::singleShot(3000, this, &CrystalKnight::attackLoop);
+        } else if(!isDead && !player->isEntityDead()) {
             performRandomAction();
         }
     });
@@ -162,6 +164,7 @@ void CrystalKnight::clawAttackAnimation(){
 }
 
 void CrystalKnight::checkCollisionsClawAttack(){
+    if(gameScene->isGamePaused()) return;
     QList<QGraphicsItem*> collisions = gameScene->collidingItems(this);
     int n = collisions.length();
     int i = 0;
@@ -214,6 +217,7 @@ Lightning::Lightning(const QRectF& spawnZone, Player* player,GameScene* scene,QG
     connect(&timer, &QTimer::timeout, this, &Lightning::updateFrame);
     connect(&timer, &QTimer::timeout, this, &Lightning::checkCollisions);
     timer.start(animSpeedMs);
+    gameScene->getTimerList().append(&timer);
 
     QTimer::singleShot(animSpeedMs*6, this, [=](){
         thunderSound();
@@ -222,6 +226,7 @@ Lightning::Lightning(const QRectF& spawnZone, Player* player,GameScene* scene,QG
 
 Lightning::~Lightning() {
     timer.stop();
+    gameScene->getTimerList().removeAll(&timer);
 }
 
 void Lightning::thunderSound() {
@@ -304,6 +309,7 @@ void Lightning::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 
 
 void Lightning::checkCollisions() {
+    if(gameScene->isGamePaused()) return;
     QList<QGraphicsItem*> collisions = gameScene->collidingItems(this);
     int n = collisions.length();
     int i = 0;

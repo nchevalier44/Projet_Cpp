@@ -327,7 +327,11 @@ void GameScene::putGamePaused(){
     isPaused = true;
     //Pause the timers
     for(QTimer* t : timerList){
-        if(t) t->stop();
+        if(t){
+            if(t->isActive()){
+                t->stop();
+            }
+        }
     }
     //Pause the movies
     for(QMovie* m : movieList){
