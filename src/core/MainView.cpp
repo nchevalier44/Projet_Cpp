@@ -35,7 +35,7 @@ void MainView::deleteDeathScreen(){
 }
 
 void MainView::deleteWinScreen(){
-    if(winScreen && winScreen != nullptr) {
+    if(winScreen != nullptr) {
         delete winScreen;
         winScreen = nullptr;
     }
@@ -86,6 +86,9 @@ void MainView::resizeEvent (QResizeEvent* event){
 
     if(deathScreen != nullptr){
         deathScreen->setGeometry(this->rect());
+    }
+    if(winScreen != nullptr){
+        winScreen->setGeometry(this->rect());
     }
 }
 
@@ -179,6 +182,8 @@ void MainView::displayDeathScreen() {
 }
 
 void MainView::displayWinScreen() {
+    deleteWinScreen();
+
     //Add font Jersey10 (pixel art)
     QFont buttonFont(FontManager::fontFamily);
     QFont titleFont(FontManager::fontFamily);
@@ -191,17 +196,17 @@ void MainView::displayWinScreen() {
 
 
 
-    deathScreen = new QWidget(this);
-    deathScreen->setGeometry(this->rect());
-    deathScreen->show();
+    winScreen = new QWidget(this);
+    winScreen->setGeometry(this->rect());
+    winScreen->show();
 
     //Creation of black background
-    QWidget* blackBackground = new QWidget(deathScreen);
-    blackBackground->setStyleSheet("background-color: green;");
-    blackBackground->setGeometry(deathScreen->rect());
-    blackBackground->show();
+    QWidget* greenBackground = new QWidget(winScreen);
+    greenBackground->setStyleSheet("background-color: green;");
+    greenBackground->setGeometry(winScreen->rect());
+    greenBackground->show();
 
-    QWidget* contentContainer = new QWidget(deathScreen);
+    QWidget* contentContainer = new QWidget(winScreen);
 
     //Creation of title and buttons
     QLabel* title = new QLabel("Thank you for playing !", contentContainer);
@@ -251,14 +256,14 @@ void MainView::displayWinScreen() {
     //Creation container widget
     contentContainer->show();
     contentContainer->adjustSize();
-    contentContainer->move((deathScreen->width() - contentContainer->width()) / 2,
-                           (deathScreen->height() - contentContainer->height()) / 2);
+    contentContainer->move((winScreen->width() - contentContainer->width()) / 2,
+                           (winScreen->height() - contentContainer->height()) / 2);
 
 
     //Fade of black background
-    QGraphicsOpacityEffect* fadeBackgroundEffect = new QGraphicsOpacityEffect(blackBackground);
-    blackBackground->setGraphicsEffect(fadeBackgroundEffect);
-    QPropertyAnimation* animationBackground = new QPropertyAnimation(fadeBackgroundEffect, "opacity", blackBackground);
+    QGraphicsOpacityEffect* fadeBackgroundEffect = new QGraphicsOpacityEffect(greenBackground);
+    greenBackground->setGraphicsEffect(fadeBackgroundEffect);
+    QPropertyAnimation* animationBackground = new QPropertyAnimation(fadeBackgroundEffect, "opacity", greenBackground);
     animationBackground->setDuration(500);
     animationBackground->setStartValue(0);
     animationBackground->setEndValue(0.6);

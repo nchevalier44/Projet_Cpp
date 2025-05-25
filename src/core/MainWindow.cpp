@@ -85,7 +85,9 @@ void MainWindow::startGame(){
 }
 
 void MainWindow::resetGame(){
+    qDebug() << "reset";
     mainView->deleteDeathScreen();
+    mainView->deleteWinScreen();
     mainView->resetTransform();
     if(gameScene != nullptr){
         delete gameScene;
