@@ -37,7 +37,6 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->addItem(character);
     this->character->setMainView(mainView);
 
-    character->setHasTreeHeart(true);
 
     //Load slash animation
     PlayerSlash* slash = new PlayerSlash(this, character, character);
