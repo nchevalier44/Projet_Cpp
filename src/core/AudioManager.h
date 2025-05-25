@@ -7,8 +7,8 @@
 
 class AudioManager {
 private:
-    QMap<QAudioOutput*, int> musicObjectMap;
-    QMap<QSoundEffect*, int> SFXObjectMap;
+    QMap<QAudioOutput*, float> musicObjectMap;
+    QMap<QSoundEffect*, float> SFXObjectMap;
 
     int musicVolumePercentage = 100;
     int SFXVolumePercentage = 100;
