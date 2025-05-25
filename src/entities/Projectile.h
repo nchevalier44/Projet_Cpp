@@ -29,6 +29,7 @@ protected:
     bool isBeenDeleting = false;
     Entity* proprietary = nullptr;
     QString pathMissileMoveSound;
+    QString pathMissileBlowSound;
     QSoundEffect* missileMoveSFX = nullptr;
 
 
@@ -63,6 +64,7 @@ public :
     virtual void setEndAnimation(QString spriteSheet, int frameCount, int animationSpeed){}
 
     void missileMoveSound();
+    void missileBlowSound();
 
 public slots:
     void moveProjectile();

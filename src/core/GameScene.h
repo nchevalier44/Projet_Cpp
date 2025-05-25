@@ -100,6 +100,8 @@ public :
     void deletePlayer();
     void setPlayerDead(bool b) { isPlayerDead = b; }
 
+    void powerUpSound();
+
     //Mouse interactions
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 

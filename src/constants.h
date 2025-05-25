@@ -84,6 +84,11 @@
 #define NB_FRAME_CK_DEATH 10
 #define ANIM_SPEED_CK_DEATH 150
 
+#define PATH_CK_DEATH_SOUND "../assets/sounds_effects/bossDie.wav"
+#define PATH_CK_HIT_SOUND "../assets/sounds_effects/bossHit.wav"
+#define PATH_CK_TP_SOUND "../assets/sounds_effects/bossTp.wav"
+#define PATH_CK_THUNDER_SOUND "../assets/sounds_effects/bossLightning.wav"
+
 #define PATH_MISSILE_SPELL_GROW_ANIMATION "../assets/images/characters/Missile_spellGrow.gif"
 
 //Character
@@ -102,6 +107,8 @@
 #define PATH_PLAYER_DEATH_SOUND "../assets/sounds_effects/playerDie.wav"
 #define PATH_PLAYER_HIT_SOUND "../assets/sounds_effects/hitPlayer.wav"
 #define PATH_PLAYER_PROJECTILE_MOVE_SOUND "../assets/sounds_effects/playerMissile.wav"
+#define PATH_PLAYER_PROJECTILE_BLOW_SOUND "../assets/sounds_effects/playerMissileBlow.wav"
+#define PATH_PLAYER_POWER_UP_SOUND "../assets/sounds_effects/playerPowerUp.wav"
 
 
 

@@ -9,6 +9,7 @@ PlayerProjectile::PlayerProjectile(int damage, int speed, int distanceMax, QStri
     throwProjectile();
     this->setTransform(QTransform::fromScale(2, 2));
     pathMissileMoveSound = PATH_PLAYER_PROJECTILE_MOVE_SOUND;
+    pathMissileBlowSound = PATH_PLAYER_PROJECTILE_BLOW_SOUND;
 }
 
 void PlayerProjectile::throwProjectile() {
