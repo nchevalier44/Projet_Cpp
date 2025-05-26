@@ -60,22 +60,13 @@
 
 ### Build Instructions
 
-#### Option 1: Using Qt Creator (Recommended)
+#### Option 1: Command Line Build
+
 
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/nchevalier44/Projet_Cpp.git
-   cd kurai
-   ```
-
-
-
-#### Option 2: Command Line Build
-
-1. **Clone and navigate:**
-   ```bash
-   git clone https://github.com/your-username/kurai.git
-   cd kurai
+   cd Projet_Cpp
    ```
 
 #### Troubleshooting
