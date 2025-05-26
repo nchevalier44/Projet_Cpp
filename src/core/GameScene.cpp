@@ -336,6 +336,7 @@ void GameScene::keyPressEvent(QKeyEvent* event){
             break;
         case Qt::Key_X :
             hud->getSpellWidget()->changeSelectedSpell(2);
+            break;
         case Qt::Key_Escape:
             putGamePaused();
             break;

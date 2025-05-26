@@ -14,7 +14,7 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     textFont.setFamily(FontManager::fontFamily);
     titleFont.setFamily(FontManager::fontFamily);
     QString percentageText;
-    
+
     //Title
     title = new QLabel("Settings", this);
     title->setStyleSheet("color: white;");
@@ -42,7 +42,7 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     volumeMusicLayout->addWidget(volumeMusicValueLabel);
 
 
-    
+
     //Volume SFX slider widget
     QWidget* volumeSFXWidget = new QWidget(this);
     volumeSFXSlider = new VolumeSlider(Qt::Horizontal, volumeSFXWidget);
@@ -107,7 +107,7 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
         for (int h : LIST_WINDOW_HEIGHT ){
             int newWidth = mainWindowBackgroundRatio * h;
             QString windowSize = QString::number(newWidth) + "x" + QString::number(h);
-            
+
             if(text == windowSize){
                 QResizeEvent re(QSize(newWidth, h), QSize(mainWindow->width(), mainWindow->height()));
                 mainWindow->setFixedSize(newWidth, h);
