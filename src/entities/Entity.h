@@ -73,7 +73,7 @@ public:
 
 
 
-        //Method to set the animation
+    //Method to set the animation
     void setAnimation(QString spriteSheet, int frameCount, int animationSpeed);
 
     //Method to call setAnimation with the right parameters
