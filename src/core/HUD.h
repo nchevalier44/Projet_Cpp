@@ -21,12 +21,18 @@ private:
     int heartHeight;
 
 public :
+    //Constructor
     HPWidget(int maxLife, QPointF windowSize, QWidget* parent = nullptr);
+
+    //Getter
     QVector<QLabel*>& getLifeList(){ return life; }
+    int getMaxLife() const { return maxLife; }
+
+    //Setter
     void setLife(int life);
+
     void addHP();
 
-    int getMaxLife() const { return maxLife; }
 
 };
 
@@ -42,23 +48,32 @@ private :
     bool isShieldOnCD = false;
 
 public :
+    //Constructor
     SpellWidget(int maxSpell,QPointF windowSize, QWidget* parent = nullptr);
-    void setCurrentMissile(int newCurrentMissile){currentMissile = newCurrentMissile;};
+
+    //Getter
     int getCurrentMissile() const { return currentMissile; }
     bool getIsShieldOnCd(){return isShieldOnCD;}
     QVector<QLabel*> getSpell() const { return spell; }
+    QVector<bool> getSelectedSpell() const { return selectedSpell; }
+
+    //Setter
+    void setCurrentMissile(int newCurrentMissile){currentMissile = newCurrentMissile;};
+
     void shootedMissile();
     void shieldUsed();
     QLabel* coolDownAnimation(int spellSelected, double duration);
     void changeSelectedSpell(int spellIndex);
-    QVector<bool> getSelectedSpell() const { return selectedSpell; }
 };
 
 class HUD : public QWidget {
 Q_OBJECT
 
 public :
+    //Constructor
     HUD(int maxHP, QPointF windowSize, QWidget* parent = nullptr);
+
+    //Getters
     HPWidget* getHPWidget() const { return hpWidget; };
     SpellWidget* getSpellWidget() const { return spellWidget; };
 

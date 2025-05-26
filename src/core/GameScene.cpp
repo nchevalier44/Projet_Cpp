@@ -686,11 +686,11 @@ void GameScene::moveNPC(){
     //We move each entity in listNPC
     for(Entity* entity : listNPC){
         if(dynamic_cast<CrystalKnight*>(entity)) return; //Do not move the CrystalKnight, he teleports
-        float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
         if(entity){
             float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
             if(distance < mainView->mapToScene(mainView->viewport()->rect()).boundingRect().width() * 0.5){
                 entity->moveEntity(posCharacterX, posCharacterY);
+                entity->updateFlipFromPlayerPosition(character->getCenterPosition());
             } else{
                 entity->idleAnimation();
             }
@@ -786,7 +786,6 @@ GameScene::~GameScene(){
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if(isPlayerDead || isPaused) return;
     QPointF clickPos = event->scenePos();
-    qDebug() << "Click position: " << clickPos;
 
     //Check if the player is on the missile spell
     if (hud->getSpellWidget()->getSelectedSpell()[0] && character->getHasMissile()) {

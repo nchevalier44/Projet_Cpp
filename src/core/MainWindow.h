@@ -31,6 +31,7 @@ public:
     void resizeEvent(QResizeEvent* event);
     QSize checkRatio(QSize size, bool check=false);
 
+    //Getters
     AudioManager* getAudioManager() const { return audioManager; }
     float getBackgroundRatio() const { return backgroundRatio; }
     ScoreManager* getScoreManager() const { return scoreManager; }
@@ -38,10 +39,12 @@ public:
     MainView* getMainView() { return mainView; }
     HUD* getHUD() { return hud; }
 
+    //Setter
     void setBackgroundRatio(float newRatio) { backgroundRatio = newRatio; }
 
     void resetGame();
 
+    //Constructor and destructor
     MainWindow(QWidget* parent = nullptr);
     virtual ~MainWindow();
 

@@ -77,6 +77,8 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     });
 
 
+
+
     //Window size combobox widget
     QWidget* windowSizeWidget = new QWidget(this);
     windowSizeComboBox = new WindowSizeComboBox(windowSizeWidget);
@@ -136,12 +138,14 @@ SettingsWidget::SettingsWidget(MainWindow* mainWindow, QWidget* parent) : QWidge
     containerLayout->addWidget(windowSizeWidget);
     containerLayout->addLayout(closeButtonLayout);
 
+    //Set the right size for all items here
     resizeItems(width(), height());
     volumeMusicSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     volumeSFXSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     volumeSFXLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     volumeMusicLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
+    //Set attribute so that buttons located below cannot be clicked on
     this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
 }
 
@@ -175,6 +179,8 @@ void SettingsWidget::resizeEvent(QResizeEvent* event) {
     resizeItems(newSize.width(), newSize.width() / ratioSettingsPixmap); //Resize other items in the widget
 }
 
+
+//Function that resize all items in settings widget in function of the width and height given
 void SettingsWidget::resizeItems(int width, int height){
     windowSizeComboBox->setFixedWidth(width * 0.40);
     volumeMusicSlider->setFixedWidth(width * 0.425);

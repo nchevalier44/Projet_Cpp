@@ -13,20 +13,27 @@
 #include <QResizeEvent>
 #include "MainWindow.h"
 
+//Constructor
 MainView::MainView(MainWindow* mainWindow, ScoreManager* scoreManager, QWidget* parent) : mainWindow(mainWindow), scoreManager(scoreManager), QGraphicsView(parent) {
+    //Hide scrollbar (if there are)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+
+    //Initialize lastSize with -1 at the start
     lastSize.setWidth(-1);
     lastSize.setHeight(-1);
+
+    //Fit the view at the scene rect at the start (with a little delay to let startMenuScene be created)
     QTimer::singleShot(50, this, [this]() {
         this->fitInView(sceneRect(), Qt::KeepAspectRatio);
     });
 }
 
-MainView::~MainView() {
-}
+//Destructor
+MainView::~MainView() {}
 
+//Delete death screen and set pointer to nullptr
 void MainView::deleteDeathScreen(){
     if(deathScreen != nullptr){
         delete deathScreen;
@@ -34,6 +41,7 @@ void MainView::deleteDeathScreen(){
     }
 }
 
+//Delete win screen and set pointer to nullptr
 void MainView::deleteWinScreen(){
     if(winScreen != nullptr) {
         delete winScreen;
@@ -41,15 +49,20 @@ void MainView::deleteWinScreen(){
     }
 }
 
+//Redefinition of resizeEvent for the view keep the right size
 void MainView::resizeEvent (QResizeEvent* event){
+
+    //Don't update the view if the size change less that 5 pixels
     int deltaW = std::abs(lastSize.width() - event->size().width());
     int deltaH = std::abs(lastSize.height() - event->size().height());
     if (deltaW < 5 && deltaH < 5) return;
 
+    //Call the initial resizeEvent
     QGraphicsView::resizeEvent(event);
 
-    //We want to have the dimension of the view equal to the scene only in the menu but no in game
     if(event->oldSize() != event->size()){
+
+        //We want to have the dimension of the view equal to the scene only in the menu but no in game
         if(fitView) {
             this->fitInView(sceneRect(), Qt::KeepAspectRatio);
         } else{
@@ -67,11 +80,12 @@ void MainView::resizeEvent (QResizeEvent* event){
                 if(player) this->centerOn(player->sceneBoundingRect().center());
             });
 
-            //Update size of pauseScreen elements
+            //Update size and position of pauseScreen elements
             if(pauseScreen){
                 updatePauseScreenSize(event->size());
             }
 
+            //Update size and position of HUD elements
             HUD* hud = mainWindow->getHUD();
             if(hud){
                 QPointF windowSize(this->width(), this->height());
@@ -81,9 +95,12 @@ void MainView::resizeEvent (QResizeEvent* event){
                 }
             }
         }
+
+        //keep in memory the lastSize
         lastSize = event->size();
     }
 
+    //Update geometry of death screen or win screen, if exist
     if(deathScreen != nullptr){
         deathScreen->setGeometry(this->rect());
     }
@@ -91,6 +108,7 @@ void MainView::resizeEvent (QResizeEvent* event){
         winScreen->setGeometry(this->rect());
     }
 }
+
 
 void MainView::displayDeathScreen() {
 
@@ -102,8 +120,7 @@ void MainView::displayDeathScreen() {
     titleFont.setPixelSize(this->window()->height()*0.2);
     scoreFont.setPixelSize(this->window()->height()*0.05);
 
-
-
+    //Create death screen
     deathScreen = new QWidget(this);
     deathScreen->setGeometry(this->rect());
     deathScreen->show();
@@ -114,6 +131,7 @@ void MainView::displayDeathScreen() {
     blackBackground->setGeometry(deathScreen->rect());
     blackBackground->show();
 
+    //Create content container
     QWidget* contentContainer = new QWidget(deathScreen);
 
     //Creation of title and buttons
@@ -125,11 +143,12 @@ void MainView::displayDeathScreen() {
 
     QPushButton* buttonRestart = new QPushButton("Restart the game", contentContainer);
     buttonRestart->setFont(buttonFont);
-    QObject::connect(buttonRestart, &QPushButton::clicked, this, &MainView::startGameRequested);
+    connect(buttonRestart, &QPushButton::clicked, this, &MainView::startGameRequested);
     QPushButton* buttonBackToMenu = new QPushButton("Back to the menu", contentContainer);
     buttonBackToMenu->setFont(buttonFont);
-    QObject::connect(buttonBackToMenu, &QPushButton::clicked, this, &MainView::goToStartMenuRequested);
+    connect(buttonBackToMenu, &QPushButton::clicked, this, &MainView::goToStartMenuRequested);
 
+    //Scores
     int score = scoreManager->getActualScore()->getScore();
     int seconds = scoreManager->getActualScore()->getTimePlayed();
     QString timePlayed = QString::number(seconds / 60) + "m" + QString::number(seconds % 60) + "s";
@@ -182,6 +201,7 @@ void MainView::displayDeathScreen() {
 }
 
 void MainView::displayWinScreen() {
+    //Delete win screen if already exist (to not have 2 win screen created at the same time)
     deleteWinScreen();
 
     //Add font Jersey10 (pixel art)
@@ -195,7 +215,7 @@ void MainView::displayWinScreen() {
     scoreFont.setPixelSize(this->window()->height()*0.05);
 
 
-
+    //Create win screen widget
     winScreen = new QWidget(this);
     winScreen->setGeometry(this->rect());
     winScreen->show();
@@ -206,9 +226,10 @@ void MainView::displayWinScreen() {
     greenBackground->setGeometry(winScreen->rect());
     greenBackground->show();
 
+    //Create content container
     QWidget* contentContainer = new QWidget(winScreen);
 
-    //Creation of title and buttons
+    //Creation of titles and buttons
     QLabel* title = new QLabel("Thank you for playing !", contentContainer);
     title->setStyleSheet("color: white;");
     title->setAlignment(Qt::AlignCenter);
@@ -223,11 +244,12 @@ void MainView::displayWinScreen() {
 
     QPushButton* buttonRestart = new QPushButton("Restart the game", contentContainer);
     buttonRestart->setFont(buttonFont);
-    QObject::connect(buttonRestart, &QPushButton::clicked, this, &MainView::startGameRequested);
+    connect(buttonRestart, &QPushButton::clicked, this, &MainView::startGameRequested);
     QPushButton* buttonBackToMenu = new QPushButton("Back to the menu", contentContainer);
     buttonBackToMenu->setFont(buttonFont);
-    QObject::connect(buttonBackToMenu, &QPushButton::clicked, this, &MainView::goToStartMenuRequested);
+    connect(buttonBackToMenu, &QPushButton::clicked, this, &MainView::goToStartMenuRequested);
 
+    //Scores
     int score = scoreManager->getActualScore()->getScore();
     int seconds = scoreManager->getActualScore()->getTimePlayed();
     QString timePlayed = QString::number(seconds / 60) + "m" + QString::number(seconds % 60) + "s";
@@ -281,11 +303,13 @@ void MainView::displayWinScreen() {
 }
 
 void MainView::displayPauseMenu(){
-
+    //Delete pause screen if already exist (it's for when we update it)
     if(pauseScreen){
         delete pauseScreen;
         pauseScreen = nullptr;
     }
+
+    //Create pause screen widget
     pauseScreen = new QWidget(this);
     pauseScreen->setGeometry(this->rect());
     pauseScreen->show();
@@ -303,6 +327,8 @@ void MainView::displayPauseMenu(){
     settingsWidget->show();
     settingsWidget->move((pauseScreen->width() - settingsWidget->width()) / 2, (pauseScreen->height() - settingsWidget->height()) / 2);
     settingsWidget->hide();
+
+    //Change the size of the window when we change the text
     connect(settingsWidget->getWindowSizeComboBox(), &QComboBox::currentTextChanged, this, [=](const QString &text){
         for (int h : LIST_WINDOW_HEIGHT ){
             int newWidth = mainWindow->getBackgroundRatio() * h;
@@ -317,15 +343,17 @@ void MainView::displayPauseMenu(){
         }
     });
 
+    //Shadow effect
     QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(settingsWidget);
     shadowEffect->setOffset(0, 0);
     shadowEffect->setBlurRadius(50);
     shadowEffect->setColor(Qt::black);
     settingsWidget->setGraphicsEffect(shadowEffect);
 
+    //Create all the contents
     createContentPauseContainer();
 
-    //Fade of black background
+    //Fade animation of black background
     QGraphicsOpacityEffect* fadeBackgroundEffect = new QGraphicsOpacityEffect(blackBackground);
     blackBackground->setGraphicsEffect(fadeBackgroundEffect);
     QPropertyAnimation* animationBackground = new QPropertyAnimation(fadeBackgroundEffect, "opacity", blackBackground);
@@ -335,8 +363,9 @@ void MainView::displayPauseMenu(){
     animationBackground->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void MainView::createContentPauseContainer(){
 
+void MainView::createContentPauseContainer(){
+    //Delete the content container if already exist (it's for when we update it)
     if(contentContainer){
         delete contentContainer;
         contentContainer = nullptr;
@@ -368,6 +397,7 @@ void MainView::createContentPauseContainer(){
     buttonSettings->setFont(buttonFont);
     buttonBackToGame->setFont(buttonFont);
 
+    //Buttons actions
     connect(buttonBackToMenu, &QPushButton::clicked, this, &MainView::backToMenu);
     connect(buttonBackToGame, &QPushButton::clicked, this, &MainView::stopGamePaused);
     connect(buttonSettings, &QPushButton::clicked, settingsWidget, &SettingsWidget::show);
@@ -407,6 +437,7 @@ void MainView::createContentPauseContainer(){
     buttonBackToGame->setFixedSize(buttonBackToGame->size().width() * 1.15, buttonBackToGame->size().height() * 2);
     buttonSettings->setFixedSize(buttonSettings->size().width() * 1.15, buttonSettings->size().height() * 2);
     containerLayout->activate();
+    //Size and postion of contentContainer
     contentContainer->adjustSize();
     contentContainer->move((pauseScreen->width() - contentContainer->width()) / 2, (pauseScreen->height() - contentContainer->height()) / 2);
 
@@ -422,6 +453,7 @@ void MainView::createContentPauseContainer(){
 }
 
 void MainView::updatePauseScreenSize(QSize size){
+    //Update pauseScreen size and its elements
     pauseScreen->resize(size);
     settingsWidget->setFixedSize(QSize(this->width() * 0.6, 1)); //1 because the resizeEvent keep the ratio and only work with the width
     settingsWidget->move((pauseScreen->width() - settingsWidget->width()) / 2, (pauseScreen->height() - settingsWidget->height()) / 2);
@@ -431,18 +463,23 @@ void MainView::updatePauseScreenSize(QSize size){
 }
 
 void MainView::stopGamePaused(){
+    //Delete pause screen and the elements in it
     delete pauseScreen;
     pauseScreen = nullptr;
     contentContainer = nullptr;
     settingsWidget = nullptr;
+
+    //Active the timer and movies that are stopped
     mainWindow->getGameSene()->reverseGamePaused();
 }
 
 void MainView::backToMenu() {
+    //Delete pause screen and the elements in it
     delete pauseScreen;
     pauseScreen = nullptr;
     contentContainer = nullptr;
     settingsWidget = nullptr;
+
     //Go to menu
     mainWindow->goToStartMenu();
 }

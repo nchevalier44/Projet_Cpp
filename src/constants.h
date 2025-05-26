@@ -19,7 +19,7 @@
 /////////////MUSIC & SOUND EFFECT/////////////////
 //Main menu music
 #define PATH_MAIN_MENU_MUSIC "../assets/musics/menu_music.mp3"
-#define PATH_MAIN_MENU_BUTTON_SOUND "../assets/sounds_effects/button.wav"
+#define PATH_MAIN_MENU_BUTTON_SOUND "../assets/sounds_effects/blipSelect.wav"
 
 //Game music
 #define PATH_GAME_MUSIC "../assets/musics/game_music.mp3"

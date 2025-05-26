@@ -11,6 +11,7 @@ class MainWindow;
 class MainView : public QGraphicsView {
     Q_OBJECT
     public:
+        //Constructor and Destructor
         MainView(MainWindow* mainWindow, ScoreManager* scoreManager, QWidget* parent = nullptr);
         virtual ~MainView();
 
@@ -20,12 +21,16 @@ class MainView : public QGraphicsView {
         void updatePauseScreenSize(QSize size);
         void createContentPauseContainer();
 
+        //Delete
         void deleteDeathScreen();
         void deleteWinScreen();
+
+        //In public to be able to call it from Main Window resizeEvent
         void resizeEvent (QResizeEvent* event) override;
 
 
 protected:
+        //Stop the wheel event for avoid being able to scroll on the view
         void wheelEvent(QWheelEvent* event) override { event->ignore(); }
 
     private:
@@ -41,13 +46,13 @@ protected:
         QWidget* contentContainer = nullptr;
 
         QSize lastSize;
+
     public slots:
         void displayDeathScreen();
         void displayWinScreen();
         void displayPauseMenu();
         void stopGamePaused();
         void backToMenu();
-
 
 
 signals:

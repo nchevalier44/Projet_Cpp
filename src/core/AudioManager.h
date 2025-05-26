@@ -7,6 +7,7 @@
 
 class AudioManager {
 private:
+    //list which contains all QSoundEffect and QAudioOutput
     QMap<QAudioOutput*, float> musicObjectMap;
     QMap<QSoundEffect*, float> SFXObjectMap;
 

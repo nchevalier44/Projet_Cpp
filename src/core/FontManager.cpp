@@ -3,6 +3,7 @@
 #include <QFontDatabase>
 #include <QDebug>
 
+//Set the static variable
 QString FontManager::fontFamily;
 bool FontManager::isLoaded = false;
 

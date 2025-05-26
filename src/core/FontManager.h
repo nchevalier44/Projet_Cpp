@@ -4,6 +4,7 @@
 #include <QString>
 #include <QFont>
 
+//Static variable to access it everywhere
 class FontManager {
 public:
     static void loadFonts();
