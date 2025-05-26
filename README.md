@@ -11,6 +11,7 @@
 - [How to Play](#how-to-play)
     - [Controls](#controls)
     - [Gameplay](#gameplay)
+    - [Spoilers](#spoilers)
 - [Project Structure](#project-structure)
 - [Technical Details](#technical-details)
     - [Dependencies](#dependencies)
@@ -68,6 +69,31 @@
    git clone https://github.com/nchevalier44/Projet_Cpp.git
    cd Projet_Cpp
    ```
+2. **Install dependencies :**
+    ```bash 
+    # Update package list
+    sudo apt update
+
+    # Install Qt development packages and cmake
+    sudo apt install qt6-base-dev qt6-multimedia-dev qt6-tools-dev
+    sudo apt install build-essential cmake pkg-config
+    ```
+3. **Compile the project:**
+    ```bash
+    #Create a build directory
+    mkdir build && cd build
+
+    # Configure the project with CMake
+    cmake ..
+
+    # Compile the project
+    make -j$(nproc)
+    ```
+4. **Run the game:**
+    ```bash
+    # Run the executable
+    ./Projet_Cpp
+    ```
 
 #### Troubleshooting
 
@@ -79,18 +105,20 @@
 
 ### Controls
 
-| Action        | Key        |
-|---------------|------------|
-| Move Up       | Z / ↑      |
-| Move Down     | S / ↓      |
-| Move Left     | Q / ←      |
-| Move Right    | D / →      |
-| Attack        | Left Click |
-| Interact      | F          |
-| Pause Menu    | Escape     |
-| Slash attack* | W          |
-| Shield*       | X          |
-| Missile*      | A |
+| Action               | Key        |
+|----------------------|------------|
+| Move Up              | Z / ↑      |
+| Move Down            | S / ↓      |
+| Move Left            | Q / ←      |
+| Move Right           | D / →      |
+| Use Spell            | Left Click |
+| Triple Missile*      | Right Click |
+| Interact             | F          |
+| Pause Menu           | Escape     |
+| Select Slash attack* | W          |
+| Select Shield*       | X          |
+| Select Missile*      | A |
+
 *Once unlocked in the game
 ### Gameplay
 
@@ -105,6 +133,9 @@
 
 5. **Progression**: Defeat enemies and explore to increase your score and unlock new areas.
 
+### Spoilers
+**Here is how to finish the game :**
+The player is supposed to get every spell on the map, then enter the dungeon, defeat the boss and find the Sacred Tree to replace its heart. 
 ## Project Structure
 
 ```
@@ -312,11 +343,12 @@ The game follows a component-based architecture with clear separation of concern
 - Some assets by Cainos [itch.io](https://cainos.itch.io/)
 - Musics tracks from [M. J. Hood Music](https://www.youtube.com/@m.j.hoodmusic8789)
 - Bat sprites from [MonoPixelArt](https://monopixelart.itch.io/)
-- 
+
 ### Third-Party Resources
 - Qt Framework for application development
 - Tiled for map editing capabilities
 - Aseprite for sprite creation
+- Chiptone for sound effects generation [link](https://sfbgames.itch.io/chiptone)
 
 ### Special Thanks
 - Chacallade for all the tips : [Chalacade](https://www.youtube.com/@Challacade)
@@ -327,5 +359,5 @@ The game follows a component-based architecture with clear separation of concern
 - **Maxime You** - *Graphics, Animations and developper* - [GitHub Profile](https://github.com/Maximey13)
 
 
-*Project developed as part of ISEN Yncrea Ouest - Nantes*
+*Project developed during our IT engineering degree at [ISEN Yncrea Ouest - Nantes](https://www.isen-nantes.fr/)*
 
