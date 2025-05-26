@@ -69,7 +69,7 @@ void Entity::setAnimation(QString newSpriteSheet, int newFrameCount, int newAnim
     this->spriteSheet = new QPixmap(newSpriteSheet);
 
     if(spriteSheet->isNull()) {
-        qDebug() << "Error: Could not load sprite sheet " << newSpriteSheet;
+        qWarning() << "Error: Could not load sprite sheet " << newSpriteSheet;
         return;
     }
     this->currentFrame = 0;
