@@ -6,12 +6,15 @@
 #include "GameScene.h"
 #include "MainWindow.h"
 
+//Constructor
 GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* scoreManager, QObject* parent) : QGraphicsScene(parent), audioManager(audioManager), scoreManager(scoreManager), mainView(view){
     //Add background music
     audioPlayer = new QMediaPlayer(this);
     QAudioOutput* audioOutput = new QAudioOutput(this);
     audioOutput->setVolume(0.35);
     audioPlayer->setAudioOutput(audioOutput);
+
+    //Play the music when it's loaded
     connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
         if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
             audioPlayer->play();
@@ -21,15 +24,11 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     audioPlayer->setLoops(QMediaPlayer::Infinite);
     audioManager->addMusicObject(audioOutput, audioOutput->volume());
 
-    //Map
-
 
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
 
 
-
     //Setting up the player's character
-    //TODO Change player hp when test are ok
     this->character = new Player("Character", 3, scoreManager, this);
     this->character->setPos(1480, 2730);
     this->character->setSpeed(6);
@@ -47,7 +46,10 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     PlayerShield* shield = new PlayerShield(this, character, character);
     this->character->setPlayerShield(shield);
 
+    //Load map and ennemies
     loadOverworld();
+
+
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer();
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
@@ -58,6 +60,7 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
 
 ///////////MAPS METHODS/////////////////////
 void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
+    //Delete map if already exist
     if(mapItem != nullptr){
         delete mapItem;
         mapItem = nullptr;
@@ -91,6 +94,7 @@ void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
     QPixmap mapPixmap(backgroundWidth, backgroundHeight);
     QPainter painter(&mapPixmap);
 
+    //For each layer, print images on the pixmap
     QJsonArray layers = mapObject["layers"].toArray();
     for(QJsonValue layerValue : layers) {
         QJsonObject layer = layerValue.toObject();
@@ -99,7 +103,7 @@ void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
             QString imageName = layer["image"].toString();
             QPixmap image("../assets/maps/" + imageName);
             if (image.isNull()) {
-                qDebug() << "Image not found:" << imageName;
+                qWarning() << "Image not found:" << imageName;
                 continue;
             }
 
@@ -110,7 +114,7 @@ void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
                 item->setOpacity(layer["opacity"].toDouble());
                 item->setPos(layer["x"].toDouble(), layer["y"].toDouble());
                 this->addItem(item);
-                continue;  // passe au prochain layer sans dessiner ici
+                continue;  // Go to next layer without draw
             }
 
             painter.setOpacity(layer["opacity"].toDouble());
@@ -141,6 +145,7 @@ void GameScene::loadMap(QString mapPath, int mapWidth, int mapHeight){
     file.close();
 }
 
+//Add an interaction zone
 void GameScene::addInteractionZone(QString name, QJsonObject layer){
     QJsonArray objects = layer["objects"].toArray();
 
@@ -167,18 +172,16 @@ void GameScene::addInteractionZone(QString name, QJsonObject layer){
                 QJsonObject point = pointValue.toObject();
                 qreal px = point["x"].toDouble();
                 qreal py = point["y"].toDouble();
-                polygon << QPointF(x + px, y + py); // coordonnées relatives à (x,y)
+                polygon << QPointF(x + px, y + py);
             }
 
             QGraphicsPolygonItem *polyItem = new QGraphicsPolygonItem(polygon, mapItem);
-            //polyItem->setBrush(Qt::red);
             polyItem->setPen(Qt::NoPen);
             polyItem->setData(0, name);
             polyItem->setZValue(100);
             this->addItem(polyItem);
         } else {
             QGraphicsRectItem *rect = new QGraphicsRectItem(x, y, width, height, mapItem);
-            //rect->setBrush(Qt::green);
             rect->setPen(Qt::NoPen);
             rect->setData(0,name);
             rect->setZValue(100);
@@ -187,6 +190,7 @@ void GameScene::addInteractionZone(QString name, QJsonObject layer){
     }
 }
 
+//Clear all interaction zones
 void GameScene::clearInteractionZones(const QStringList& tags) {
     for (QGraphicsItem* item : this->items()) {
         QString tag = item->data(0).toString();
@@ -197,16 +201,22 @@ void GameScene::clearInteractionZones(const QStringList& tags) {
     }
 }
 
+//Load the overworld map and ennemies
 void GameScene::loadOverworld() {
+    //Delete audioPlayer if exist
     if(audioPlayer) {
         audioPlayer->stop();
         delete audioPlayer;
         audioPlayer = nullptr;
     }
+
+    //Create an audio player with another music
     audioPlayer = new QMediaPlayer(this);
     QAudioOutput* audioOutput = new QAudioOutput(this);
     audioOutput->setVolume(0.4);
     audioPlayer->setAudioOutput(audioOutput);
+
+    //Play the music when it's loaded
     connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
         if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
             audioPlayer->play();
@@ -234,25 +244,24 @@ void GameScene::loadOverworld() {
             {572,1630}, {836,2111}, {1096,1988}, {249,2641}, {280,2815}, {477,2720}
     };
 
+    //For each ennemies add it in the map
     for (int i = 0; i < enemyPositions.size(); ++i) {
         QPoint pos = enemyPositions[i];
         if (i % 2 == 0) {
             Goblin* goblin = new Goblin("Goblin", GOBLIN_HP, scoreManager, this);
             goblin->setPos(pos);
-            goblin->updateFlipFromPlayerPosition(character->getCenterPosition());
             this->addItem(goblin);
             listNPC.append(goblin);
         } else {
             Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
             bat->setPos(pos);
-            bat->updateFlipFromPlayerPosition(character->getCenterPosition());
             this->addItem(bat);
             listNPC.append(bat);
         }
     }
-    qDebug("Ennemies loaded");
 }
 
+//Load the dungeon map and the boss
 void GameScene::loadDungeon() {
     try{ //Loading the map
         loadMap("../assets/maps/mapDonjon.json", 2000,2000);
@@ -261,19 +270,27 @@ void GameScene::loadDungeon() {
     } catch(std::exception e){
         qCritical() << "Error when loading the map : " << e.what();
     }
+
+    //teleport player in the dungeon
     character->setPos(990,1350);
 
+    //If he has tree heart, he already defeated the boss
     if(!character->getHasTreeHeart()){
-        //Load the boss Music
+
+        //Delete audioPlayer if exist
         if(audioPlayer) {
             audioPlayer->stop();
             delete audioPlayer;
             audioPlayer = nullptr;
         }
+
+        //Create an audio player with another music
         audioPlayer = new QMediaPlayer(this);
         QAudioOutput* audioOutput = new QAudioOutput(this);
         audioOutput->setVolume(0.2);
         audioPlayer->setAudioOutput(audioOutput);
+
+        //Play the music when it's loaded
         connect(audioPlayer, &QMediaPlayer::mediaStatusChanged, audioPlayer, [=]() {
             if (audioPlayer->mediaStatus() == QMediaPlayer::LoadedMedia) {
                 audioPlayer->play();
@@ -282,7 +299,6 @@ void GameScene::loadDungeon() {
         audioPlayer->setSource(QUrl::fromLocalFile(PATH_GAME_MUSIC2));
         audioPlayer->setLoops(QMediaPlayer::Infinite);
         audioManager->addMusicObject(audioOutput, audioOutput->volume());
-
 
 
         //Load the boss
@@ -295,6 +311,8 @@ void GameScene::loadDungeon() {
 
 
 }
+
+
 //Mouvement functions
 //Adapt the animation according to the direction
 void GameScene::keyPressEvent(QKeyEvent* event){
@@ -311,32 +329,29 @@ void GameScene::keyPressEvent(QKeyEvent* event){
 
     switch (event->key()){
         case Qt::Key_A :
-            qDebug("Key A pressed");
             hud->getSpellWidget()->changeSelectedSpell(0);
             break;
         case Qt::Key_W :
-            qDebug("Key W pressed");
             hud->getSpellWidget()->changeSelectedSpell(1);
             break;
         case Qt::Key_X :
-            qDebug("Key X pressed");
             hud->getSpellWidget()->changeSelectedSpell(2);
-        case Qt::Key_T:
-            qDebug() << character->pos();
-            break;
         case Qt::Key_Escape:
             putGamePaused();
             break;
     }
 }
 
+//Delete player
 void GameScene::deletePlayer() {
     delete character;
     character = nullptr;
 }
 
+//Set game in pause
 void GameScene::putGamePaused(){
     isPaused = true;
+
     //Pause the timers
     for(QTimer* t : timerList){
         if(t){
@@ -345,33 +360,42 @@ void GameScene::putGamePaused(){
             }
         }
     }
+
     //Pause the movies
     for(QMovie* m : movieList){
         if(m) m->setPaused(true);
     }
+
     //Pause the HUD animations
     for(QLabel* anim : hud->getHPWidget()->getLifeList()){
         anim->movie()->setPaused(true);
     }
+
+    //Set score with the right time played
     scoreManager->getActualScore()->setTimePlayed(scoreManager->getElapsedTimer()->elapsed() / 1000);
     scoreManager->getActualScore()->setDate(QDateTime::currentDateTime().toString("dd/MM/yyyy"));
     mainView->displayPauseMenu();
 }
 
+//Cancel time and animation stop
 void GameScene::reverseGamePaused(){
     isPaused = false;
+
     //Pause the timers
     for(QTimer* t : timerList){
         if(t) t->start();
     }
+
     //Pause the movies
     for(QMovie* m : movieList){
         if(m) m->setPaused(false);
     }
+
     //Pause the HUD animations
     for(QLabel* anim : hud->getHPWidget()->getLifeList()){
         anim->movie()->setPaused(false);
     }
+
     this->mainView->setFocus(); //Set the focus on the mainView so we can detect the key press
 }
 
@@ -405,8 +429,7 @@ void GameScene::keyReleaseEvent(QKeyEvent *event) {
     }
 }
 
-
-
+//Function called every 30 ms
 void GameScene::timerUpdate(){
     if(isPlayerDead) return;
     moveNPC();
@@ -419,6 +442,7 @@ void GameScene::timerUpdate(){
     }
 }
 
+//Move projectiles
 void GameScene::moveProjectiles(){
     for(Projectile* projectile : listProjectiles){
         if(projectile){
@@ -427,6 +451,7 @@ void GameScene::moveProjectiles(){
     }
 }
 
+//Remove projectiles
 void GameScene::removeProjectile(Projectile* projectile){
     if(projectile){
         listProjectiles.removeAll(projectile);
@@ -444,7 +469,7 @@ void GameScene::removeEntity(Entity* entity){
 }
 
 
-
+//Monsters attack player if the player is in their range attack
 void GameScene::checkNPCAttackRange(){
     if(isPlayerDead) return;
 
@@ -628,25 +653,25 @@ void GameScene::checkInteractionZone(){
 void GameScene::showTooltip(QPointF pos, QString text){
     if (tooltiptxt || tooltiprect) return;
 
-    // Texte
+    // Text
     tooltiptxt = new QGraphicsTextItem(text);
     QFont font("Cinzel Decorative", 12);
     tooltiptxt->setFont(font);
     tooltiptxt->setDefaultTextColor(QColor("#d6c7ff"));
     tooltiptxt->setZValue(100);
 
-    // Taille du texte
+    // Size of text
     QFontMetrics metrics(font);
     QRect textRect = metrics.boundingRect(text);
     int padding = 5;
 
-    // Fond
+    // Background
     tooltiprect = new QGraphicsRectItem(textRect.adjusted(-padding, -padding, padding, padding));
     tooltiprect->setBrush(QColor(40, 30, 60, 180));
     tooltiprect->setPen(QPen(QColor(120, 100, 180), 2));
     tooltiprect->setZValue(90);  // derrière le texte
 
-    //Pos
+    //Position
     tooltiptxt->setPos(pos.x() -1, pos.y()  - 50);
     tooltiprect->setPos(pos.x() , pos.y() + textRect.height() - 50);
 
@@ -690,13 +715,14 @@ void GameScene::moveNPC(){
             float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
             if(distance < mainView->mapToScene(mainView->viewport()->rect()).boundingRect().width() * 0.5){
                 entity->moveEntity(posCharacterX, posCharacterY);
-                entity->updateFlipFromPlayerPosition(character->getCenterPosition());
+                entity->updateFlipFromPlayerPosition(character->getCenterPosition()); //Flip entities in the right direction (because their animation are in one side)
             } else{
                 entity->idleAnimation();
             }
         }
     }
 }
+
 
 qreal* GameScene::getDeltaPosition() {
     qreal dx = 0;
@@ -760,6 +786,7 @@ qreal* GameScene::getDeltaPosition() {
     return deltaPosition;
 }
 
+//Destructor
 GameScene::~GameScene(){
     if(mapItem){
         delete mapItem;
@@ -781,8 +808,7 @@ GameScene::~GameScene(){
 }
 
 
-//Detection des clics
-
+//Detection of clicks
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if(isPlayerDead || isPaused) return;
     QPointF clickPos = event->scenePos();
@@ -844,6 +870,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
+//Sound of power up (when we get spells)
 void GameScene::powerUpSound(){
     QSoundEffect* powerUpSFX = new QSoundEffect();
     connect(powerUpSFX, &QSoundEffect::loadedChanged, powerUpSFX, &QSoundEffect::play);

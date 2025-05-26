@@ -50,6 +50,13 @@ PlayerSlash::PlayerSlash(GameScene *scene, Player* player, QGraphicsObject* pare
     this->setScale(0.25);
 }
 
+//Destructor
+PlayerSlash::~PlayerSlash(){
+    delete attackAnimation[0];
+    delete attackAnimation[1];
+    delete attackAnimation[2];
+}
+
 void PlayerSlash::slashAttack(QPointF pos, QPointF playerPos, Direction CurrentDirection)
 {
     if(isSlashing) return;
