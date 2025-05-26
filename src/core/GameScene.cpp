@@ -22,9 +22,11 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     audioManager->addMusicObject(audioOutput, audioOutput->volume());
 
     //Map
-    loadOverworld();
+
 
     this->setSceneRect(0, 0, backgroundWidth, backgroundHeight);
+
+
 
     //Setting up the player's character
     //TODO Change player hp when test are ok
@@ -37,8 +39,6 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     this->addItem(character);
     this->character->setMainView(mainView);
 
-    //character->setHasTreeHeart(true);
-
     //Load slash animation
     PlayerSlash* slash = new PlayerSlash(this, character, character);
     this->character->setPlayerSlash(slash);
@@ -47,24 +47,12 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
     PlayerShield* shield = new PlayerShield(this, character, character);
     this->character->setPlayerShield(shield);
 
-    Goblin* goblin = new Goblin("Goblin", GOBLIN_HP, scoreManager, this);
-    goblin->setPos(1110, 2180);
-    goblin->updateFlipFromPlayerPosition(character->getCenterPosition());
-    this->addItem(goblin);
-    listNPC.append(goblin);
-
-    /*Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
-    bat->setPos(910, 1970);
-    bat->updateFlipFromPlayerPosition(character->getCenterPosition());
-    this->addItem(bat);
-    listNPC.append(bat);*/
-
+    loadOverworld();
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer();
     connect(this->timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
     this->timer->start(30); //every 30 milliseconds
     timerList.append(timer);
-
 }
 
 
@@ -228,7 +216,7 @@ void GameScene::loadOverworld() {
     audioPlayer->setLoops(QMediaPlayer::Infinite);
     audioManager->addMusicObject(audioOutput, audioOutput->volume());
 
-    //Chargement de la map
+    //Loading the map
     try{
         loadMap("../assets/maps/map.json", 3000,3000);
     } catch(QException e){
@@ -237,18 +225,36 @@ void GameScene::loadOverworld() {
         qCritical() << "Error when loading the map : " << e.what();
     }
 
-    //Ajout des ennemy
+    //Adding ennemies
+    QList<QPoint> enemyPositions = {  //Position for every ennemies
+            {1762,1965}, {1947,1974}, {2197,2082}, {2583,1820},
+            {2432,1477}, {2363,859}, {2189,839}, {2230,1011}, {1355,346},
+            {1724,409}, {1584,395}, {1403,506}, {1667,41}, {1387,745},
+            {798,917}, {776,1082}, {418,1107}, {502,938}, {384,1452},
+            {572,1630}, {836,2111}, {1096,1988}, {249,2641}, {280,2815}, {477,2720}
+    };
 
-
-
+    for (int i = 0; i < enemyPositions.size(); ++i) {
+        QPoint pos = enemyPositions[i];
+        if (i % 2 == 0) {
+            Goblin* goblin = new Goblin("Goblin", GOBLIN_HP, scoreManager, this);
+            goblin->setPos(pos);
+            goblin->updateFlipFromPlayerPosition(character->getCenterPosition());
+            this->addItem(goblin);
+            listNPC.append(goblin);
+        } else {
+            Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
+            bat->setPos(pos);
+            bat->updateFlipFromPlayerPosition(character->getCenterPosition());
+            this->addItem(bat);
+            listNPC.append(bat);
+        }
+    }
+    qDebug("Ennemies loaded");
 }
 
 void GameScene::loadDungeon() {
-
-
-
-
-    try{
+    try{ //Loading the map
         loadMap("../assets/maps/mapDonjon.json", 2000,2000);
     } catch(QException e){
         qCritical() << "Error when loading the map : " << e.what();
@@ -780,6 +786,7 @@ GameScene::~GameScene(){
 void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if(isPlayerDead || isPaused) return;
     QPointF clickPos = event->scenePos();
+    qDebug() << "Click position: " << clickPos;
 
     //Check if the player is on the missile spell
     if (hud->getSpellWidget()->getSelectedSpell()[0] && character->getHasMissile()) {
