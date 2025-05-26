@@ -18,7 +18,6 @@ Q_OBJECT
 public:
     //Constructor and destructor
     ScoreboardWidget(MainWindow *mainWindow, QWidget *parent = nullptr);
-
     ~ScoreboardWidget();
 
 private:

@@ -49,15 +49,13 @@ GameScene::GameScene(AudioManager* audioManager, MainView* view, ScoreManager* s
 
     Goblin* goblin = new Goblin("Goblin", GOBLIN_HP, scoreManager, this);
     goblin->setPos(1110, 2180);
-    goblin->updateFlipFromPlayerPosition(character->getCenterPosition());
     this->addItem(goblin);
     listNPC.append(goblin);
 
-    /*Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
+    Bat* bat = new Bat("Bat", BAT_HP, scoreManager, this);
     bat->setPos(910, 1970);
-    bat->updateFlipFromPlayerPosition(character->getCenterPosition());
     this->addItem(bat);
-    listNPC.append(bat);*/
+    listNPC.append(bat);
 
     //Starting the timer to update the animation and mouvement
     this->timer = new QTimer();
@@ -680,11 +678,11 @@ void GameScene::moveNPC(){
     //We move each entity in listNPC
     for(Entity* entity : listNPC){
         if(dynamic_cast<CrystalKnight*>(entity)) return; //Do not move the CrystalKnight, he teleports
-        float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
         if(entity){
             float distance = sqrt(pow(posCharacterX - entity->getCenterPosition().x(), 2) + pow(posCharacterY - entity->getCenterPosition().y(), 2));
             if(distance < mainView->mapToScene(mainView->viewport()->rect()).boundingRect().width() * 0.5){
                 entity->moveEntity(posCharacterX, posCharacterY);
+                entity->updateFlipFromPlayerPosition(character->getCenterPosition());
             } else{
                 entity->idleAnimation();
             }

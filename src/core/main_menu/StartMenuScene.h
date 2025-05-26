@@ -35,19 +35,22 @@ class StartMenuScene : public QGraphicsScene{
         //Getters
         QMediaPlayer* getAudioPlayer() { return audioPlayer; }
         SettingsWidget* getSettingsWidget() { return settingsWidget; }
+
+        //Functions to create widget
         void createSettingsWidget(MainWindow* mainWindow);
         void createScoreboardWidget(MainWindow* mainWindow);
         void createButtons(MainWindow* mainWindow);
 
         void drawBackground(QPainter* painter, const QRectF& rect);
 
+        //Constructor and destructor
         StartMenuScene(MainWindow* mainWindow, QObject* parent = nullptr);
         virtual ~StartMenuScene();
 
     private:
         QPixmap* background = nullptr;
-        QWidget* buttonsContainer = nullptr;
 
+        QWidget* buttonsContainer = nullptr;
         QMediaPlayer* audioPlayer = nullptr;
         QAudioOutput* audioOutput = nullptr;
         SettingsWidget* settingsWidget = nullptr;

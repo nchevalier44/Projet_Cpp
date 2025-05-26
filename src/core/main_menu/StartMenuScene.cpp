@@ -30,7 +30,6 @@ StartMenuScene::StartMenuScene(MainWindow* mainWindow, QObject* parent) : QGraph
 
 //Destructor
 StartMenuScene::~StartMenuScene() {
-    qDebug() << "Delete start menu scene";
     delete background;
     background = nullptr;
     delete settingsProxyWidget;
@@ -50,6 +49,7 @@ void StartMenuScene::drawBackground(QPainter* painter, const QRectF& rect) {
 }
 
 void StartMenuScene::createSettingsWidget(MainWindow* mainWindow){
+    //We delete it if it exist, before recreate it (it's for update)
     if (settingsProxyWidget) {
         if (settingsProxyWidget->scene() == this) {
             this->removeItem(settingsProxyWidget);
@@ -84,6 +84,7 @@ void StartMenuScene::createSettingsWidget(MainWindow* mainWindow){
 }
 
 void StartMenuScene::createScoreboardWidget(MainWindow* mainWindow){
+    //We delete it if it exist, before recreate it (it's for update)
     if (scoreboardProxyWidget) {
         if (scoreboardProxyWidget->scene() == this) {
             this->removeItem(scoreboardProxyWidget);
@@ -118,12 +119,13 @@ void StartMenuScene::createScoreboardWidget(MainWindow* mainWindow){
 }
 
 void StartMenuScene::createButtons(MainWindow* mainWindow){
-    //Create buttons container and buttons
+    //We delete it if it exist, before recreate it
     if(buttonsContainer){
         delete buttonsContainer;
         buttonsContainer = nullptr;
     }
 
+    //Create buttons container and buttons
     buttonsContainer = new QWidget();
     buttonsContainer->setAttribute(Qt::WA_OpaquePaintEvent); //get background of the widget transparent
     MainMenuButton* startButton = new MainMenuButton("Start", mainWindow->getAudioManager(), buttonsContainer);
@@ -146,6 +148,7 @@ void StartMenuScene::createButtons(MainWindow* mainWindow){
     scoreboardButton->setFont(buttonFont);
     exitButton->setFont(buttonFont);
 
+    //Set the right size
     startButton->setFixedSize(startButton->size() * 4);
     settingsButton->setFixedSize(settingsButton->size() * 4);
     scoreboardButton->setFixedSize(scoreboardButton->size() * 4);

@@ -2,27 +2,34 @@
 #include "MainView.h"
 #include "HUD.h"
 
-
+//Constructor
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
+    //Create audio and score manager
     audioManager = new AudioManager();
     scoreManager = new ScoreManager();
     scoreManager->loadScores();
 
-
+    //Create StartMenuScene and MainView
     startMenuScene = new StartMenuScene(this);
     mainView = new MainView(this, scoreManager, this);
     mainView->setScene(startMenuScene);
 
+
+    //Actions
     connect(startMenuScene, &StartMenuScene::startGameRequested, this, &MainWindow::startGame); //When the player start from the principal menu
     connect(mainView, &MainView::startGameRequested, this, &MainWindow::restartGame); //When the player die and he clicked on restart
     connect(mainView, &MainView::goToStartMenuRequested, this, &MainWindow::goToStartMenu); //When the player die, and he wants to go back to the principal menu
+
 
     this->setCentralWidget(mainView);
     this->setWindowTitle("C++ Project");
     this->setFixedSize(backgroundRatio * DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_HEIGHT);
     startMenuScene->getSettingsWidget()->getWindowSizeComboBox()->setCurrentText(QString::number(backgroundRatio * DEFAULT_WINDOW_HEIGHT) + "x" + QString::number(DEFAULT_WINDOW_HEIGHT));
 
+
+    //Check ratio of the window every 500ms and modify it if the ratio is not correct
+    //Because sometimes Qt call multiple times resizeEvent, so it doesn't work well sometimes
     QTimer* windowSizeTimer = new QTimer(this);
     windowSizeTimer->start(500);
     connect(windowSizeTimer, &QTimer::timeout, this, [=](){
@@ -30,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     });
 }
 
-
+//Destructor
 MainWindow::~MainWindow(){
     delete audioManager;
     audioManager = nullptr;
@@ -38,6 +45,7 @@ MainWindow::~MainWindow(){
     scoreManager = nullptr;
 }
 
+//Restart the game
 void MainWindow::restartGame(){
     scoreManager->addScore(*(scoreManager->getActualScore()));
     resetGame();
@@ -45,6 +53,7 @@ void MainWindow::restartGame(){
 
 }
 
+//Go to start menu scene
 void MainWindow::goToStartMenu() {
 
     scoreManager->addScore(*(scoreManager->getActualScore()));
@@ -55,6 +64,7 @@ void MainWindow::goToStartMenu() {
     startMenuScene->createButtons(this); //Update scoreboardWidget and settingsWidget
     startMenuScene->getAudioPlayer()->play();
 
+    //Change the actual scene
     mainView->setScene(startMenuScene);
     mainView->setFitView(true);
     mainView->fitInView(mainView->sceneRect(), Qt::KeepAspectRatio);
@@ -62,6 +72,7 @@ void MainWindow::goToStartMenu() {
     startMenuScene->getAudioPlayer()->play(); //Start the music
 }
 
+//Start a game
 void MainWindow::startGame(){
     //Set the scene to the game scene
     gameScene = new GameScene(audioManager, mainView, scoreManager, this);
@@ -81,6 +92,7 @@ void MainWindow::startGame(){
     gameScene->setHUD(hud);
     gameScene->getCharacter()->setHUD(hud);
 
+    //Start the elapsed timer in score manager to get the time played
     scoreManager->getElapsedTimer()->start();
 
     mainView->setFocusPolicy(Qt::StrongFocus);
@@ -88,6 +100,7 @@ void MainWindow::startGame(){
     mainView->setMouseTracking(true);
 }
 
+//Reset game
 void MainWindow::resetGame(){
     mainView->deleteDeathScreen();
     mainView->deleteWinScreen();
@@ -105,7 +118,7 @@ void MainWindow::resetGame(){
 
 }
 
-
+//Redefinition of resizeEvent to keep the right ratio
 void MainWindow::resizeEvent(QResizeEvent* event) {
         QMainWindow::resizeEvent(event);
         QSize newSize = event->size();
@@ -114,11 +127,13 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
         newSize = checkRatio(newSize);
         if (newSize == event->oldSize()) return;
 
+        //Call resizeEvent of mainView because it is not called everytime
         QResizeEvent eventResize(newSize, QSize(this->width(), this->height()));
         this->resize(newSize);
         mainView->resizeEvent(&eventResize);
 }
 
+//Check the ratio of the window and return the right size adjusted
 QSize MainWindow::checkRatio(QSize size, bool check){
     int newWidth = size.width();
     int newHeight = newWidth / backgroundRatio;

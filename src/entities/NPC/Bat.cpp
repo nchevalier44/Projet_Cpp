@@ -15,12 +15,12 @@ Bat::Bat(std::string name, int life, ScoreManager* scoreManager, GameScene* scen
 void Bat::updateFlipFromPlayerPosition(QPointF playerPosition){
     // If the player is on the left of the bat, flip it horizontally
     if(playerPosition.x() < getCenterPosition().x()){
-        if(!horizontalFlipped) horizontalFlip();
-        horizontalFlipped = true;
-
-    } else{
         if(horizontalFlipped) horizontalFlip();
         horizontalFlipped = false;
+
+    } else{
+        if(!horizontalFlipped) horizontalFlip();
+        horizontalFlipped = true;
     }
 }
 

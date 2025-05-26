@@ -22,16 +22,17 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
     title->setAlignment(Qt::AlignCenter);
     title->setFont(titleFont);
 
+    //Scores
     scoresContainer = new QWidget(this);
     QVBoxLayout* scoresLayout = new QVBoxLayout();
 
-    //Get scores
+    //Get best scores
     mainWindow->getScoreManager()->loadScores();
     QList<Score> scores = mainWindow->getScoreManager()->getBestScoresList();
     int n = scores.size();
 
     if(n == 0){ // if no scores
-        //it crash if we decomment this (only when we start the first time and we do 'back to menu')
+        //it crash if when we decomment this (only when we start the first time and we click 'back to menu' when we die / win / pause)
         /*QLabel* label = new QLabel("No previous scores...");
         label->setFont(font);
         label->setStyleSheet("color: white;");
@@ -41,7 +42,7 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
             QString number = QString::number(n - i);
             QString score = QString::number(scores[i].getScore());
             int seconds = scores[i].getTimePlayed();
-            QString timePlayed = QString::number(seconds / 60) + "m" + QString::number(seconds % 60) + "s";
+            QString timePlayed = QString::number(seconds / 60) + "m" + QString::number(seconds % 60) + "s"; //convert seconds in minutes and seconds
             QString date = scores[i].getDate();
 
             QLabel* label = new QLabel(number + " | " + score + " pts - " + timePlayed + " - " + date);
@@ -81,6 +82,7 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
 
     closeButton->setFixedSize(closeButton->size() * 3);
 
+    //Set attribute so that buttons located below cannot be clicked on
     this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
 
 
@@ -88,6 +90,7 @@ ScoreboardWidget::ScoreboardWidget(MainWindow* mainWindow, QWidget* parent) : QW
 }
 
 
+//Destructor
 ScoreboardWidget::~ScoreboardWidget(){
     if(backgroundPixmap){
         delete backgroundPixmap;
@@ -103,7 +106,7 @@ ScoreboardWidget::~ScoreboardWidget(){
 
 
 
-
+//Redefinition of the paintEvent function to draw the pixmap
 void ScoreboardWidget::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
     QPainterPath path;

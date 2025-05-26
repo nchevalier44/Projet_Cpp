@@ -4,7 +4,7 @@
 #include "MainWindow.h"
 #include "FontManager.h"
 
-
+//Constructor
 HUD::HUD(int maxHP, QPointF windowSize, QWidget* parent): QWidget(parent) {
     //Base attribute of HUD
     setAttribute(Qt::WA_OpaquePaintEvent);
@@ -24,13 +24,18 @@ HUD::HUD(int maxHP, QPointF windowSize, QWidget* parent): QWidget(parent) {
     show();
 }
 
+//Update HUD
 void HUD::updateHUD(int actualHP, int newMaxHP, QPointF newWindowSize){
     this->setGeometry(0, 0, newWindowSize.x(), newWindowSize.y());
+
+    //Update HPWidget
     delete hpWidget;
     hpWidget = new HPWidget(newMaxHP, newWindowSize, this);
     hpWidget->move(newWindowSize.x() * 0.01, newWindowSize.y() * 0.01);
     hpWidget->setLife(actualHP);
     hpWidget->show();
+
+    //Update SpellWidget
     delete spellWidget;
     spellWidget = new SpellWidget(3, newWindowSize, this);
     spellWidget->move(newWindowSize.x() * 0.78, newWindowSize.y() * 0.02);
@@ -44,6 +49,7 @@ void HUD::updateHUD(int actualHP, int newMaxHP, QPointF newWindowSize){
 
 ///HEART HUD
 
+//Constructor
 HPWidget::HPWidget(int maxLife, QPointF windowSize, QWidget *parent) : QWidget(parent), maxLife(maxLife) {
     lifeLayout = new QHBoxLayout(this);
     heartWidth = windowSize.x() * 0.05;   //Change this to adjust the size of the heart
@@ -71,6 +77,7 @@ HPWidget::HPWidget(int maxLife, QPointF windowSize, QWidget *parent) : QWidget(p
     this->setLayout(lifeLayout);
 }
 
+//Adjust the right number of hp
 void HPWidget::setLife(int hp) {
     for(int i = 0 ; i < maxLife ; i++) {
         QMovie* movie;
@@ -83,9 +90,9 @@ void HPWidget::setLife(int hp) {
         life[i]->setMovie(movie);
         movie->start();
     }
-    qDebug() << "Life : " << hp;
 }
 
+//Add an hp
 void HPWidget::addHP() {
     ++maxLife;
 
@@ -109,6 +116,7 @@ void HPWidget::addHP() {
 
 ///SPELL HUD
 
+//Constructor
 SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QWidget(parent), maxSpell(maxSpell){
     //Base attribute of the widget
     setAttribute(Qt::WA_OpaquePaintEvent);
@@ -123,7 +131,7 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
     //set the size of the widget according to the size of the window
     this->setFixedSize(windowSize.x() * 0.2, windowSize.y() * 0.2 * maxSpell + 50);
     for (int i = 0; i < maxSpell; ++i) {
-        // Créer une boîte pour chaque sort
+        // Create a square for each spell
         QLabel* spellLabel = new QLabel(this);
         QPixmap spellPixmap;
         if(i == 0){
@@ -138,7 +146,7 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
         spellLabel->setFixedSize(windowSize.x() * 0.1, windowSize.y() * 0.1);
         spellLabel->setPixmap(spellPixmap.scaled(spellLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
-        // Ajouter une icône de sort
+        // Add spell icon
         QLabel* iconeLabel = new QLabel(spellLabel);
         QPixmap iconePixmap;
         if(i == 0){
@@ -158,10 +166,10 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
         iconeLabel->move(spellLabel->width() / 2 - iconeLabel->width() / 2, spellLabel->height() / 2 - iconeLabel->height() / 2);
 
         if(i == 0){
-            //Ajout du nombre de missile restant
+            //Add number of missile count left
             missileCountLabel = new QLabel(spellLabel);
             QFont font(FontManager::fontFamily);
-            font.setPointSize(0.035 * this->height()); // Taille de la police (ajuste selon ton besoin)
+            font.setPointSize(0.035 * this->height()); // Size of the font
             missileCountLabel->setFont(font);
             missileCountLabel->setStyleSheet("color: white;");
             missileCountLabel->move(spellLabel->width() * 0.59, spellLabel->height() * 0.63);
@@ -170,7 +178,7 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
             missileCountLabel->show();
         }
 
-        // Ajouter le widget au layout
+        // Add widget to layout
         spellLayout->addWidget(spellLabel);
         spellLabel->hide();
         spell.append(spellLabel);
@@ -178,6 +186,7 @@ SpellWidget::SpellWidget(int maxSpell, QPointF windowSize, QWidget *parent) : QW
     this->setLayout(spellLayout);
 }
 
+//Apply cooldown animation and reduce number of missile left on the label
 void SpellWidget::shootedMissile(){
     QLabel* cooldownOverlay = coolDownAnimation(0,2000);
     currentMissile--;
@@ -189,6 +198,7 @@ void SpellWidget::shootedMissile(){
     });
 }
 
+//Apply cooldown animation
 void SpellWidget::shieldUsed(){
     QLabel* cooldownOverlay = coolDownAnimation(2,5000);
     isShieldOnCD = true;
@@ -198,28 +208,33 @@ void SpellWidget::shieldUsed(){
     });
 }
 
+//Cooldown animation
 QLabel* SpellWidget::coolDownAnimation(int spellSelected, double duration){
     QLabel* spellLabel = spell[spellSelected];
     const int spellLabelWidth = spellLabel->pixmap().width();
     const int spellLabelHeight = spellLabel->pixmap().height();
+
+    //Black overlay
     QLabel* cooldownOverlay = new QLabel(spellLabel);
     cooldownOverlay->setStyleSheet("background-color: rgba(0, 0, 0, 150);");
-    cooldownOverlay->setGeometry(0, 0,spellLabelWidth, spellLabelHeight); // Geometry dès le début
+    cooldownOverlay->setGeometry(0, 0,spellLabelWidth, spellLabelHeight);
     cooldownOverlay->show();
     cooldownOverlay->raise();
 
-
+    //Animation
     QPropertyAnimation* animation = new QPropertyAnimation(cooldownOverlay, "geometry", spellLabel);
     animation->setDuration(duration);
     animation->setStartValue(QRect(0, 0,spellLabelWidth, spellLabelHeight));
     animation->setEndValue(QRect(0, spellLabelHeight, spellLabelWidth, 0));
     animation->setEasingCurve(QEasingCurve::OutQuad);
 
+    //Start animation
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 
     return cooldownOverlay;
 }
 
+//Change the selected spell
 void SpellWidget::changeSelectedSpell(int spellIndex){
     QPixmap selectedSpellPixmap;
 

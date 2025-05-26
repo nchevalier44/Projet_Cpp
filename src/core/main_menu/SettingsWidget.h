@@ -17,16 +17,19 @@ public:
     SettingsWidget(MainWindow* mainWindow, QWidget* parent=nullptr);
     virtual ~SettingsWidget();
 
+    //Getters
     VolumeSlider* getVolumeSFXSlider() { return volumeSFXSlider; }
     VolumeSlider* getVolumeMusicSlider() { return volumeMusicSlider; }
     WindowSizeComboBox* getWindowSizeComboBox() { return windowSizeComboBox; }
 
+    //Function that resize all items in settings widget in function of the width and height given
     void resizeItems(int width, int height);
 
 private:
     float ratioSettingsPixmap = 1;
     QPixmap* settingsBackgroundPixmap = nullptr;
 
+    //Elements in settings widget
     VolumeSlider* volumeMusicSlider = nullptr;
     VolumeSlider* volumeSFXSlider = nullptr;
     WindowSizeComboBox* windowSizeComboBox = nullptr;
